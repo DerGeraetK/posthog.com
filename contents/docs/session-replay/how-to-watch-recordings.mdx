@@ -72,6 +72,20 @@ To watch recordings, you can visit the [Replay](https://app.posthog.com/replay) 
   classes="rounded"
 />
 
+## Pinning a primary property
+
+When you expand an event in the activity panel, you can pin a property as the "primary property" for that event type. The pinned property's value then displays next to events of that type in the inspector list and on the seekbar timeline, making it easier to scan for the events you care about.
+
+To pin a primary property:
+
+1. In the activity panel, click an event to expand its details and show the **Properties** tab.
+2. Hover over any property row to reveal a pin icon.
+3. Click the pin icon to set that property as the primary property for this event type.
+
+This setting applies team-wide, so the pinned property shows for everyone on your team. To unpin, click the filled pin icon on the currently pinned property.
+
+Built-in events like `$pageview` have predefined primary properties that can't be changed.
+
 ## When watching a filter result or collection:
 
 1. Open the filter panel to find more recordings
