@@ -96,7 +96,7 @@ Avoid large rename-only PRs across unrelated areas. They create review noise and
 
 Treat inclusive language like any other naming feedback:
 
-- Request changes for new user-facing copy, public APIs, SDK options, config names, and docs.
+- Consider whether to request changes for new user-facing copy, public APIs, SDK options, config names, and docs where it is hard to change in a follow-up
 - Suggest changes for private code when the fix is low risk.
 - Do not block urgent fixes because of old internal names unless the PR introduces new user-facing language.
 - If a rename could break users, ask for a compatibility plan instead of asking for a direct replacement.
