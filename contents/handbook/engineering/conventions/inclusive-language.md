@@ -51,30 +51,6 @@ This table is not exhaustive.
 | `suffers from`, `afflicted with` | `has`, `is` | Avoid pathologizing language, particularly in accessibility. For example, write `a user who is colorblind` instead of `a user who suffers from colorblindness`. |
 | Casual uses of `crazy`, `insane`, or `lame` | `unexpected`, `surprising`, `broken`, `high-volume`, `difficult`, `unhelpful` | Describe the behavior or impact instead. |
 
-## Examples
-
-Prefer names that explain the rule or behavior:
-
-| Less clear | Better |
-|------------|--------|
-| `ip_whitelist` | `allowed_ip_addresses` |
-| `proxy_whitelist` | `trusted_proxy_ips` |
-| `property_blacklist` | `excluded_properties` |
-| `is_user_blacklisted` | `is_user_blocked` |
-| `master_database` | `primary_database` |
-| `slave_database` | `replica_database` |
-| `dummy_user` | `test_user` |
-| `sanity_check_query()` | `validate_query()` |
-
-User-facing copy should follow the same pattern:
-
-| Instead of | Use |
-|------------|-----|
-| `This domain is whitelisted.` | `This domain is allowed.` |
-| `This IP is blacklisted.` | `This IP is blocked.` |
-| `Run a sanity check before deploying.` | `Run a smoke test before deploying.` |
-| `This customer is grandfathered into the old plan.` | `This customer has retained access to the old plan.` |
-
 ## Changing existing code
 
 Changing old names is valuable, but stability matters more than a tidy diff.
