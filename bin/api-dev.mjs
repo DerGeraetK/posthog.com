@@ -83,8 +83,12 @@ const server = http.createServer(async (req, res) => {
     const urlPath = (req.url || '').split('?')[0]
     const loader = ROUTES[urlPath]
     if (!loader) {
+        // Don't reflect the raw request path back into the response body — set an explicit
+        // JSON content-type and return a generic message so the path can't be interpreted as
+        // markup by a browser (avoids reflected-XSS even on this local-only dev server).
         res.statusCode = 404
-        return res.end(JSON.stringify({ error: `No route for ${urlPath}` }))
+        res.setHeader('content-type', 'application/json')
+        return res.end(JSON.stringify({ error: 'No route', routes: Object.keys(ROUTES) }))
     }
 
     try {
@@ -127,9 +131,11 @@ const server = http.createServer(async (req, res) => {
         const startedAt = Date.now()
         await handler(fakeReq, fakeRes)
         const ms = Date.now() - startedAt
-        console.log(`${req.method} ${urlPath} ${fakeRes.statusCode} ${ms}ms`)
+        // Pass request-derived values as console args, never as the format string, so a path
+        // containing %-specifiers can't be interpreted as a format directive.
+        console.log('%s %s %s %sms', req.method, urlPath, fakeRes.statusCode, ms)
     } catch (err) {
-        console.error(`${req.method} ${urlPath} 500`, err)
+        console.error('%s %s 500', req.method, urlPath, err)
         res.statusCode = 500
         res.setHeader('content-type', 'application/json')
         res.end(JSON.stringify({ error: err instanceof Error ? err.message : 'Handler error' }))
