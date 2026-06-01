@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SEO from 'components/seo'
 import ReaderView from 'components/ReaderView'
 import { TreeMenu } from 'components/TreeMenu'
@@ -36,12 +36,15 @@ async function evaluateChannels(
 
 export default function HogWatchPage() {
     const { user, isModerator } = useUser()
+    const [mounted, setMounted] = useState(false)
     const [channelInput, setChannelInput] = useState('')
     const [defaultRate, setDefaultRate] = useState(500)
     const [rateOverrides, setRateOverrides] = useState<Record<string, number>>({})
     const [results, setResults] = useState<ChannelResult[] | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => setMounted(true), [])
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -64,6 +67,30 @@ export default function HogWatchPage() {
     function handleExportCSV() {
         if (!results?.length) return
         exportToCSV(results)
+    }
+
+    // Defer auth-dependent UI until after mount so server and client render the same (avoids hydration #418)
+    if (!mounted) {
+        return (
+            <>
+                <SEO
+                    title="HogWatch 3000 - PostHog"
+                    description="Internal tool to check if creators are worth going into negotiations with"
+                />
+                <ReaderView
+                    title="HogWatch 3000"
+                    leftSidebar={<TreeMenu items={internalToolsNav} />}
+                    description="A tool to check if creators are worth going into negotiations with or not. Internal use."
+                    showQuestions={false}
+                >
+                    <div className="@container text-primary">
+                        <div className="bg-accent p-4 rounded border border-primary mt-4">
+                            <p className="mt-0 mb-0 text-muted">Checking access…</p>
+                        </div>
+                    </div>
+                </ReaderView>
+            </>
+        )
     }
 
     if (!user || !isModerator) {
