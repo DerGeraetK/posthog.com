@@ -256,7 +256,7 @@ export default function HogWatchPerformancePage() {
 
                         {data && totals && (
                             <>
-                                <section className="grid grid-cols-2 md:grid-cols-5 gap-3 border-t border-primary pt-4">
+                                <section className="grid grid-cols-2 @md:grid-cols-5 gap-3 border-t border-primary pt-4">
                                     <StatTile label="Influencers" value={totals.influencerCount.toLocaleString()} />
                                     <StatTile label="Spend" value={`$${Math.round(totals.spend).toLocaleString()}`} />
                                     <StatTile label="Views" value={totals.views.toLocaleString()} />
