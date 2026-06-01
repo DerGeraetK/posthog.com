@@ -59,6 +59,21 @@ An alert without a destination has nowhere to send notifications. Add at least o
 
 Destinations are delivered through hog functions under the hood, so they reuse the same infrastructure as other PostHog destinations. The **Notifications** column in the alert list shows a struck-through bell when no destinations are configured.
 
+### Manage notification destinations
+
+Click **View** on a destination row to open its detail view. This shows all lifecycle events for that destination:
+
+| Event | Description |
+|-------|-------------|
+| **Firing** | Sent when the alert starts firing |
+| **Resolved** | Sent when a firing alert returns to normal |
+| **Auto-disabled** | Sent if the alert is auto-disabled after repeated check failures |
+| **Errored** | Sent when an alert check can't evaluate |
+
+Each event shows its current status (Active, Paused, or Missing) and can be toggled on or off independently. Click **Open editor** to customize the notification template for that event.
+
+To remove a destination, click **Remove destination** at the top of the page.
+
 ## Advanced options
 
 ### Reduce noise
