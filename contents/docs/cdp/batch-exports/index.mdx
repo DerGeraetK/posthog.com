@@ -229,6 +229,12 @@ In addition, depending on any delays in sending or ingesting data, batch export 
 
 For these reasons, although we strive to keep the number of duplicates below a threshold, we recommend that you set up processes to de-duplicate the data in your destination if any amount of duplicates is undesirable. Different destinations will offer different tools to optimally handle duplicates, so we suggest you review your destination's documentation to find out what is the best strategy.
 
+### Why can't I set an end date in the future?
+
+Batch exports only export data that already exists in PostHog. When you specify a `data_interval_end` – whether through backfills or the on-demand export API – it must be a time in the past. If you try to set a future end date, you'll get an error.
+
+This keeps batch exports from waiting around indefinitely for events that haven't happened yet.
+
 ### Why are events exported in runs that do not match the event's timestamp?
 
 Due to delays in ingestion, caused by unreliable networks, buffering strategies, and other quirks, an event may arrive at PostHog with a significant delay compared to its timestamp. If batch exports relied on the event's timestamp to decide which data to include in a particular batch, we could be missing events that arrive late. As it is impossible to know whether events with a delay exist before they arrive, batch exports instead relies on the time when an event is ingested to decide whether an event belongs in a batch or not.
