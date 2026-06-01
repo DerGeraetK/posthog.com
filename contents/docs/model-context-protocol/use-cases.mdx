@@ -5,7 +5,7 @@ sidebar: Docs
 showTitle: true
 ---
 
-import PromptExample from "./_snippets/prompt-example.tsx"
+import PromptExample from "./_snippets/prompt-example.tsx";
 
 Once you've [connected the PostHog MCP server](/docs/model-context-protocol#get-started-in-30-seconds), your agent can read and write across PostHog's products. Here's a tour of the most useful things to ask – click the copy icon next to any prompt to grab it for your own agent, then adapt it to your project.
 
@@ -102,6 +102,18 @@ Wire up integrations from a single prompt instead of clicking through the UI.
 <PromptExample
   prompt="Test my webhook destination with a mock purchase event."
   outcome="Sends a mock payload and returns execution logs."
+/>
+<PromptExample
+  prompt="Create a workflow that sends a Slack notification when a user completes checkout."
+  outcome="Creates a draft workflow with the trigger and Slack action configured, ready for testing."
+/>
+<PromptExample
+  prompt="Test-run my welcome-email workflow with a mock signup event."
+  outcome="Invokes the workflow with mock async functions and returns the execution trace."
+/>
+<PromptExample
+  prompt="Enable my onboarding-sequence workflow."
+  outcome="Activates the workflow after confirmation, making it live for matching events."
 />
 
 ### Manage cohorts, prompts, and support
