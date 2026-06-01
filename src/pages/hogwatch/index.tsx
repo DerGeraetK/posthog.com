@@ -117,13 +117,8 @@ export default function HogWatchPage() {
                                         How we evaluate influencers
                                     </a>
                                     {' · '}
-                                    <a
-                                        href="https://us.posthog.com/project/2/dashboard/493906"
-                                        className="text-red hover:underline"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        Influencer performance dashboard (PostHog)
+                                    <a href="/hogwatch/performance" className="text-red hover:underline">
+                                        Performance dashboard (ROI)
                                     </a>
                                 </p>
                             </div>

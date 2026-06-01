@@ -57,6 +57,12 @@ module.exports = {
     flags: {
         DEV_SSR: false,
     },
+    // Local dev only: forward /api/* to the api-dev server (bin/api-dev.mjs on port 3002).
+    // On Vercel these routes are served natively from /api, so this proxy is a no-op there.
+    proxy: {
+        prefix: '/api',
+        url: `http://localhost:${process.env.API_DEV_PORT || 3002}`,
+    },
     siteMetadata: {
         title: 'PostHog',
         titleTemplate: '%s',
