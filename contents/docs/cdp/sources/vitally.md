@@ -25,6 +25,15 @@ To link Vitally:
 
 Once the syncs are complete, you can start using Vitally data in PostHog.
 
+## Custom object records
+
+Vitally lets you define custom objects (like Feature Requests or Opportunities) to track workspace-specific data. PostHog syncs both the custom object definitions and the actual records:
+
+- **Custom_Objects** – The definitions of your custom objects (metadata about the object types)
+- **Custom_Object_&lt;machineName&gt;** – One table per custom object containing the actual records, where `<machineName>` is Vitally's machine name for the object (for example, `Custom_Object_featureRequest`)
+
+Each custom object table appears as a separate schema you can enable during setup. The table name in HogQL is `vitally_custom_object_<machinename>` (lowercase).
+
 ## Configuration
 
 <SourceParameters />
