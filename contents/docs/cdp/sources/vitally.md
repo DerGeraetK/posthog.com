@@ -27,12 +27,11 @@ Once the syncs are complete, you can start using Vitally data in PostHog.
 
 ## Custom object records
 
-Vitally lets you define custom objects (like Feature Requests or Opportunities) to track workspace-specific data. PostHog syncs both the custom object definitions and the actual records:
+In addition to the standard schemas (accounts, conversations, notes, etc.), PostHog automatically discovers any [custom objects](https://docs.vitally.io/pushing-data-to-vitally/rest-api/custom-objects) in your Vitally workspace and creates a separate schema for each one. These schemas are named `Custom_Object_<machineName>` (e.g., `Custom_Object_featureRequest`) and sync the actual records, not just the definitions.
 
-- **Custom_Objects** – The definitions of your custom objects (metadata about the object types)
-- **Custom_Object_&lt;machineName&gt;** – One table per custom object containing the actual records, where `<machineName>` is Vitally's machine name for the object (for example, `Custom_Object_featureRequest`)
+To sync custom object records, refresh your source schemas. Each custom object appears as a toggleable schema. Once synced, the data lands in a table named `vitally_custom_object_<name>` (e.g., `vitally_custom_object_featurerequest`), which you can query directly in PostHog SQL. Incremental sync is supported via the `updatedAt` field.
 
-Each custom object table appears as a separate schema you can enable during setup. The table name in HogQL is `vitally_custom_object_<machinename>` (lowercase).
+> **Note:** The existing `Custom_Objects` schema still syncs custom object definitions (metadata). The new `Custom_Object_<machineName>` schemas sync the underlying records for each object.
 
 ## Configuration
 
