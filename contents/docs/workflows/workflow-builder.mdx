@@ -47,7 +47,6 @@ Every workflow starts with a trigger. Triggers define what kicks off the workflo
 | ---------------------- | ------------------------------------------------------------------------------ |
 | Event trigger          | A captured [PostHog event](/docs/data/events) (e.g. `signed up`)               |
 | Webhook trigger        | Programmatically start a workflow with an HTTP request                         |
-| Schedule trigger       | Run a workflow on a recurring schedule (e.g. daily, weekly, monthly)           |
 | Batch trigger          | Run the workflow for each person matching an audience, on a recurring schedule |
 | Tracking pixel trigger | Start the workflow when a 1x1 tracking pixel is loaded (e.g. in an email)      |
 
@@ -76,24 +75,6 @@ To set this up:
 2. Add a **Capture Event** action step to create a PostHog event from the incoming data.
 3. Optionally add delays, branching, person property updates, or dispatches.
 4. Enable the workflow and point your external system at the webhook URL which can be copied from the trigger step.
-
-### Schedule triggers
-
-Schedule triggers run a workflow on a recurring basis, independent of user actions. Use them for cron-style automations like "run every Monday at 9am" or "run daily at midnight."
-
-Unlike event and webhook triggers, schedule triggers don't require a person audience. When you select **Schedule** as the trigger type, configure a recurring pattern using the schedule picker (e.g. daily, weekly, or monthly).
-
-Schedule triggers display a status badge next to the trigger type:
-
-| Status    | Description                                                  |
-| --------- | ------------------------------------------------------------ |
-| Active    | The schedule is running and will fire at the next occurrence |
-| Paused    | The schedule is paused because the workflow is disabled      |
-| Completed | The schedule has finished all its occurrences                |
-
-If you update a completed schedule's configuration, its status resets to **Active**.
-
-If your workflow needs to target specific users on a schedule, use a [batch trigger](#batch-triggers) instead.
 
 ### Batch triggers
 
