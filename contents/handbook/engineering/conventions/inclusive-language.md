@@ -6,6 +6,8 @@ showTitle: true
 
 PostHog is built by and for people from many backgrounds. Clear, specific language helps everyone understand our code, product, docs, and operations. Some common technical terms carry unnecessary historical, cultural, or exclusionary baggage. Use neutral, precise alternatives when naming new things.
 
+The goal of this guide is to help us choose clearer language and provide alternatives for words that may have non-inclusive meanings. It is not about blaming people for wording used in older code, docs, or good-faith conversations. As with all feedback at PostHog, [assume positive intent](/handbook/people/feedback#how-to-receive-feedback-well) and treat suggestions as constructive naming feedback.
+
 This is guidance for engineering work. For docs-specific style, see the [docs style guide](/handbook/docs-and-wizard/docs-style-guide).
 
 ## What this applies to
