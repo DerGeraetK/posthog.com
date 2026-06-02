@@ -17,16 +17,13 @@ Batch exports can be used to export data to a BigQuery table.
 To set up the right permissions for a batch export targeting BigQuery, you need:
 
 1. A Google Cloud service account with the required BigQuery permissions.
-2. A dataset which has permissions allowing the service account to access it.
+2. A dataset that grants the service account access.
 
-PostHog supports two authentication methods for connecting to your service account:
-
-- **Service account impersonation** – You provide a service account email and project ID, and PostHog impersonates your service account using its own credentials. **A service account key is not required**.
-- **JSON key file** – You generate a service account JSON key file containing long-lived credentials and upload it to PostHog.
+PostHog uses **service account impersonation** to connect to your BigQuery account. You provide a service account email and project ID, and PostHog impersonates your service account using its own credentials. No service account key is required.
 
 ### Service account permissions
 
-Regardless of which authentication method you choose, you need a service account with permissions to load data in BigQuery by running BigQuery jobs. Follow these steps:
+You need a service account with permissions to load data in BigQuery by running BigQuery jobs. Follow these steps:
 
 1. Create a [service account](https://cloud.google.com/iam/docs/service-accounts-create#creating).
 
@@ -66,9 +63,9 @@ To do so, from the dataset view, click on "Share", then "Manage permissions", an
 
 If required, this step is also [explained in Google Cloud's own documentation](https://cloud.google.com/bigquery/docs/control-access-to-resources-iam#grant_access_to_a_dataset).
 
-### Option 1: Service account impersonation
+### Granting PostHog access to impersonate your service account
 
-With this method, you don't need to create, store, or share a JSON key file for your service account. Instead, you grant PostHog permission to impersonate your service account.
+Grant PostHog permission to impersonate your service account by following these steps:
 
 1. Add `posthog:{organization_id}` to your service account's **description** in Google Cloud. Replace `{organization_id}` with your PostHog organization ID, which you can find in your [PostHog organization settings](https://app.posthog.com/settings/organization).
 
@@ -88,24 +85,7 @@ And assign the aforementioned roles. This allows PostHog to impersonate your ser
 
 > In the screenshot above, we are assigning the built-in `roles/iam.serviceAccountViewer` role which contains the `iam.serviceAccounts.get` permission, but you may choose a different custom one just with that single permission.
 
-3. When creating the batch export, connect to a new Google Cloud service account, select **Impersonate service account**, and provide your service account email and Google Cloud project ID.
-
-### Option 2: JSON key file
-
-With this method, you generate a JSON key file for your service account and upload it to PostHog.
-
-<CalloutBox icon="IconWarning" title="Prefer impersonating a service account to avoid generating long-lived credentials" type="caution">
-
-The generated JSON key file contains long-lived credentials. Purely by their nature, long-lived credentials represent a security risk. We strongly recommend the previous option which eliminates this risk entirely.
-
-</CalloutBox>
-
-1. [Create a key](https://cloud.google.com/iam/docs/keys-create-delete#creating) for your service account.
-2. Save the key file as JSON.
-
-![Create JSON private key](https://res.cloudinary.com/dmukukwp6/image/upload/v1710055416/posthog.com/contents/images/docs/batch-exports/bigquery/create-private-key-json.png)
-
-3. When creating a batch export, connect to a new Google Cloud service account, select **Upload service account JSON key file**, and upload the key file from the previous step.
+3. When creating the batch export, connect to a new Google Cloud service account and provide your service account email and Google Cloud project ID.
 
 ## Models
 
@@ -213,12 +193,7 @@ Configuring a batch export targeting BigQuery requires the following BigQuery-sp
 * **Table ID:** The ID of the destination BigQuery table. This is not the fully-qualified name of a table, so omit the dataset and project IDs. For example for the fully-qualified table name `project-123:dataset:MyExportTable`, use only `MyExportTable` as the table ID.
 * **Dataset ID:** The ID of the BigQuery dataset which contains the destination table. Only the dataset ID is required, so omit the project ID if present. For example for the fully-qualified dataset `project-123:my-dataset`, use only `my-dataset` as the dataset ID.
 
-The configuration of a Google Cloud service account integration depends on your authentication method:
-
-* **If using service account impersonation:** Provide the **Service Account Email** and **Project ID**. No key file is needed.
-* **If using a JSON key file:** Upload the **Google Cloud JSON key file** for your Service Account. The project ID and service account information are extracted automatically from the key file.
-
-See the [BigQuery access setup section](#setting-up-bigquery-access) for more information on configuring authentication.
+To connect your Google Cloud service account, provide the **Service Account Email** and **Project ID**. See the [BigQuery access setup section](#setting-up-bigquery-access) for more information on configuring authentication.
 
 ## Examples
 
