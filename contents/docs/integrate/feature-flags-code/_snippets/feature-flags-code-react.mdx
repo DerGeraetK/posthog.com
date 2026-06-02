@@ -9,7 +9,7 @@ PostHog provides several hooks to make it easy to use feature flags in your Reac
 
 | Hook | Description |
 | --- | --- |
-| `useFeatureFlagEnabled` | Returns a boolean indicating whether the feature flag is enabled. This sends a `$feature_flag_called` event. |
+| `useFeatureFlagEnabled` | Returns `true`, `false`, or `undefined` (while loading) indicating whether the feature flag is enabled. Pass an optional second argument `defaultValue` to return that value instead of `undefined` while flags are loading. This sends a `$feature_flag_called` event. |
 | `useFeatureFlagVariantKey` | Returns the variant key of the feature flag. This sends a `$feature_flag_called` event. |
 | `useActiveFeatureFlags` | Returns an array of active feature flags. This does *not* send a `$feature_flag_called` event. |
 | `useFeatureFlagPayload` | Returns the payload of the feature flag. This does *not* send a `$feature_flag_called` event. Always use this with `useFeatureFlagEnabled` or `useFeatureFlagVariantKey`. |
@@ -44,6 +44,13 @@ function App() {
 
 export default App;
 ```
+
+> **Tip:** `useFeatureFlagEnabled` returns `undefined` while flags are loading. To avoid handling this third state, pass a default value as the second argument:
+>
+> ```react
+> // Returns false instead of undefined while loading
+> const showWelcomeMessage = useFeatureFlagEnabled('flag-key', false)
+> ```
 
 #### Example 2: Using a multivariate feature flag
 
