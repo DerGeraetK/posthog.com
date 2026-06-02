@@ -54,7 +54,7 @@ This is an overview for what you should actually be doing with a customer at eac
 
 ### 1. You get a lead
 
-We're constantly experimenting with the best lead types, documented [here](/handbook/growth/sales/lead-scoring). Info on _how_ leads are assigned can be [found here](/handbook/growth/sales/crm#how-we-do-lead-assignments). 
+We're constantly experimenting with [the best lead types](/handbook/growth/sales/lead-scoring). You can also read about [_how_ leads are assigned](/handbook/growth/sales/crm#how-we-do-lead-assignments). 
 
 ### 2. You qualify
 
