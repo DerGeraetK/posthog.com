@@ -362,16 +362,14 @@ export const DocsIndex = () => {
                             </Link>
                             .
                         </p>
+                        asdfsdfasdfvsd
                         <p>
                             <strong className="text-base">In the product</strong>
                         </p>
                         <p>Look for tooltips that link to docs - they open right inside the product.</p>
                         <p>Ask PostHog AI in the product.</p>
-
                         <hr className="my-4" />
-
                         <h6 className="text-lg">Feedback</h6>
-
                         <p>
                             Our docs are perpetually a work in progress. The
                             <SmallTeam slug="content" /> is responsible for what you see here.
