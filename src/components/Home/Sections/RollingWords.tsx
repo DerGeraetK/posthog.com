@@ -24,16 +24,13 @@ const fastRoll = (hold: number) => ({ duration: Math.min(0.26, Math.max(0.07, ho
 // Graceful ease-out-expo settle for the final word
 const SETTLE_TRANSITION = { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }
 
-// Underline uses the primary text color (theme-adaptive), independent of the word color.
-const UNDERLINE = 'absolute left-0 right-0 -bottom-1 h-[3px] rounded-full bg-[rgb(var(--text-primary))]'
-
 /**
- * Slot-machine word cycler for headlines. Words stack in a single fixed-size cell and roll
- * vertically — the outgoing word slides up and out (clipped) while the incoming word rises
- * from below into place. The cycle accelerates (driven by each step's `hold`) and settles
- * permanently on the last word with a slower, graceful glide.
+ * Slot-machine word cycler for headlines. Words roll vertically in place — the outgoing word
+ * slides up and out (clipped) while the incoming word rises from below. The cycle accelerates
+ * (driven by each step's `hold`) and settles permanently on the last word with a slower glide.
  *
- * The cell is sized to the longest word so the underline holds a constant width.
+ * The cell takes each word's natural width (sized to the current word), so the line grows and
+ * shrinks with the word.
  *
  * Respects `prefers-reduced-motion` by rendering only the final word, statically.
  */
@@ -43,9 +40,6 @@ export function RollingWords({ steps, className = '' }: RollingWordsProps): JSX.
 
     const lastIndex = steps.length - 1
     const isFinal = index >= lastIndex
-
-    // Reserve width/height for the longest word so the cell (and underline) never resize.
-    const longestWord = steps.reduce((a, b) => (b.word.length > a.length ? b.word : a), '')
 
     useEffect(() => {
         if (prefersReducedMotion || isFinal) {
@@ -57,24 +51,18 @@ export function RollingWords({ steps, className = '' }: RollingWordsProps): JSX.
 
     // Reduced motion: skip the animation, show the destination word.
     if (prefersReducedMotion) {
-        return (
-            <span className={`relative inline-block px-2 align-baseline ${className}`}>
-                <span aria-hidden className="invisible">
-                    {longestWord}
-                </span>
-                <span className="absolute inset-0 whitespace-nowrap text-center">{steps[lastIndex]?.word ?? ''}</span>
-                <span className={UNDERLINE} />
-            </span>
-        )
+        return <span className={`whitespace-nowrap ${className}`}>{steps[lastIndex]?.word ?? ''}.</span>
     }
 
     const current = steps[index]?.word ?? ''
+    // The period rides along with the verb so it rolls in/out as part of the word.
+    const phrase = `${current}.`
 
     return (
-        <span className={`group relative inline-block px-2 align-baseline ${className}`}>
-            {/* Invisible sizer pins the cell to the longest word's box */}
-            <span aria-hidden className="invisible">
-                {longestWord}
+        <span className={`group relative inline-block align-baseline ${className}`}>
+            {/* In-flow sizer = current phrase, giving the slot the word's natural width */}
+            <span aria-hidden className="invisible whitespace-nowrap">
+                {phrase}
             </span>
 
             {/* Rolling cell — clips words as they slide in/out. Extends a couple px below the
@@ -89,20 +77,18 @@ export function RollingWords({ steps, className = '' }: RollingWordsProps): JSX.
                         exit={{ y: '-105%', opacity: 0 }}
                         transition={isFinal ? SETTLE_TRANSITION : fastRoll(steps[index]?.hold ?? 300)}
                     >
-                        {current}
+                        {phrase}
                     </motion.span>
                 </AnimatePresence>
             </span>
 
-            <span className={UNDERLINE} />
-
-            {/* Replay control — appears on hover once the cycle has settled */}
+            {/* Replay control — appears on hover once the cycle has settled, just past the word */}
             {isFinal && (
                 <button
                     type="button"
                     onClick={() => setIndex(0)}
                     aria-label="Replay"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 text-muted opacity-0 transition-opacity duration-150 hover:text-primary focus-visible:opacity-100 group-hover:opacity-100"
+                    className="absolute left-full top-1/2 ml-1 -translate-y-1/2 text-muted opacity-0 transition-opacity duration-150 hover:text-primary focus-visible:opacity-100 group-hover:opacity-100"
                 >
                     <IconRewind className="size-4" />
                 </button>
