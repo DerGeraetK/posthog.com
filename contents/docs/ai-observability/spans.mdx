@@ -15,6 +15,17 @@ Spans are units of work within an LLM [trace](/docs/ai-observability/traces). Th
 
 <Caption>Spans are nested and displayed within a trace</Caption>
 
+## View span attributes
+
+Expand any span row in the [trace list](https://app.posthog.com/ai-observability/traces) to view its attributes inline. Click the chevron on the left side of a row to reveal:
+
+- **Attributes** – Custom key-value pairs you set on the span using OTel
+- **Span details** – Intrinsic span properties like name, duration, and status
+
+This lets you inspect span data without opening the full trace timeline.
+
+## Span types
+
 PostHog captures spans to track atomic operations that make up your LLM workflow. For example:
 
 - **[Generations](/docs/ai-observability/generations)** - LLM calls and interactions
