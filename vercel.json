@@ -87,6 +87,10 @@
             "destination": "/handbook/strategy/ideal-customer-persona"
         },
         { "source": "/blog/carbon-offset-wren", "destination": "/handbook/people/spending-money" },
+        {
+            "source": "/blog/autoresearch-query-bug",
+            "destination": "/blog/andrej-karpathy-autoresearch-query-engine-bug"
+        },
         { "source": "/hogwars", "destination": "/sparks-joy/hogwars" },
         { "source": "/youreastar", "destination": "https://www.youtube.com/watch?v=SD7B2teuLXk" },
         {
