@@ -480,6 +480,12 @@ export function useMenuData(): MenuType[] {
                     icon: <Icons.IconMap className="size-4 text-red" />,
                 },
                 {
+                    type: 'item',
+                    label: 'Meet PostHog Code',
+                    link: '/community/profiles/posthog-code',
+                    icon: <Icons.IconTerminal className="size-4 text-orange" />,
+                },
+                {
                     type: 'separator',
                 },
                 {
