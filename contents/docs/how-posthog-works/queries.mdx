@@ -51,6 +51,18 @@ This section covers how PostHog filters out events based on person properties.
 
 > **Note:** If you signed up before June 2024, you can configure in [settings](https://us.posthog.com/settings/project-product-analytics#persons-on-events) to use the faster queries mode instead of joining with the person table for current properties. This is the default for users signed up after June 2024.
 
+### Person property mode
+
+By default, insights filter on person properties as they were at event time. You can override this per insight using **Person property mode** in **Advanced options**.
+
+There are three options:
+
+- **Project default** - Uses your project's default setting
+- **Event-time snapshot** - Uses person properties as they were when the event was captured
+- **Latest person profile** - Joins the current person profile at query time, so filters reflect the person's current properties rather than their properties at event time
+
+When you select **Latest person profile**, a warning appears because changing a person's properties can alter historical-looking results. For example, if you update a user's `plan` property from `free` to `enterprise`, past events for that user now match filters for `enterprise` users, even though they were on the `free` plan when those events occurred.
+
 Since all the properties for a person are stored on each event, the process is straightforward.
 
 Let's walk through a simple example to see how this works in practice. Let's say we have ingested the following events:
