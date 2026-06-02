@@ -6841,6 +6841,12 @@ export const docsMenu = {
                     color: 'blue',
                 },
                 {
+                    name: 'Link Tracing',
+                    url: '/docs/logs/link-tracing',
+                    icon: 'IconListTree',
+                    color: 'purple',
+                },
+                {
                     name: 'Set up alerts',
                     url: '/docs/logs/alerts',
                     icon: 'IconBell',

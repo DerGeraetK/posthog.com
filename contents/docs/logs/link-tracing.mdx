@@ -1,0 +1,55 @@
+---
+title: Link to Tracing
+sidebar: Docs
+showTitle: true
+availability:
+  free: full
+  selfServe: full
+  enterprise: full
+---
+
+Logs and [Tracing](/docs/tracing) both record what happens inside your application, but from different angles. Logs capture what happened at each point; traces show how a request flowed across services and where time went. When they share a `trace_id`, you can jump between them to get both views of the same operation.
+
+## Navigate from a log to its trace
+
+When a log entry has a `trace_id` attribute, a **View trace** button appears in two places:
+
+1. **On the log row** – A button in the floating action bar when you hover over a log entry
+2. **In the log details modal** – A button in the modal header when you click to expand a log entry
+
+Clicking either button opens the originating trace in the Tracing scene. If the log also has a `span_id`, the trace view auto-highlights the span that emitted the log.
+
+This button only appears when:
+- The log entry has a `trace_id` attribute
+- Your team has [Tracing](/docs/tracing) enabled
+
+## Navigate from a span to related logs
+
+When viewing a trace, you can jump to logs emitted during that operation:
+
+1. Open a trace in the Tracing scene
+2. Click on a span to expand its details
+3. Click the **View logs** button
+
+This opens the Logs viewer filtered to logs with the same `trace_id`, scoped to a 10-minute window (±5 minutes) around the span's timestamp. The time window keeps the query efficient while capturing logs from the traced operation.
+
+This button only appears when:
+- The span has a `trace_id`
+- Your team has [Logs](/docs/logs) enabled
+
+## Ensure logs and traces are linked
+
+For logs and traces to link, they need to share the same `trace_id`. If you're using OpenTelemetry for both logging and tracing, this happens automatically – the OTel SDK propagates trace context to log records emitted within an active span.
+
+If your logs aren't linking to traces:
+
+1. **Check your OpenTelemetry setup** – Make sure your logging SDK is configured to include trace context. Most OTel logging libraries do this by default when there's an active span.
+2. **Verify the `trace_id` attribute** – In the log details view, check that the log has a `trace_id` attribute matching your traces.
+3. **Check feature flags** – Both Logs and Tracing need to be enabled for your team.
+
+## See also
+
+- [Getting started with Tracing](/docs/tracing/start-here)
+- [Getting started with Logs](/docs/logs/start-here)
+- [Link to Session Replay](/docs/logs/link-session-replay)
+- [Search logs](/docs/logs/search)
