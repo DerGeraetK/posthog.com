@@ -26,6 +26,12 @@ By including session IDs and user identity in your logs, you can:
 
 > **Logs captured client-side:** When you call `posthog.captureLog` / `posthog.logger.*` directly from the JavaScript web SDK or React Native SDK, the current `distinct_id` and `session_id` are attached to every log record automatically. You only need the manual setup below when your backend emits the logs.
 
+## Customizing the person attribute key
+
+By default, PostHog links logs to person profiles using the `posthogDistinctId` attribute – the key the JavaScript and React Native SDKs attach automatically. If your pipeline emits the person identifier under a different attribute key, you can change this in [**Settings** > **Environment** > **Logs** > **Person pivot attribute**](https://app.posthog.com/settings/environment-logs#logs-distinct-id-attribute-key).
+
+> **Note:** Changing this setting requires project admin permissions.
+
 ## Implementation
 
 To link logs to session replays, you need to pass the session ID and user identity from your frontend to your backend, then include them as log attributes.
