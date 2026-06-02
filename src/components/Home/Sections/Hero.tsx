@@ -75,16 +75,16 @@ export const Hero = () => {
 
     return (
         <>
-            <div className="text-primary text-center @xl:text-left mb-12 not-prose leading-normal">
+            <div className="text-primary text-left mb-12 not-prose leading-normal">
                 <CloudinaryImage
                     src="https://res.cloudinary.com/dmukukwp6/image/upload/lazy_a2afd552f7.png"
                     className="w-64 @xl:!hidden -scale-x-100"
                 />
 
-                <h1 className="@xl:!text-4xl pt-2 mb-8 tracking-tight !leading-[3rem]">
+                <h1 className="text-4xl pt-2 mb-8 tracking-tight leading-[3rem]">
                     Let{' '}
                     <Logo
-                        className="inline-block h-8 @xl:h-10 w-auto align-baseline relative ml-1.5 mr-1 relative top-2"
+                        className="inline-block h-10 w-auto align-baseline relative ml-1.5 mr-1 relative top-2"
                         variant={siteSettings.theme === 'dark' ? 'mono' : 'gradient'}
                         color={siteSettings.theme === 'dark' ? 'white' : undefined}
                     />{' '}
@@ -98,11 +98,9 @@ export const Hero = () => {
                     className="hidden @xl:!inline-block @xl:w-48 @xl:float-right @xl:ml-8 @2xl:w-56 @3xl:w-60 @4xl:w-64 @2xl:float-right -scale-x-100 @2xl:-mt-4 @3xl:-mt-16 @4xl:-mt-24 transition-all"
                 />
 
-                <p className="text-balance @xl:text-wrap @5xl:text-balance">
-                    PostHog is the customer context platform for AI agents.
-                </p>
+                <p className="@5xl:text-balance">PostHog is the customer context platform for AI agents.</p>
 
-                <p className="text-balance @xl:text-wrap @5xl:text-balance">
+                <p className="@5xl:text-balance">
                     Other AI code editors know your codebase. Only PostHog knows your code{' '}
                     <strong className="underline">and</strong> your customers.
                 </p>
