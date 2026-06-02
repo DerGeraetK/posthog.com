@@ -11,6 +11,28 @@ import Logo from 'components/Logo'
 import { useApp } from '../../../context/App'
 import { DebugContainerQuery } from 'components/DebugContainerQuery'
 import { CTAs } from 'components/CTAs'
+import { RollingWords, type RollingWordStep } from './RollingWords'
+
+// Cycling verbs for the hero headline. The suite runs twice — readable at the start, blurring
+// faster as it goes — so it feels like the product does even more, before settling on "code".
+// Holds follow an ease-in curve (HERO_ACCEL > 1): the first round stays slow and readable, then
+// the speed-up builds gradually so it eases into the second round instead of lurching into it.
+const HERO_WORDS = ['analyze', 'diagnose', 'debug', 'test', 'instrument', 'experiment', 'query', 'flag', 'ship']
+const HERO_PASSES = 2
+const HERO_START_HOLD = 700 // ms for the first word
+const HERO_END_HOLD = 110 // ms for the last verb before "code"
+const HERO_ACCEL = 1.25 // >1 eases into the acceleration (stay slow early, build speed later)
+
+const HERO_STEP_COUNT = HERO_WORDS.length * HERO_PASSES
+const HERO_CYCLE: RollingWordStep[] = Array.from({ length: HERO_STEP_COUNT }, (_, i) => {
+    const progress = Math.pow(i / (HERO_STEP_COUNT - 1), HERO_ACCEL)
+    return {
+        word: HERO_WORDS[i % HERO_WORDS.length],
+        hold: Math.round(HERO_START_HOLD * Math.pow(HERO_END_HOLD / HERO_START_HOLD, progress)),
+    }
+})
+
+const HERO_VERBS: RollingWordStep[] = [...HERO_CYCLE, { word: 'code', hold: 0 }]
 
 const heroTabs: TabbedCarouselTab[] = [
     {
@@ -53,31 +75,39 @@ export const Hero = () => {
 
     return (
         <>
-            <div className="text-center @xl:text-left mb-12">
+            <div className="text-center @xl:text-left mb-12 not-prose leading-normal">
                 <CloudinaryImage
                     src="https://res.cloudinary.com/dmukukwp6/image/upload/lazy_a2afd552f7.png"
-                    className="w-64 @xl:w-48 @xl:float-right @xl:ml-8 @2xl:w-56 @3xl:w-64 @2xl:float-right -scale-x-100 @xl:mt-16 @3xl:mt-8"
+                    className="w-64 @xl:!hidden -scale-x-100"
                 />
-                <h1 className="[&_p]:m-0 flex gap-1 flex-wrap justify-center @xl:justify-start !text-2xl mb-8 pt-2">
+
+                <h1 className="@xl:!text-4xl pt-2 mb-8 tracking-tight !leading-[3rem]">
+                    Let{' '}
                     <Logo
-                        className="inline-block h-9"
+                        className="inline-block h-8 @xl:h-10 w-auto align-baseline relative ml-1.5 mr-1 relative top-1.5"
                         variant={siteSettings.theme === 'dark' ? 'mono' : 'gradient'}
                         color={siteSettings.theme === 'dark' ? 'white' : undefined}
                     />{' '}
+                    <span className="inline-block">
+                        <RollingWords steps={HERO_VERBS} className="text-primary font-bold" />.
+                    </span>
                 </h1>
 
-                <h1 className="!text-2xl pt-4">The new way to build products</h1>
+                <CloudinaryImage
+                    src="https://res.cloudinary.com/dmukukwp6/image/upload/lazy_a2afd552f7.png"
+                    className="hidden @xl:!inline-block @xl:w-48 @xl:float-right @xl:ml-8 @2xl:w-56 @3xl:w-60 @4xl:w-64 @2xl:float-right -scale-x-100 @2xl:-mt-4 @3xl:-mt-16 @4xl:-mt-24 transition-all"
+                />
+
                 <p className="text-balance @xl:text-wrap @5xl:text-balance">
-                    Product development used to mean manually writing code, running analysis, diagnosing bugs, and
-                    rolling out changes using dozens of tools.
+                    PostHog is the customer context platform for AI agents.
                 </p>
 
                 <p className="text-balance @xl:text-wrap @5xl:text-balance">
-                    PostHog is the only platform that acts like a co-pilot for you (and your AI agents) to do it all –{' '}
-                    <em>autonomously</em>.
+                    Other AI code editors know your codebase. PostHog knows your code{' '}
+                    <strong className="underline">and</strong> your customers.
                 </p>
 
-                <div>
+                <div className="pt-2">
                     <CTAs />
                 </div>
             </div>

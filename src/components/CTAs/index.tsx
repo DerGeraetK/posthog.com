@@ -15,14 +15,14 @@ export const CTAs = () => {
                 <div className="flex flex-col @xs:flex-row gap-3 @sm:gap-2">
                     <CallToAction
                         to="https://app.posthog.com/signup"
-                        size="md"
+                        size="lg"
                         state={{ newWindow: true, initialTab: 'signup' }}
                     >
                         Get started - free
                     </CallToAction>
                     <CallToAction
                         type="secondary"
-                        size="md"
+                        size="lg"
                         onClick={() => setShowIntegrationPrompt((current) => !current)}
                     >
                         Install with AI

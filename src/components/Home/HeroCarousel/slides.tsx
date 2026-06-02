@@ -139,7 +139,7 @@ export const OnePlaceSlide = () => {
                     src="https://res.cloudinary.com/dmukukwp6/image/upload/event_pipelines_be7e71e65e.png"
                     className="@lg:float-right @lg:ml-8 mb-4 @lg:mb-0 w-60"
                 />
-                <h2 className="mt-0 mb-2">Build better products with better data</h2>
+                <h2 className="mt-0 mb-2 text-xl @2xl:text-2xl">Build better products with better data</h2>
                 <p className="text-secondary text-[15px]">
                     Not your mama's data integrations. Third party data is imported into PostHog's CDP and warehouse and
                     lives as a first-class citizen. This means you can query third party data <em>and</em> product usage
@@ -398,7 +398,7 @@ export const UnderstandUsageSlide = () => {
 
     return (
         <div className="rounded p-4 relative h-full flex flex-col bg-[#F3F4F0] dark:bg-[#131316]">
-            <h2 className="my-0">Understand what users are doing</h2>
+            <h2 className="my-0 text-xl @2xl:text-2xl">Understand what users are doing</h2>
             <div className="grid grid-cols-1 @lg:grid-cols-2 gap-x-8 gap-y-4 mb-2">
                 <div>
                     <p className="text-secondary text-sm">
@@ -444,7 +444,7 @@ export const DebugFixSlide = () => {
 
     return (
         <div className="rounded pt-4 px-4 bg-primary">
-            <h2 className="mt-0 mb-2">Triage issues, fix them automatically</h2>
+            <h2 className="mt-0 mb-2  text-xl @2xl:text-2xl">Triage issues, fix them automatically</h2>
             <p className="text-secondary text-sm">
                 Use PostHog's debugging tools to quickly find issues and get the context to fix them.
             </p>
@@ -509,7 +509,7 @@ export const TestRolloutSlide = () => {
                 src="https://res.cloudinary.com/dmukukwp6/image/upload/e_trim/w_500,c_limit,q_auto,f_auto/generated_1772230552078_80c991e813.png"
                 imgClassName="@lg:float-right mb-4 @lg:!ml-2 @lg:!mt-4 @lg:!mr-0 @lg:mb-0 w-48 -scale-x-100"
             />
-            <h2 className="mt-0">Ship features safely & get feedback</h2>
+            <h2 className="mt-0 text-xl @2xl:text-2xl">Ship features safely & get feedback</h2>
             <p className="text-secondary text-sm">
                 Now that you know what's happening, you can make informed decisions about what to build.
             </p>
