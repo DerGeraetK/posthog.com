@@ -8,6 +8,16 @@ availability:
 
 The [SQL editor](https://us.posthog.com/sql) enables you to directly access all your data in PostHog, from PostHog-specific `events` and `persons` tables to your external sources, using [SQL queries](/blog/sql-for-analytics).
 
+## Taxonomy validation
+
+The SQL editor validates event names and property references against your project's taxonomy as you type. If you reference an event or property that doesn't exist, you'll see a yellow warning squiggle with a message explaining the issue.
+
+For example, if you write `WHERE event = 'purchase'` but your project doesn't have a `purchase` event, the editor highlights it and suggests alternatives. The same applies to property references like `properties.country_code`.
+
+Hover over a warning and click **Quick Fix** to replace the reference with the suggested value. This helps catch typos or cases where you forgot that PostHog's built-in events use a `$` prefix (like `$pageview` instead of `pageview`).
+
+These warnings are advisory – your query still runs even if warnings are present. This lets you catch potential issues while experimenting with queries.
+
 ## SQL commands
 
 You create SQL queries out of a list of commands that shape what data, filters, aggregations, and ordering we want to see.
