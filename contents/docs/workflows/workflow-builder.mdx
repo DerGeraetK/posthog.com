@@ -156,6 +156,14 @@ Audience splits help you target your automation or messages to specific groups o
 
 These can be used to target users based on their behavior or properties.
 
+### Conditional branch "no match" path
+
+Users who don't match any condition in a conditional branch follow the "no match" path. By default, you can connect additional steps to this path, like sending a different message or taking an alternative action.
+
+To have users who don't match any condition exit the workflow immediately, enable **Exit workflow immediately** in the conditional branch configuration panel. This connects the "no match" path directly to the workflow exit and removes any steps previously connected to that path.
+
+To reconnect steps to the "no match" path after enabling this option, drag a step onto the **No match** edge in the canvas.
+
 ## PostHog Actions
 
 PostHog Actions allow you to change a person's properties, trigger other events, or chain workflows together once a person reaches a specific point in your workflow. There are 2 types of PostHog actions:
