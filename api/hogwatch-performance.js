@@ -53,6 +53,68 @@ function sqlEscape(s) {
     return String(s).replace(/'/g, "''")
 }
 
+const MONTH_INDEX = {
+    jan: 0,
+    january: 0,
+    feb: 1,
+    february: 1,
+    mar: 2,
+    march: 2,
+    apr: 3,
+    april: 3,
+    may: 4,
+    jun: 5,
+    june: 5,
+    jul: 6,
+    july: 6,
+    aug: 7,
+    august: 7,
+    sep: 8,
+    sept: 8,
+    september: 8,
+    oct: 9,
+    october: 9,
+    nov: 10,
+    november: 10,
+    dec: 11,
+    december: 11,
+}
+
+// Parse the messy sheet date strings ("21-Mar-2026", "5/1/2026", "03-03-2026") into a
+// {year, month, day} for in-JS date-window filtering. Returns null if unparseable.
+function parseSheetDate(raw) {
+    if (!raw) return null
+    const s = String(raw).trim()
+    if (!s) return null
+    const dmy = s.match(/(\d{1,2})[-\s/](\w{3,9})[-\s/](\d{4})/)
+    if (dmy) {
+        const m = MONTH_INDEX[dmy[2].toLowerCase()]
+        if (m !== undefined) return { year: Number(dmy[3]), month: m, day: Number(dmy[1]) }
+    }
+    const numeric = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/)
+    if (numeric) {
+        const first = Number(numeric[1])
+        const second = Number(numeric[2])
+        const year = Number(numeric[3])
+        const isDMY = first > 12
+        const month = (isDMY ? second : first) - 1
+        const day = isDMY ? first : second
+        if (month >= 0 && month < 12) return { year, month, day }
+    }
+    return null
+}
+
+// Build a HogQL timestamp WHERE-clause fragment for an optional [from, to) window.
+// from/to are 'YYYY-MM-DD' strings (to is exclusive). Falls back to the rolling lookback.
+function timestampClause(from, to) {
+    if (from && to) {
+        return `timestamp >= toDateTime('${sqlEscape(from)} 00:00:00') AND timestamp < toDateTime('${sqlEscape(
+            to
+        )} 00:00:00')`
+    }
+    return `timestamp >= now() - INTERVAL ${ATTRIBUTION_LOOKBACK_DAYS} DAY`
+}
+
 function buildAliases(utm, name) {
     // Only the utm slug, the full lowercase name, and curated aliases.
     // Do NOT split the name into words — short tokens like "code", "ai", "chris" cause
@@ -101,13 +163,16 @@ function detectMedium(publishLink, utm, videoId, name, sheetType) {
     if (name && /\bpodcast\b/i.test(name)) return 'podcast'
     if (name && /\bnewsletter\b/i.test(name)) return 'newsletter'
     if (videoId) return 'youtube'
-    if (!publishLink) return 'unknown'
-    const lower = publishLink.toLowerCase()
+    const lower = (publishLink || '').toLowerCase()
     if (/youtube\.com|youtu\.be/.test(lower)) return 'youtube'
     if (/lennysnewsletter|substack|opensourceceo|newsletter/.test(lower)) return 'newsletter'
     if (/spotify|apple\.com\/podcasts|anchor\.fm|podcast/.test(lower)) return 'podcast'
     if (/instagram\.com/.test(lower)) return 'instagram'
     if (/twitter\.com|x\.com\//.test(lower)) return 'twitter'
+    // "Influencer"-type rows are YouTube placements by default — their publish_link is often
+    // just not filled in yet. Better than dumping them in an "unknown" bucket.
+    if (sheetType && String(sheetType).toLowerCase().includes('influencer')) return 'youtube'
+    if (!publishLink) return 'unknown'
     return 'youtube' // default — most title-only entries are YouTube
 }
 
@@ -298,9 +363,9 @@ async function fetchWarehouseRows() {
         .filter((r) => r.utm) // drop only the rows where we couldn't derive any slug at all
 }
 
-async function fetchAttributionCounts(influencers) {
+async function fetchAttributionCounts(influencers, from, to) {
     if (influencers.length === 0) return { perUtm: new Map(), youtubeReferrer: 0 }
-    const dateFrom = `now() - INTERVAL ${ATTRIBUTION_LOOKBACK_DAYS} DAY`
+    const dateClause = timestampClause(from, to)
 
     // Single-scan attribution: one events scan, three uniqExact aggregations per influencer.
     // ~30 influencers × 3 = ~90 aggregations sharing one filter pass. Much faster than the
@@ -331,7 +396,7 @@ async function fetchAttributionCounts(influencers) {
             ${aggCols.join(',\n            ')}
         FROM events
         WHERE event = '${sqlEscape(SIGNUP_EVENT)}'
-          AND timestamp >= ${dateFrom}
+          AND ${dateClause}
     `
     const rows = await phQuery(sql)
     const row = rows?.[0] ?? []
@@ -351,11 +416,16 @@ async function fetchAttributionCounts(influencers) {
     return { perUtm, youtubeReferrer }
 }
 
-async function fetchDubClicks(influencerUtms) {
+async function fetchDubClicks(influencerUtms, from, to) {
     const key = process.env.DUB_API_KEY
     if (!key) return { perUtm: new Map(), error: 'DUB_API_KEY not set' }
     try {
-        const url = 'https://api.dub.co/analytics?event=clicks&groupBy=top_links&interval=1y'
+        // Dub supports either a rolling `interval` or an explicit `start`/`end` window.
+        const params =
+            from && to
+                ? `event=clicks&groupBy=top_links&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`
+                : 'event=clicks&groupBy=top_links&interval=1y'
+        const url = `https://api.dub.co/analytics?${params}`
         const res = await fetch(url, { headers: { Authorization: `Bearer ${key}` } })
         if (!res.ok) return { perUtm: new Map(), error: `Dub ${res.status}` }
         const data = await res.json()
@@ -375,12 +445,12 @@ async function fetchDubClicks(influencerUtms) {
     }
 }
 
-async function fetchPageviewClicks(influencers) {
+async function fetchPageviewClicks(influencers, from, to) {
     // Single-scan over $pageview events, counts unique users who landed at posthog.com with
     // an influencer UTM tag — covers BOTH Dub-tracked clicks and vercel-redirect clicks since
     // both end up at posthog.com with the same utm_source/utm_campaign params.
     if (influencers.length === 0) return new Map()
-    const dateFrom = `now() - INTERVAL ${ATTRIBUTION_LOOKBACK_DAYS} DAY`
+    const dateClause = timestampClause(from, to)
     const aggCols = influencers.map(({ utm }) => {
         const utmEsc = sqlEscape(utm)
         const cond = `(properties.utm_source = '${utmEsc}' OR (properties.utm_source = 'influencer' AND properties.utm_campaign = '${utmEsc}'))`
@@ -391,7 +461,7 @@ async function fetchPageviewClicks(influencers) {
             ${aggCols.join(',\n            ')}
         FROM events
         WHERE event = '$pageview'
-          AND timestamp >= ${dateFrom}
+          AND ${dateClause}
     `
     const rows = await phQuery(sql)
     const row = rows?.[0] ?? []
@@ -507,7 +577,12 @@ const handler = async (req, res) => {
 
     const refreshYouTube = req.query?.refreshYouTube === '1' || req.query?.refreshYouTube === 'true'
     const bypassCache = req.query?.refresh === '1' || req.query?.refresh === 'true'
-    const cacheKey = `yt=${refreshYouTube ? 1 : 0}`
+    // Optional date window. Both must be 'YYYY-MM-DD'; `to` is exclusive. When set, scopes
+    // spend (by placement publish date), signups, and clicks to that window.
+    const isISODate = (s) => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s)
+    const from = isISODate(req.query?.from) ? req.query.from : null
+    const to = isISODate(req.query?.to) ? req.query.to : null
+    const cacheKey = `yt=${refreshYouTube ? 1 : 0}|from=${from ?? ''}|to=${to ?? ''}`
 
     if (!bypassCache) {
         const cached = cacheGet(cacheKey)
@@ -521,12 +596,34 @@ const handler = async (req, res) => {
 
     try {
         // Step 1: warehouse rows (need this to know which influencers exist).
-        const warehouseRows = await fetchWarehouseRows()
+        let warehouseRows = await fetchWarehouseRows()
 
+        // Date-window filter: keep placements whose publish date (publish date preferred,
+        // paid date as fallback) falls within [from, to). Unparseable-date rows are dropped
+        // from a windowed view since we can't place them in time.
+        if (from && to) {
+            const fromMs = new Date(`${from}T00:00:00`).getTime()
+            const toMs = new Date(`${to}T00:00:00`).getTime()
+            warehouseRows = warehouseRows.filter((r) => {
+                const d = parseSheetDate(r.publishDate) || parseSheetDate(r.paidDate)
+                if (!d) return false
+                const ms = new Date(d.year, d.month, d.day).getTime()
+                return ms >= fromMs && ms < toMs
+            })
+        }
+
+        // Build the influencer list for attribution. Self-reported (referral_source) matching
+        // is YouTube/podcast-only: newsletters have generic names ("Bytes", "Pointer", even
+        // "Facebook") that fuzzy-match unrelated signups, so newsletters get UTM/click-only
+        // attribution (empty alias list).
         const utmToInfluencer = new Map()
         for (const r of warehouseRows) {
             if (!utmToInfluencer.has(r.utm)) {
-                utmToInfluencer.set(r.utm, { utm: r.utm, aliases: buildAliases(r.utm, r.name) })
+                const isNewsletter = (r.sheetType || '').toLowerCase().includes('newsletter')
+                utmToInfluencer.set(r.utm, {
+                    utm: r.utm,
+                    aliases: isNewsletter ? [] : buildAliases(r.utm, r.name),
+                })
             }
         }
         const influencers = [...utmToInfluencer.values()]
@@ -545,15 +642,19 @@ const handler = async (req, res) => {
 
         // Step 3: run all independent queries in parallel — attribution, pageview clicks,
         // Dub clicks, YouTube views. Big speed win vs sequential.
-        const attributionPromise = fetchAttributionCounts(influencers).catch((err) => {
+        const attributionPromise = fetchAttributionCounts(influencers, from, to).catch((err) => {
             errors.push(`Attribution query failed: ${err instanceof Error ? err.message : 'unknown'}`)
             return { perUtm: new Map(), youtubeReferrer: 0 }
         })
-        const clicksPromise = fetchPageviewClicks(influencers).catch((err) => {
+        const clicksPromise = fetchPageviewClicks(influencers, from, to).catch((err) => {
             errors.push(`Pageview clicks query failed: ${err instanceof Error ? err.message : 'unknown'}`)
             return new Map()
         })
-        const dubPromise = fetchDubClicks(influencers.map((i) => i.utm)).then((r) => {
+        const dubPromise = fetchDubClicks(
+            influencers.map((i) => i.utm),
+            from,
+            to
+        ).then((r) => {
             if (r.error) errors.push(`Dub fetch: ${r.error}`)
             return r.perUtm
         })
@@ -619,6 +720,8 @@ const handler = async (req, res) => {
             syncFailedAt: null,
             signupEvent: SIGNUP_EVENT,
             earliestPublishDate: earliestPublishDate ?? null,
+            dateFrom: from,
+            dateTo: to,
             fetchedAt: new Date().toISOString(),
             errors,
         }
