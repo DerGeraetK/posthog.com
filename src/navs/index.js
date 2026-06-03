@@ -4095,6 +4095,25 @@ export const docsMenu = {
             ],
         },
         {
+            name: 'Replay Vision',
+            url: '/docs/replay-vision',
+            color: 'yellow',
+            icon: 'IconEye',
+            description: 'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
+            featureFlag: 'replay-vision-docs',
+            children: [
+                {
+                    name: 'Replay Vision',
+                },
+                {
+                    name: 'Overview',
+                    url: '/docs/replay-vision',
+                    icon: 'IconEye',
+                    color: 'seagreen',
+                },
+            ],
+        },
+        {
             name: 'Feature Flags',
             icon: 'IconToggle',
             color: 'seagreen',
@@ -6829,6 +6848,12 @@ export const docsMenu = {
                     color: 'blue',
                 },
                 {
+                    name: 'Link logs to a person',
+                    url: '/docs/logs/link-person',
+                    icon: 'IconPerson',
+                    color: 'blue',
+                },
+                {
                     name: 'Set up alerts',
                     url: '/docs/logs/alerts',
                     icon: 'IconBell',
@@ -6898,6 +6923,12 @@ export const docsMenu = {
                     icon: 'IconListCheck',
                     color: 'orange',
                     featured: true,
+                },
+                {
+                    name: 'Why you need tracing',
+                    url: '/docs/tracing/basics',
+                    icon: 'IconBook',
+                    color: 'seagreen',
                 },
             ],
         },
