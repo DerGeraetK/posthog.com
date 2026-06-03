@@ -38,6 +38,7 @@ import { useLocation } from '@reach/router'
 import { getProseClasses, isMarkdownContentPath } from '../../constants'
 import { useWindow } from '../../context/Window'
 import { MenuItem, useApp } from '../../context/App'
+import { useActiveFeatureFlags, filterMenuByFlags } from '../../hooks/useActiveFeatureFlags'
 import { Questions } from 'components/Squeak'
 import { DocsPageSurvey } from 'components/DocsPageSurvey'
 import CopyMarkdownActionsDropdown, { useMarkdownUrlExists } from 'components/MarkdownActionsDropdown'
@@ -514,13 +515,18 @@ const resolveMenuIcons = (items: MenuItem[] | undefined, resolveIcons = false): 
 
 const Menu = (props: { parent: MenuItem }) => {
     const { activeInternalMenu: windowActiveInternalMenu, parent: windowParent } = useWindow()
+    const activeFlags = useActiveFeatureFlags()
 
     const parent = props.parent || windowParent
-    const activeInternalMenu = windowActiveInternalMenu || parent?.children?.[0]
 
     if (!parent) return null
 
-    return <TreeMenu key={activeInternalMenu?.url} items={resolveMenuIcons(activeInternalMenu?.children)} />
+    // Hide any flag-gated products/pages the current user can't see.
+    const visibleChildren = filterMenuByFlags(parent.children, activeFlags)
+    const activeInternalMenu = windowActiveInternalMenu || visibleChildren?.[0]
+    const visibleActiveChildren = filterMenuByFlags(activeInternalMenu?.children, activeFlags)
+
+    return <TreeMenu key={activeInternalMenu?.url} items={resolveMenuIcons(visibleActiveChildren)} />
 }
 
 /**
@@ -1640,8 +1646,9 @@ function ReaderViewContent({
                                                 <a href="/error-tracking">error tracking</a>,{' '}
                                                 <a href="/feature-flags">feature flags</a>,{' '}
                                                 <a href="/experiments">experiments</a>, <a href="/surveys">surveys</a>,{' '}
-                                                <a href="/llm-analytics">AI Observability</a>, <a href="/logs">logs</a>,{' '}
-                                                <a href="/workflows">workflows</a>, <a href="/endpoints">endpoints</a>,{' '}
+                                                <a href="/ai-observability">AI Observability</a>,{' '}
+                                                <a href="/logs">logs</a>, <a href="/workflows">workflows</a>,{' '}
+                                                <a href="/endpoints">endpoints</a>,{' '}
                                                 <a href="/data-warehouse">data warehouse</a>, <a href="/cdp">CDP</a>,
                                                 and an <a href="/ai">AI product assistant</a> to help debug your code,
                                                 ship features faster, and keep all your usage and customer data in one

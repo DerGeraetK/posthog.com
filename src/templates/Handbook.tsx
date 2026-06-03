@@ -38,6 +38,9 @@ import { useProductInterestFromPathname } from 'hooks/useProductInterest'
 import useProduct from 'hooks/useProduct'
 import { buildProductMenuTabs, ProductSwitcher } from 'components/Products/ReaderViewProduct'
 import slugify from 'slugify'
+import usePostHog from 'hooks/usePostHog'
+import { RenderInClient } from 'components/RenderInClient'
+import NotFoundPage from 'components/NotFoundPage'
 
 const DestinationsLibraryCallout = () => {
     return (
@@ -321,12 +324,15 @@ export default function Handbook({ data: { post, postHogSource }, pageContext: {
             hideRightSidebar,
             contentMaxWidthClass,
             showByline,
+            featureFlag,
+            noindex,
         },
         fields: { slug, appConfig, templateConfigs, commits },
         excerpt,
     } = post
 
     const sourceFields = postHogSource?.sourceFields ?? null
+    const posthog = usePostHog()
 
     // Track product interest for cross-subdomain cookie
     useProductInterestFromPathname(slug)
@@ -390,6 +396,39 @@ export default function Handbook({ data: { post, postHogSource }, pageContext: {
         ...shortcodes,
     }
 
+    const readerView = (
+        <ReaderView
+            body={{
+                type: 'mdx',
+                content: body,
+                ...(showByline
+                    ? {
+                          contributors,
+                          date,
+                          tags: tags?.map((tag) => ({
+                              label: tag,
+                              url:
+                                  tag === 'Post mortems'
+                                      ? '/handbook/company/post-mortems'
+                                      : `/blog/tags/${slugify(tag, { lower: true })}`,
+                          })),
+                      }
+                    : null),
+            }}
+            title={title}
+            tableOfContents={frontmatterTableOfContents || tableOfContents}
+            mdxComponents={components}
+            commits={commits}
+            filePath={post.parent?.relativePath}
+            showSurvey
+            hideRightSidebar={hideRightSidebar}
+            contentMaxWidthClass={contentMaxWidthClass}
+            sourceInstanceName={post.parent?.sourceInstanceName}
+            menuTabs={productMenuTabs}
+            productSelect={productSelect}
+        />
+    )
+
     return (
         <>
             <SEO
@@ -398,37 +437,20 @@ export default function Handbook({ data: { post, postHogSource }, pageContext: {
                 article
                 image={`${process.env.GATSBY_CLOUDFRONT_OG_URL}/${slug.replace(/\//g, '')}.jpeg`}
                 imageType="absolute"
+                // Flag-gated pages are always noindexed: the content ships in the static
+                // HTML, so we at least keep it out of search engines while in beta.
+                noindex={!!noindex || !!featureFlag}
             />
-            <ReaderView
-                body={{
-                    type: 'mdx',
-                    content: body,
-                    ...(showByline
-                        ? {
-                              contributors,
-                              date,
-                              tags: tags?.map((tag) => ({
-                                  label: tag,
-                                  url:
-                                      tag === 'Post mortems'
-                                          ? '/handbook/company/post-mortems'
-                                          : `/blog/tags/${slugify(tag, { lower: true })}`,
-                              })),
-                          }
-                        : null),
-                }}
-                title={title}
-                tableOfContents={frontmatterTableOfContents || tableOfContents}
-                mdxComponents={components}
-                commits={commits}
-                filePath={post.parent?.relativePath}
-                showSurvey
-                hideRightSidebar={hideRightSidebar}
-                contentMaxWidthClass={contentMaxWidthClass}
-                sourceInstanceName={post.parent?.sourceInstanceName}
-                menuTabs={productMenuTabs}
-                productSelect={productSelect}
-            />
+            {featureFlag ? (
+                <RenderInClient
+                    // Render nothing until flags resolve, then show the page only if the
+                    // viewer has the gating flag enabled (otherwise the standard 404).
+                    placeholder={null}
+                    render={() => (posthog?.isFeatureEnabled(featureFlag) ? readerView : <NotFoundPage />)}
+                />
+            ) : (
+                readerView
+            )}
         </>
     )
 }
@@ -523,6 +545,8 @@ export const query = graphql`
             }
             frontmatter {
                 showByline
+                featureFlag
+                noindex
                 tableOfContents {
                     depth
                     url
@@ -562,7 +586,7 @@ export const query = graphql`
                     featureFlags
                     groupAnalytics
                     surveys
-                    llmAnalytics
+                    aiObservability
                     errorTracking
                 }
                 availability {
