@@ -70,6 +70,27 @@ Spin up flags, multivariate tests, and full A/B experiments without leaving your
   outcome="Creates the feature and auto-links a dark-mode feature flag."
 />
 
+### Work with surveys
+
+Read responses, summarize feedback, and manage survey lifecycle. See the [surveys guide](/docs/surveys/analyze-surveys-mcp).
+
+<PromptExample
+  prompt="Find all NPS detractors from the onboarding survey this month."
+  outcome="Returns respondents who scored 6 or below, with distinct_id for follow-up."
+/>
+<PromptExample
+  prompt="Summarize the feedback themes from my checkout experience survey."
+  outcome="Returns AI-generated themes from open-ended responses."
+/>
+<PromptExample
+  prompt="Launch the new-feature-feedback survey."
+  outcome="Sets start_date to now and returns the updated survey."
+/>
+<PromptExample
+  prompt="What's the response rate and average rating for my support survey?"
+  outcome="Returns statistics including per-question distributions and averages."
+/>
+
 ### Run SQL and HogQL queries
 
 Drop into raw queries when you need precision. See the [SQL guide](/docs/data-warehouse/run-sql-mcp).

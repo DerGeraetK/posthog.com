@@ -5221,6 +5221,12 @@ export const docsMenu = {
                     color: 'purple',
                 },
                 {
+                    name: 'Analyze surveys with MCP',
+                    url: '/docs/surveys/analyze-surveys-mcp',
+                    icon: 'IconSparkles',
+                    color: 'purple',
+                },
+                {
                     name: 'Resources',
                 },
                 {

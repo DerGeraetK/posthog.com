@@ -1,0 +1,55 @@
+---
+title: Analyze Surveys with MCP
+---
+
+The [PostHog MCP server](/docs/model-context-protocol) lets your AI coding agent read survey responses, launch and stop surveys, and surface insights – all from your code editor. Find NPS detractors, summarize feedback themes, and manage survey lifecycle without switching to the PostHog app.
+
+This works in any MCP client – Cursor, Codex, Claude Code, Windsurf, VS Code, and others.
+
+## How it works
+
+With MCP, your coding agent can:
+
+- **Read survey responses** – Pull individual responses with question text resolved, filter by score to find detractors or promoters
+- **Summarize feedback** – Get AI-generated theme summaries for open-ended questions or survey-wide headlines
+- **Manage survey lifecycle** – Launch or stop surveys with explicit lifecycle actions
+- **Get response statistics** – View response counts, distributions, and averages per question
+
+## Survey tools
+
+The MCP server provides these tools for working with Surveys:
+
+| Tool | Description |
+|------|-------------|
+| `surveys-responses-list` | List individual responses with resolved question text. Filter by date range, question, or score (e.g., NPS detractors with `score_lte=6`). Returns `distinct_id` and `session_id` for cross-pivot to recordings or persons. |
+| `surveys-summarize-responses-create` | Summarize responses using AI. Pass `question_id` for per-question themes, or omit for a survey-wide headline summary. |
+| `survey-launch` | Launch a survey by setting `start_date` to now. Preferred over manually updating `start_date`. |
+| `survey-stop` | Stop a survey by setting `end_date` to now. Existing responses remain available. |
+| `survey-stats` | Get response statistics including event counts, conversion rates, and per-question distributions (with `include_per_question_stats=true`). |
+| `surveys-get-all` | List surveys with fuzzy search and type filtering (`popover`, `widget`, `external_survey`, `api`). |
+| `survey-get` | Get a specific survey's configuration, questions, and targeting rules. |
+| `survey-create` | Create a new survey with questions, targeting, and display conditions. |
+| `survey-update` | Update an existing survey's configuration. |
+
+## Example prompts
+
+Try these with your MCP-enabled agent:
+
+- `Show me all responses to my NPS survey from last week`
+- `Find all NPS detractors (score 6 or below) from the onboarding survey`
+- `Summarize the feedback themes from my checkout experience survey`
+- `Launch the new-feature-feedback survey`
+- `What's the average rating for my support experience survey?`
+- `List all active popover surveys in this project`
+
+## Install the MCP server
+
+The recommended way to install is with the [AI wizard](/docs/ai-engineering/ai-wizard):
+
+```bash
+npx @posthog/wizard mcp add
+```
+
+The wizard supports Claude, Cursor, Windsurf, VS Code, and more. You can also [configure it manually](/docs/model-context-protocol#manual-install).
+
+See the [MCP server docs](/docs/model-context-protocol) for full setup instructions.
