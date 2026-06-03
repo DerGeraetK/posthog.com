@@ -1124,5 +1124,9 @@ export default function ProductComparisonTable({
         return false
     })
 
-    return <OSTable columns={columns} rows={tableRows} width={width} />
+    return (
+        <div>
+            <OSTable columns={columns} rows={tableRows} width={width} />
+        </div>
+    )
 }
