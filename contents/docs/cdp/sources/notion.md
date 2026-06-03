@@ -9,50 +9,48 @@ availability:
 sourceId: Notion
 ---
 
-The Notion connector can link pages, databases, users, blocks, and comments to PostHog.
+The Notion connector syncs your Notion workspace data into PostHog, including pages, databases, users, blocks, and comments.
 
-To link Notion:
+## Adding a data source
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+1. In PostHog, go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
+2. Click **+ New source** and select Notion by clicking the **Link** button.
+3. Get your integration token:
+   - Go to [notion.so/my-integrations](https://www.notion.so/my-integrations) and click **+ New integration**.
+   - Give your integration a name and select the workspace you want to sync.
+   - Under **Capabilities**, enable **Read content** (required for syncing pages, blocks, and comments) and **Read user information without email addresses** (required for syncing users).
+   - Copy the **Internal Integration Secret** (starts with `ntn_` or `secret_`).
+4. Paste your integration token into PostHog.
+5. _Optional:_ Add a prefix to your table names.
+6. Click **Next**.
 
-2. Click **+ New source** and then click **Link** next to Notion.
+<CalloutBox icon="IconWarning" title="Share pages with your integration" type="action">
 
-3. Create a Notion internal integration and get its token:
-   1. Go to [notion.so/my-integrations](https://www.notion.so/my-integrations) and click **+ New integration**.
-   2. Give your integration a name (like "PostHog") and select the workspace.
-   3. Under **Capabilities**, enable **Read content** (required for syncing pages, blocks, and comments) and **Read user information without email addresses** (required for syncing users). Leave other capabilities disabled.
-   4. Click **Save changes**, then copy the **Internal Integration Secret** (starts with `ntn_` or `secret_`).
+Each page and database you want to sync must be explicitly shared with your integration. Open the page in Notion, click the **•••** menu in the top right, select **Connections**, and add your integration. Pages not shared with the integration won't appear in the sync.
 
-4. Share the pages and databases you want to sync with your integration. For each one:
-   1. Open the page or database in Notion.
-   2. Click the `•••` menu in the top-right corner.
-   3. Click **Connections**, then select your integration.
+</CalloutBox>
 
-5. Back in PostHog, paste the token in the **API key** field and click **Next**.
+The data warehouse then starts syncing your Notion data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
 
-6. Select the schemas you want to sync. All Notion tables use full refresh sync. Once done, click **Import**.
+## Available tables
 
-Once the syncs are complete, you can start using Notion data in PostHog.
+The Notion source syncs the following tables:
 
-## Synced tables
-
-The Notion connector syncs the following tables:
-
-| Table | Description |
-|-------|-------------|
-| `pages` | All pages shared with your integration, including their properties and metadata |
-| `databases` | All databases shared with your integration |
-| `users` | Users in your Notion workspace |
-| `blocks` | Content blocks within pages (text, headings, lists, toggles, etc.) |
-| `comments` | Comments on pages |
-
-All tables use full refresh sync because Notion's API doesn't support filtering by last-modified time server-side.
-
-### Blocks and comments
+| Table     | Description                                                            |
+| --------- | ---------------------------------------------------------------------- |
+| pages     | All pages shared with your integration, including their properties and metadata |
+| databases | All database objects shared with your integration                      |
+| users     | All users in your workspace                                            |
+| blocks    | Content blocks within synced pages (paragraphs, headings, lists, etc.) |
+| comments  | Comments on synced pages                                               |
 
 The `blocks` and `comments` tables include a `_page_id` field that links each record to its parent page. Use this to join block content or comments with their pages.
 
-Blocks are fetched recursively up to a limited depth. For large workspaces with deeply nested content, some nested blocks may not sync to avoid excessive API calls under Notion's rate limits (~3 requests per second).
+## Sync modes
+
+Notion tables support **full refresh only**. Each sync re-downloads all data from Notion. Incremental syncing isn't available because Notion's API only sorts by last edited time but doesn't support server-side filtering by it.
+
+For large workspaces, syncs may take longer due to Notion's rate limits (~3 requests/second). The blocks and comments tables fan out across all synced pages, so workspaces with many deeply nested pages will take the longest. Blocks are fetched recursively up to a limited depth to avoid excessive API calls.
 
 ## Configuration
 
