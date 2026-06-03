@@ -21,3 +21,13 @@ You can also use the `--host` option instead of the `POSTHOG_CLI_HOST` environme
 ```bash
 posthog-cli --host https://eu.posthog.com [CMD]
 ```
+
+### Dry run mode
+
+Use the `--dry-run` flag or set `POSTHOG_CLI_DRY_RUN=true` to verify your source map bundling and injection without uploading artifacts. This skips uploads and doesn't require credentials, making it useful for PR checks that test the build pipeline but shouldn't upload to PostHog.
+
+```bash
+posthog-cli --dry-run sourcemap upload --directory ./path/to/assets
+```
+
+Don't use `--dry-run` for release builds — no symbols are uploaded and stack traces won't be symbolicated.
