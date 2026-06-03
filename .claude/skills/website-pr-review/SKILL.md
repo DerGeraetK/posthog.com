@@ -9,7 +9,7 @@ Self-review a posthog.com change **before** opening it for review, so it lands c
 
 **Audience:** anyone shipping to posthog.com — often a product marketer who built a page or wrote a post with Claude and isn't a full-time engineer. So: explain *why* each issue matters in plain language, don't just assert a rule.
 
-**Golden rule: report first, fix second.** Produce the full report and let the user decide. Only edit files after they accept. Never silently change copy or design choices.
+**Golden rule: auto-fix the mechanical, propose the substantive.** Purely mechanical issues — formatting, typos, en dashes, term casing (Prettier + group M) — have no judgment involved, so just fix them and note what changed. Everything substantive (missing `newWindow`, color tokens, layout, SSR guards, and especially copy/tone) is reported first and only applied after the user accepts. Never silently rewrite copy, layout, or design.
 
 ## Step 1 — Figure out what to review
 
@@ -95,14 +95,21 @@ Every finding = `file:line` + a one-line plain-language *why* + the concrete fix
 
 End with: **"Want me to apply the Must and Should fixes? Copy and design items I'll leave to you unless you tell me otherwise."**
 
-## Step 4 — Apply fixes (only if the user accepts)
+## Step 4 — Fix
 
-1. Apply the accepted edits. **Never** auto-apply copy/tone changes (group H) — those are the user's voice; surface them as suggestions only.
-2. Run Prettier on the touched files: `pnpm format` (the repo uses `pnpm`, never `npm`).
-3. Re-run the grep sweeps from `references/review-checklist.md` to confirm the anti-patterns are gone.
-4. If `vercel.json` or any page path changed, run `pnpm test-redirects`.
-5. For content PRs, run `pnpm vale:staged` to confirm the prose conventions (group M) pass before CI does.
-6. Report what you changed and what still needs a human decision.
+**Auto-fix the mechanical class right away** (no need to ask — these are judgment-free) and report what you changed:
+
+- **Formatting** — run `pnpm format` (Prettier) on touched files.
+- **Prose conventions (group M)** on content prose — convert em dashes / spaced hyphens to spaced en dashes (` – `), fix term casing (PostHog, GitHub, PR), make headings sentence case, correct American spelling and obvious typos, replace "click here" link text.
+
+**Apply substantive fixes only after the user accepts** — windowed-UI, colors, layout, SSR guards (groups A–G), and copy/tone (group H). Copy/tone is the user's voice; surface it as suggestions and never auto-apply.
+
+Then verify:
+
+1. Re-run the grep sweeps from `references/review-checklist.md` to confirm the anti-patterns are gone.
+2. If `vercel.json` or any page path changed, run `pnpm test-redirects`.
+3. For content PRs, run `pnpm vale:staged` to confirm the prose conventions (group M) pass before CI does.
+4. Report what you changed and what still needs a human decision.
 
 Do **not** run `pnpm build` or `pnpm check-links-post-build` as part of review — they need ~16GB RAM and are too slow for an interactive loop. Only run them if the user explicitly asks.
 
