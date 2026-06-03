@@ -1,0 +1,46 @@
+---
+title: Linking Postmark as a source
+sidebar: Docs
+showTitle: true
+availability:
+  free: full
+  selfServe: full
+  enterprise: full
+sourceId: Postmark
+---
+
+The Postmark connector can link transactional email data including outbound and inbound messages, bounces, templates, and message streams to PostHog.
+
+To link Postmark:
+
+1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and the sources tab in PostHog
+2. Click **New source** and select Postmark
+3. Get a Server API token from Postmark. In your Postmark dashboard, go to **Servers** > select your server > **API Tokens** and copy the Server API token
+4. Back in PostHog, paste the token in the **Server API token** field, then click **Next**
+5. Select the schemas you want to sync. All Postmark tables use full refresh sync. Click **Import**
+
+The data warehouse then starts syncing your Postmark data. You can see details and progress in the [sources tab](https://app.posthog.com/data-management/sources).
+
+## Synced tables
+
+The Postmark connector syncs the following tables:
+
+| Table | Description |
+|-------|-------------|
+| `messages_outbound` | Outbound transactional emails with delivery status and metadata |
+| `messages_inbound` | Inbound emails received through Postmark |
+| `bounces` | Email bounce events with bounce type and details |
+| `templates` | Email templates configured in your Postmark server |
+| `message_streams` | Message streams that organize your email sending |
+
+All tables use full refresh sync because Postmark's server-side date filtering hasn't been verified for incremental sync.
+
+## Limitations
+
+- **10,000 row limit** - Postmark's paginated endpoints cap results at 10,000 rows per table. If you have more than 10,000 messages or bounces, only the most recent 10,000 are synced.
+- **45-day retention** - Postmark expires message data after 45 days by default. Historical data beyond this window isn't available from the API.
+- **Server-level only** - This connector uses a server API token and syncs data for a single Postmark server. Account-level data like domains or sender signatures across servers isn't included.
+
+## Configuration
+
+<SourceParameters />
