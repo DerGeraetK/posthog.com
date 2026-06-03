@@ -9,6 +9,8 @@ Self-review a posthog.com change **before** opening it for review, so it lands c
 
 **Audience:** anyone shipping to posthog.com — often a product marketer who built a page or wrote a post with Claude and isn't a full-time engineer. So: explain *why* each issue matters in plain language, don't just assert a rule.
 
+**How to run it:** `/website-pr-review` reviews your current branch; `/website-pr-review <PR-number-or-URL>` reviews an existing PR. No setup needed.
+
 **Golden rule: auto-fix the mechanical, propose the substantive.** Purely mechanical issues — formatting, typos, en dashes, term casing (Prettier + group M) — have no judgment involved, so just fix them and note what changed. Everything substantive (missing `newWindow`, color tokens, layout, SSR guards, and especially copy/tone) is reported first and only applied after the user accepts. Never silently rewrite copy, layout, or design.
 
 ## Step 1 — Figure out what to review
@@ -71,7 +73,7 @@ For **page/component PRs**:
 - `npm` instead of `pnpm` in any added scripts/docs.
 - Copy/tone: confusing or "marketing-y" lines, non-sentence-case headings, non-American spelling.
 
-Don't waste effort on pure formatting (quotes, semicolons, indentation, typos) — a pre-commit hook (Prettier + ESLint + markdownlint) and CI (codespell, Vale) already handle those. The checklist preamble lists exactly what's auto-handled and mirrors the repo's official PR-template merge gate.
+Don't hand-review pure code formatting (quotes, semicolons, indentation) — the pre-commit hook (Prettier + ESLint + markdownlint) auto-handles it. Plain typos are caught by codespell (CI) and this skill's own mechanical pass (group M). Spend your attention on the semantic conventions instead. The checklist preamble lists exactly what's auto-handled and mirrors the repo's official PR-template merge gate.
 
 ## Step 3 — Report, grouped by severity
 
@@ -110,6 +112,14 @@ Then verify:
 2. If `vercel.json` or any page path changed, run `pnpm test-redirects`.
 3. For content PRs, run `pnpm vale:staged` to confirm the prose conventions (group M) pass before CI does.
 4. Report what you changed and what still needs a human decision.
+
+## Step 5 — Confirm it actually works
+
+Static review can't see a broken render, and the PR template explicitly requires checking the change in the preview. For anything visual or interactive, confirm it in a browser before shipping:
+
+- Open the page in the **Vercel preview** (or run the dev server locally — the `dev-server` skill starts it) and check the browser console for errors.
+- View it in **both light and dark mode**, and **resize the window** from narrow to wide to confirm the container-query layout reflows cleanly (groups C, D).
+- For content, proofread the **rendered** page, not just the diff — MDX components, images, and links render differently than the source.
 
 Do **not** run `pnpm build` or `pnpm check-links-post-build` as part of review — they need ~16GB RAM and are too slow for an interactive loop. Only run them if the user explicitly asks.
 

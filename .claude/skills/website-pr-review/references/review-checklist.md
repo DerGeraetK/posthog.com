@@ -12,8 +12,8 @@ When scanning, grep to find candidates, then **read the surrounding code** — m
 
 **Two kinds of PR — figure out which you're reviewing first:**
 
-- **Content PRs** — `.md`/`.mdx` files under `contents/` (blog posts, tutorials, docs, handbook, customers). This is the most common thing a product marketer ships. Focus on groups **I, J, K** (frontmatter, images, MDX components) plus the link rules (A2/A3) and copy/tone (H).
-- **Page / component PRs** — `.tsx`/`.ts` files under `src/`. Focus on groups **A–G** (windows, layout, colors, components).
+- **Content PRs** — `.md`/`.mdx` files under `contents/` (blog posts, tutorials, docs, handbook, customers). This is the most common thing a product marketer ships. Focus on groups **I–M** (frontmatter, images, MDX components, SEO/structure, prose conventions) plus the link rules (A2/A3) and copy/tone (H).
+- **Page / component PRs** — `.tsx`/`.ts` files under `src/`. Focus on groups **A–G** (windows, layout, colors, components, SSR safety).
 
 Most PRs are one or the other; some touch both. Sources are cited inline (`CLAUDE.md`, the `agents/*` guides, and the website handbook under `contents/handbook/engineering/posthog-com/`).
 
