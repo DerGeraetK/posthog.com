@@ -14,6 +14,7 @@ The full set of commands `@PostHog` accepts, in the same order it lists them whe
 | `@PostHog rules remove <number(s)>` | Remove routing rules by number (e.g. `remove 1` or `remove 1,2`) |
 | `@PostHog project` | Show which PostHog project your mentions route to in this workspace |
 | `@PostHog project <id>` | Set the PostHog project your mentions route to in this workspace |
+| `@PostHog project workspace <id>` | Set the workspace-wide default project (Slack admins/owners only) |
 | `@PostHog help` | Show the command list |
 
 For repo selection, the bot checks routing rules first. If nothing matches and you have multiple repos, it opens the in-thread picker. If you only have one repo connected, the task runs against it directly. The `project` commands only matter if your Slack workspace is connected to multiple PostHog projects – see [Pick a project](/docs/slack-app/setup#pick-a-project-multi-integration-workspaces).

@@ -63,8 +63,11 @@ Pick a project once and the bot remembers it for you across channels and threads
 |---|---|
 | `@PostHog project` | Show which PostHog project your mentions route to in this workspace, and list the alternatives |
 | `@PostHog project <id>` | Set the PostHog project your mentions route to in this workspace |
+| `@PostHog project workspace <id>` | Set the workspace-wide default project (Slack admins/owners only) |
 
-The bot resolves a target with this precedence: thread context (continuing an existing task) → your personal default → workspace-wide default (set by support, no UI yet) → the only connected project → picker. Personal defaults always win over the workspace fallback, so each teammate can route their own mentions independently.
+The bot resolves a target with this precedence: thread context (continuing an existing task) → your personal default → workspace-wide default → the only connected project → picker. Personal defaults always win over the workspace fallback, so each teammate can route their own mentions independently.
+
+Slack workspace admins and owners can set a workspace-wide default with `@PostHog project workspace <id>`. This applies to anyone who hasn't set a personal default. You need PostHog access to the target project to set it as the workspace default.
 
 If your workspace is only connected to a single PostHog project, this section doesn't apply – the bot routes there automatically.
 
