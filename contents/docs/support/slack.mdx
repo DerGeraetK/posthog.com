@@ -39,6 +39,20 @@ After connecting, configure the integration in **Support > Settings**:
 
 When you click the channel selector, PostHog lists all public and private channels the SupportHog bot has access to. Select the channel you want to use as your dedicated support inbox.
 
+### Channel membership alerts
+
+Get notified when someone joins or leaves any Slack channel where SupportHog is present. This helps you track activity in support-related channels.
+
+To enable:
+
+1. Go to **Support > Settings** and scroll to the Slack section
+2. Under **Channel membership alerts**, toggle on the events you want:
+   - **Alert when someone joins a channel**
+   - **Alert when someone leaves a channel**
+3. Select which channel should receive the alerts
+
+Alerts are sent immediately when members join or leave. They're posted with the SupportHog bot's display name and icon (if configured), and each alert mentions the user and the channel they joined or left.
+
 ## How tickets are created
 
 There are three ways a Slack message becomes a support ticket:
