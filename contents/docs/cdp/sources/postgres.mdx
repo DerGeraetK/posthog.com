@@ -382,6 +382,39 @@ CDC is powerful, but it changes how your production database retains WAL. Keep t
 
 For production databases, we recommend enabling CDC on one or two representative tables first so your team can validate database permissions, WAL settings, monitoring, and internal rollout steps before adding more tables.
 
+## Row-level security warning
+
+When you select tables to sync, PostHog checks whether row-level security (RLS) is active for the sync role on each table. If RLS policies apply to the connecting user, a warning tag appears next to the table name in the table picker:
+
+**"RLS may hide rows"** – Row-level security is active on this table for the sync role, so PostHog can only read rows the policy permits and can't detect how many rows are hidden.
+
+This warning is advisory. You can still sync the table, but keep in mind:
+
+- PostHog syncs only the rows visible to the sync role under the active RLS policies.
+- You won't know how many rows the policy excludes.
+- The sync shows the row count visible to PostHog, not the total row count in the table.
+
+### Resolving the warning
+
+To sync all rows regardless of RLS policies, either:
+
+- **Grant `BYPASSRLS`** to the sync role so it bypasses row-level security entirely:
+
+  ```sql
+  ALTER USER "posthog" WITH BYPASSRLS;
+  ```
+
+- **Create a permissive policy** that allows the sync role to read all rows:
+
+  ```sql
+  CREATE POLICY allow_posthog_full_read ON "your_table"
+    FOR SELECT
+    TO "posthog"
+    USING (true);
+  ```
+
+If the RLS policy is intentional and you only want PostHog to see a subset of rows (for example, to exclude sensitive data), ignore the warning. The sync works correctly with the rows the policy permits.
+
 ## Troubleshooting
 
 ### `wal_level must be set to logical`
