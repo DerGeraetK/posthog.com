@@ -9,38 +9,42 @@ availability:
 sourceId: Drip
 ---
 
-The Drip connector links subscribers, campaigns, broadcasts, workflows, forms, and goals to PostHog.
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-To link Drip:
+This source is currently in **alpha**. The interface and available tables may change.
+
+</CalloutBox>
+
+Enter your Drip API token and account ID to pull your Drip email marketing data – subscribers, campaigns, broadcasts, workflows, forms, and goals – into the PostHog data warehouse.
+
+## Adding a data source
 
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-
 2. Click **+ New source** and then click **Link** next to Drip.
+3. Next, gather your Drip credentials:
+   - **API token** – found in Drip under **Settings → User Settings → API**.
+   - **Account ID** – found under **Settings → Account → General Info** (it's the numeric ID in your Drip dashboard URL).
+4. Back in PostHog, enter the credentials and click **Next**.
+5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
 
-3. Get an API token from Drip. Go to **Settings** > **User Settings** > **API** in your Drip dashboard and copy your API token.
+Once the syncs are complete, you can start using Drip data in PostHog.
 
-4. Get your Drip account ID. Find it under **Settings** > **Account** > **General Info**, or in your Drip dashboard URL (the number after `/a/`).
+## Available tables
 
-5. Back in PostHog, paste the API token in the `API token` field and the account ID in the `Account ID` field, then click **Next**.
+| Table | Description | Sync method |
+| ----- | ----------- | ----------- |
+| `subscribers` | Subscribers in your Drip account | Full refresh |
+| `campaigns` | Email campaigns | Full refresh |
+| `broadcasts` | One-off broadcast emails | Full refresh |
+| `workflows` | Automation workflows | Full refresh |
+| `forms` | Signup forms | Full refresh |
+| `goals` | Conversion goals | Full refresh |
 
-6. Select the schemas you want to sync. All Drip tables use full refresh sync. Once done, click **Import**.
+**Incremental** tables sync only new or updated records on each run. **Full refresh** tables reload all data on each sync.
 
-Once syncs complete, you can use Drip data in PostHog.
+## Sync limitations
 
-## Synced tables
-
-The Drip connector syncs the following tables:
-
-| Table | Description |
-|-------|-------------|
-| `subscribers` | Contacts in your Drip account with their tags, status, and custom fields |
-| `campaigns` | Email campaigns you've created |
-| `broadcasts` | One-time email broadcasts |
-| `workflows` | Automation workflows |
-| `forms` | Opt-in forms |
-| `goals` | Conversion goals |
-
-All tables use full refresh sync because Drip's API doesn't support filtering by last-modified time.
+All Drip tables are full refresh only. Drip's only documented server-side timestamp filter is `subscribed_after` on subscribers, which filters on subscription date and would silently miss updates to existing records, so it isn't used as an incremental cursor.
 
 ## Configuration
 
