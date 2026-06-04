@@ -109,11 +109,11 @@ with new_context():
 <CalloutBox icon="IconInfo" title="Using PostHog on your frontend too?">
 
 If you're using the PostHog JavaScript Web SDK on your frontend, it generates a session ID for you.
-You can pass it to your backend by adding your backend domain to `__add_tracing_headers` in your config. This will automatically add tracing headers to your requests.
+You can pass it to your backend by adding your backend domain to `tracing_headers` in your config. This will automatically add tracing headers to your requests.
 
 ```js
 posthog.init('<ph_project_token>', {
-    __add_tracing_headers: ['your-backend-domain.com'] // +
+    tracing_headers: ['your-backend-domain.com'] // +
 });
 ```
 

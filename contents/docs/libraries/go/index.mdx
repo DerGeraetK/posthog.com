@@ -91,7 +91,7 @@ If you're using PostHog on your frontend, enable tracing headers for your backen
 
 ```js
 posthog.init('<ph_project_token>', {
-    __add_tracing_headers: ['your-backend-domain.com']
+    tracing_headers: ['your-backend-domain.com']
 })
 ```
 

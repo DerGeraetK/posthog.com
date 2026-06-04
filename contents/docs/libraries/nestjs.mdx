@@ -74,12 +74,12 @@ It also automatically captures request metadata as properties:
 
 ### Sending headers from the client
 
-If you're using [PostHog JS](/docs/libraries/js) on the frontend, configure `__add_tracing_headers` to automatically inject session and identity headers on every request to your NestJS backend:
+If you're using [PostHog JS](/docs/libraries/js) on the frontend, configure `tracing_headers` to automatically inject session and identity headers on every request to your NestJS backend:
 
 ```js
 posthog.init('<ph_project_token>', {
     api_host: '<ph_client_api_host>',
-    __add_tracing_headers: ['your-nestjs-backend.com']
+    tracing_headers: ['your-nestjs-backend.com']
 })
 ```
 
