@@ -5732,7 +5732,7 @@ export const docsMenu = {
                         },
                         {
                             name: 'OpenCode',
-                            url: '/docs/llm-analytics/installation/opencode',
+                            url: '/docs/ai-observability/installation/opencode',
                             icon: 'IconOpenCode',
                         },
                         {

@@ -1,5 +1,6 @@
 ---
-title: OpenCode LLM analytics installation
+title: OpenCode AI Observability installation
+platformLabel: OpenCode
 platformIconName: IconOpenCode
 showStepsToc: true
 tableOfContents: [
@@ -37,6 +38,8 @@ tableOfContents: [
 ---
 
 [OpenCode](https://opencode.ai) is an open-source coding agent that runs in your terminal. The `opencode-posthog` plugin captures LLM generations, tool executions, and conversation traces as `$ai_generation`, `$ai_span`, and `$ai_trace` events and sends them to PostHog.
+
+> **Note:** `opencode-posthog` is a community-maintained plugin, not an official PostHog package.
 
 ## Prerequisites
 
@@ -85,7 +88,7 @@ The plugin initializes automatically and starts capturing LLM calls, tool execut
 
 After running a few prompts through OpenCode:
 
-1. Go to the [LLM analytics](https://us.posthog.com/llm-analytics) tab in PostHog.
+1. Go to the [AI Observability](https://us.posthog.com/ai-observability) tab in PostHog.
 2. You should see traces and generations appearing within a few minutes.
 
 ## Configuration options
@@ -107,9 +110,9 @@ All configuration is done via environment variables:
 
 The plugin captures three types of events:
 
-- **`$ai_generation`**: Every LLM call, including model, provider, token usage, cost, stop reason, and message content in [OpenAI chat format](/docs/llm-analytics/generations).
-- **`$ai_span`**: Each tool execution, including tool name, duration, input and output state, and any error information ([learn more](/docs/llm-analytics/spans)).
-- **`$ai_trace`**: Completed user prompts with total latency, accumulated token counts, and final input and output state ([learn more](/docs/llm-analytics/traces)).
+- **`$ai_generation`**: Every LLM call, including model, provider, token usage, cost, stop reason, and message content in [OpenAI chat format](/docs/ai-observability/generations).
+- **`$ai_span`**: Each tool execution, including tool name, duration, input and output state, and any error information ([learn more](/docs/ai-observability/spans)).
+- **`$ai_trace`**: Completed user prompts with total latency, accumulated token counts, and final input and output state ([learn more](/docs/ai-observability/traces)).
 
 ### Privacy mode
 
@@ -119,12 +122,12 @@ Sensitive keys in tool inputs and outputs, including `api_key`, `token`, `secret
 
 ## Next steps
 
-Now that you're capturing AI conversations, continue with the resources below to learn what else LLM analytics enables within the PostHog platform.
+Now that you're capturing AI conversations, continue with the resources below to learn what else AI Observability enables within the PostHog platform.
 
 | Resource | Description |
 |----------|-------------|
-| [Basics](/docs/llm-analytics/basics) | Learn the basics of how LLM calls become events in PostHog. |
-| [Generations](/docs/llm-analytics/generations) | Read about the `$ai_generation` event and its properties. |
-| [Traces](/docs/llm-analytics/traces) | Explore the trace hierarchy and how to use it to debug LLM calls. |
-| [Spans](/docs/llm-analytics/spans) | Review spans and their role in representing individual operations. |
-| [Analyze LLM performance](/docs/llm-analytics/dashboard) | Learn how to create dashboards to analyze LLM performance. |
+| [Basics](/docs/ai-observability/basics) | Learn the basics of how LLM calls become events in PostHog. |
+| [Generations](/docs/ai-observability/generations) | Read about the `$ai_generation` event and its properties. |
+| [Traces](/docs/ai-observability/traces) | Explore the trace hierarchy and how to use it to debug LLM calls. |
+| [Spans](/docs/ai-observability/spans) | Review spans and their role in representing individual operations. |
+| [Analyze LLM performance](/docs/ai-observability/dashboard) | Learn how to create dashboards to analyze LLM performance. |
