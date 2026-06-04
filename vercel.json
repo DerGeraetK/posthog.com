@@ -57,6 +57,11 @@
     ],
     "redirects": [
         {
+            "source": "/slack",
+            "destination": "/slack-app",
+            "statusCode": 301
+        },
+        {
             "source": "/blog/autoresearch-query-bug",
             "destination": "/blog/karpathy-autoresearch-query-engine-bug"
         },
@@ -798,6 +803,7 @@
             "destination": "/docs/libraries/google-tag-manager"
         },
         { "source": "/docs/experiments/manual", "destination": "/docs/experiments/start-here" },
+        { "source": "/docs/experiments/new-experimentation-engine", "destination": "/docs/experiments/start-here" },
         { "source": "/docs/experiments/under-the-hood", "destination": "/docs/experiments/experiment-significance" },
         { "source": "/docs/experiments/significance", "destination": "/docs/experiments/experiment-significance" },
         { "source": "/docs/experiments/statistics", "destination": "/docs/experiments/statistics-bayesian" },

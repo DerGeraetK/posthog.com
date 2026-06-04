@@ -9,6 +9,12 @@ availability:
 sourceId: Webflow
 ---
 
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+
+This source is currently in **alpha**. The interface and available tables may change.
+
+</CalloutBox>
+
 The Webflow connector syncs your site data into PostHog, including pages, CMS collections, products, orders, users, and forms.
 
 To link Webflow:
@@ -36,16 +42,16 @@ To link Webflow:
 
 ## Synced data
 
-| Table | Description |
-|-------|-------------|
-| `sites` | Site metadata including name, timezone, and creation date |
-| `collections` | CMS collection definitions |
-| `collection_<slug>` | Items for each CMS collection (one table per collection) |
-| `pages` | Static pages and their metadata |
-| `products` | E-commerce products |
-| `orders` | E-commerce orders |
-| `users` | Site members |
-| `forms` | Form definitions |
+| Table | Description | Sync method |
+|-------|-------------|-------------|
+| `sites` | Site metadata including name, timezone, and creation date | Full refresh |
+| `collections` | CMS collection definitions | Full refresh |
+| `collection_<slug>` | Items for each CMS collection (one table per collection) | Full refresh |
+| `pages` | Static pages and their metadata | Full refresh |
+| `products` | E-commerce products | Full refresh |
+| `orders` | E-commerce orders | Full refresh |
+| `users` | Site members | Full refresh |
+| `forms` | Form definitions | Full refresh |
 
 ### Dynamic CMS collections
 
