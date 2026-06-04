@@ -128,7 +128,7 @@ Altogether, this looks like this:
 
 ```js
 import { NextResponse } from 'next/server';
-import { OpenAI } from '@posthog/ai'
+import { OpenAI } from '@posthog/ai/openai'
 import { PostHog } from 'posthog-node'
 
 const phClient = new PostHog(

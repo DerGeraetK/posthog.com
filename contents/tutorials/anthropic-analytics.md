@@ -127,7 +127,7 @@ With both of these set up, we simply call the `anthropic.messages.create` method
 ```js
 // app/api/generate/route.js
 import { NextResponse } from 'next/server';
-import { Anthropic } from '@posthog/ai';
+import { Anthropic } from '@posthog/ai/anthropic';
 import { PostHog } from 'posthog-node';
 
 const phClient = new PostHog(

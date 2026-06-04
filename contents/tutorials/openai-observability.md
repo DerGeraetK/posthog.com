@@ -128,7 +128,7 @@ With both of these set up, we simply call the `openai.chat.completions.create` m
 
 ```js file=app/api/generate.js
 import { NextResponse } from 'next/server';
-import { OpenAI } from '@posthog/ai'
+import { OpenAI } from '@posthog/ai/openai'
 import { PostHog } from 'posthog-node'
 
 const phClient = new PostHog(
