@@ -9,48 +9,49 @@ availability:
 sourceId: CampaignMonitor
 ---
 
-The Campaign Monitor connector can link clients, campaigns, subscriber lists, segments, templates, and subscriber activity to PostHog.
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-To link Campaign Monitor:
+This source is currently in **alpha**. The interface and available tables may change.
+
+</CalloutBox>
+
+The Campaign Monitor (CreateSend) connector syncs your email marketing data – clients, campaigns, lists, segments, templates, suppression lists, and subscriber states – into PostHog.
+
+## Adding a data source
 
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-
 2. Click **+ New source** and then click **Link** next to Campaign Monitor.
-
-3. Next, you need an API key from Campaign Monitor. In your Campaign Monitor account, go to **Account settings** > **API keys**. Create a new API key or copy an existing one.
-
-4. You also need your Client ID. Find this in your client's **Settings** page, or retrieve it by calling the Campaign Monitor API's `clients.json` endpoint. The Client ID identifies which client's data to sync.
-
-5. Back in PostHog, paste the API key and Client ID, then click **Next**.
-
-6. On the next page, set up the schemas you want to sync. All tables currently use full refresh sync. Once done, click **Import**.
+3. Next, you need two credentials from Campaign Monitor:
+   - **API key** – Create one in your [Campaign Monitor account settings](https://www.campaignmonitor.com/api/) under **Account settings → API keys**.
+   - **Client ID** – This identifies the client whose data you want to sync. You can find it on the client's **Settings** page, or by calling the `clients.json` API endpoint.
+4. Back in PostHog, enter the credentials and click **Next**.
+5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
 
 Once the syncs are complete, you can start using Campaign Monitor data in PostHog.
 
-## Synced tables
+## Available tables
 
-The Campaign Monitor connector syncs the following tables:
+| Table | Description | Sync method |
+| ----- | ----------- | ----------- |
+| `clients` | Clients in your Campaign Monitor account | Full refresh |
+| `campaigns` | Sent campaigns for the selected client | Full refresh |
+| `scheduled_campaigns` | Campaigns scheduled to send | Full refresh |
+| `draft_campaigns` | Draft campaigns | Full refresh |
+| `lists` | Subscriber lists for the client | Full refresh |
+| `segments` | Segments defined on the client's lists | Full refresh |
+| `templates` | Email templates for the client | Full refresh |
+| `suppression_list` | The client's suppression list | Full refresh |
+| `active_subscribers` | Active subscribers across the client's lists | Full refresh |
+| `unsubscribed_subscribers` | Unsubscribed subscribers across the client's lists | Full refresh |
+| `bounced_subscribers` | Bounced subscribers across the client's lists | Full refresh |
 
-| Table | Description |
-|-------|-------------|
-| `clients` | Account-level client records |
-| `campaigns` | Sent email campaigns with delivery metadata |
-| `scheduled_campaigns` | Campaigns scheduled to send in the future |
-| `draft_campaigns` | Draft campaigns not yet sent or scheduled |
-| `lists` | Subscriber lists for the client |
-| `segments` | Segments defined within the client's lists |
-| `templates` | Email templates configured in the account |
-| `suppression_list` | Globally suppressed email addresses |
-| `active_subscribers` | Active subscribers across all lists |
-| `unsubscribed_subscribers` | Subscribers who have unsubscribed |
-| `bounced_subscribers` | Subscribers whose emails have bounced |
+**Incremental** tables sync only new or updated records on each run. **Full refresh** tables reload all data on each sync.
 
-Subscriber tables include a `ListID` field to identify which list each subscriber belongs to.
+## Sync limitations
 
-## Limitations
+All Campaign Monitor tables currently sync via full refresh. Incremental sync is not yet available for this source.
 
-- **Full refresh only** - All tables sync using full refresh. Incremental sync may be added once the Campaign Monitor API's date filtering is verified.
-- **Rate limits** - Campaign Monitor enforces approximately 1 request per second. The connector handles rate limiting automatically with retries.
+Campaign Monitor enforces approximately 1 request per second. The connector handles rate limiting automatically with retries.
 
 ## Configuration
 
