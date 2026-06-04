@@ -98,7 +98,7 @@ By default, a CIMD partner app is unverified and capped at 10 account requests p
 You can link the app to a PostHog organization with a verification token to raise that to 100/hour and surface the partner integration to that org's admins.
 
 1. In PostHog, go to **Organization settings → CIMD verification tokens** and click **Create token**. Copy the `phvt_…` value – it's only shown once.
-2. Add a `posthog_verification_token` field to your CIMD metadata document:
+2. Add a `com.posthog` object to your CIMD metadata document with a `verification_token` field:
 
    ```json
    {
@@ -109,15 +109,50 @@ You can link the app to a PostHog organization with a verification token to rais
      "token_endpoint_auth_method": "none",
      "grant_types": ["authorization_code"],
      "response_types": ["code"],
-     "posthog_verification_token": "phvt_..."
+     "com.posthog": {
+       "verification_token": "phvt_..."
+     }
    }
    ```
 
-3. The next time PostHog refreshes the metadata document, the app is linked to the matching organization and the rate limit is bumped.
+3. The next time PostHog refreshes the metadata document, the app is linked to the matching organization and the rate limit increases.
 
-The token is only used to prove ownership of the partner app – it isn't sent on API requests.
+The token only proves ownership of the partner app – it isn't sent on API requests.
 You can rotate or revoke a token at any time from the same settings page.
 Revocation clears the link on the next metadata refresh, so a leaked or stale token can't keep an app linked to your org.
+
+> **Note:** The legacy top-level `posthog_verification_token` field is still supported for backwards compatibility, but `com.posthog.verification_token` is preferred. If both are present, the nested form takes precedence.
+
+### Set a scope ceiling for your app (optional)
+
+Limit which OAuth scopes your partner app can request by declaring them in your CIMD metadata. This sets a ceiling – users can still grant fewer scopes, but your app can't request more than what's declared.
+
+Add a `scopes` array inside the `com.posthog` object:
+
+```json
+{
+  "client_id": "https://yourapp.com/.well-known/posthog-client.json",
+  "client_name": "Your App Name",
+  "redirect_uris": ["https://yourapp.com/callbacks/posthog"],
+  "token_endpoint_auth_method": "none",
+  "grant_types": ["authorization_code"],
+  "response_types": ["code"],
+  "com.posthog": {
+    "verification_token": "phvt_...",
+    "scopes": ["insight:read", "person:read", "project:read"]
+  }
+}
+```
+
+PostHog only allows unprivileged scopes in this list. Privileged, internal, or unrecognized scope strings are silently filtered out. See [available scopes](#available-scopes) for the full list.
+
+When scopes are declared:
+- On first registration, the app is created with these scopes as its ceiling
+- On metadata refresh, the scopes are updated to match the new declaration
+
+When scopes are absent from the metadata:
+- On first registration, the app gets no scope ceiling (the default set is granted at authorization time)
+- On metadata refresh, existing scopes are left unchanged
 
 ## API reference
 
