@@ -9,46 +9,50 @@ availability:
 sourceId: Freshdesk
 ---
 
-The Freshdesk connector syncs support tickets, contacts, companies, and other helpdesk data to PostHog.
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-To link Freshdesk:
+This source is currently in **alpha**. The interface and available tables may change.
 
-1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and the sources tab in PostHog.
+</CalloutBox>
 
-2. Click **New source** and select Freshdesk.
+Enter your Freshdesk domain and API key to pull your Freshdesk support data – tickets, contacts, companies, agents, and more – into the PostHog data warehouse.
 
-3. Get your API key from Freshdesk by clicking your profile icon in the top right, then **Profile settings**. Copy your API key from the right sidebar.
+## Adding a data source
 
-4. Find your Freshdesk domain – the subdomain part of your Freshdesk URL. For example, if your URL is `https://yourcompany.freshdesk.com`, your domain is `yourcompany`.
+1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+2. Click **+ New source** and then click **Link** next to Freshdesk.
+3. Next, gather your Freshdesk credentials:
+   - **Freshdesk domain** – the subdomain in your Freshdesk URL, e.g. `acme` for `acme.freshdesk.com`.
+   - **API key** – on your Freshdesk profile settings page (click your profile picture → **Profile settings**; the API key is shown in the right sidebar).
+4. Back in PostHog, enter the credentials and click **Next**.
+5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
 
-5. Enter the API key and domain in PostHog, then click **Next**.
+Once the syncs are complete, you can start using Freshdesk data in PostHog.
 
-6. Select the schemas you want to sync, choose the sync method and frequency for each, then click **Import**.
-
-The data warehouse then starts syncing your Freshdesk data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
-
-## Synced tables
-
-The Freshdesk connector syncs the following tables:
+## Available tables
 
 | Table | Description | Sync method |
-|-------|-------------|-------------|
-| `tickets` | Support tickets with status, priority, and metadata | Incremental |
-| `contacts` | Customer contacts with their details and tags | Incremental |
-| `companies` | Company records associated with contacts | Full refresh |
-| `agents` | Support agents in your Freshdesk account | Full refresh |
-| `groups` | Agent groups for ticket routing | Full refresh |
-| `roles` | Agent roles and permissions | Full refresh |
-| `products` | Products associated with your helpdesk | Full refresh |
-| `skills` | Agent skills for skill-based routing | Full refresh |
-| `ticket_fields` | Custom field definitions for tickets | Full refresh |
-| `time_entries` | Time tracked on tickets | Full refresh |
-| `satisfaction_ratings` | CSAT ratings from ticket surveys | Full refresh |
-| `sla_policies` | Service level agreement policies | Full refresh |
-| `business_hours` | Support availability schedules | Full refresh |
-| `canned_response_folders` | Folders containing canned responses | Full refresh |
+| ----- | ----------- | ----------- |
+| `tickets` | Support tickets | Incremental |
+| `contacts` | Contacts | Incremental |
+| `companies` | Companies | Full refresh |
+| `agents` | Support agents | Full refresh |
+| `groups` | Agent groups | Full refresh |
+| `roles` | Agent roles | Full refresh |
+| `products` | Products | Full refresh |
+| `skills` | Agent skills | Full refresh |
+| `ticket_fields` | Ticket field definitions | Full refresh |
+| `time_entries` | Time entries logged on tickets | Full refresh |
+| `satisfaction_ratings` | Customer satisfaction survey ratings | Full refresh |
+| `sla_policies` | SLA policies | Full refresh |
+| `business_hours` | Business hours definitions | Full refresh |
+| `canned_response_folders` | Canned response folders | Full refresh |
 
-The `tickets` and `contacts` tables support incremental sync using the `updated_since` filter. All other tables are fully refreshed on each sync.
+**Incremental** tables sync only new or updated records on each run. **Full refresh** tables reload all data on each sync.
+
+## Sync limitations
+
+Only `tickets` and `contacts` have a server-side `updated_since` filter, so they support incremental sync on the `updated_at` field. All other tables are full refresh only. Freshdesk caps the tickets list at roughly 300 pages per query; syncing `tickets` incrementally keeps each window small and lets the watermark advance across runs to page beyond that cap.
 
 ## Configuration
 
