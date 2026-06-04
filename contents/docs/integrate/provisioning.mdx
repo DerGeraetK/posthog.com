@@ -299,7 +299,7 @@ curl -X POST https://us.posthog.com/api/agentic/provisioning/resources \
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `service_id` | string | No | The plan to provision. `"analytics"` (default) provisions a standard project. `"free"` and `"pay_as_you_go"` set the billing plan explicitly. |
-| `label_prefix` | string | No | Label prefix for the personal API key shown in PostHog, up to 25 characters. The key is labeled `{label_prefix} - {team_name}`. If omitted, empty, or whitespace-only, the key is labeled with just the team name. |
+| `label_prefix` | string | No | Label prefix for the personal API key shown in PostHog, up to 25 characters. Only applies if the app has PAT minting enabled. The key is labeled `{label_prefix} - {team_name}`. If omitted, empty, or whitespace-only, the key is labeled with just the team name. |
 | `configuration.project_name` | string | No | Project name (defaults to `"Default project"`) |
 
 **Response** (HTTP 200):
@@ -312,12 +312,13 @@ curl -X POST https://us.posthog.com/api/agentic/provisioning/resources \
   "complete": {
     "access_configuration": {
       "api_key": "phc_abc123...",
-      "host": "https://us.posthog.com",
-      "personal_api_key": "phx_def456..."
+      "host": "https://us.posthog.com"
     }
   }
 }
 ```
+
+> **Note:** The `personal_api_key` field is only included when PAT minting is enabled for the partner app. Most new apps won't receive this field – use the OAuth access token for API calls instead.
 
 **Response fields:**
 
@@ -325,7 +326,7 @@ curl -X POST https://us.posthog.com/api/agentic/provisioning/resources \
 |---|---|
 | `api_key` | The project token (starts with `phc_`) – use this to initialize PostHog SDKs |
 | `host` | The API host (`https://us.posthog.com` or `https://eu.posthog.com`) |
-| `personal_api_key` | A personal API key scoped to this project – use this for the PostHog API |
+| `personal_api_key` | (Optional) A personal API key scoped to this project. Only returned for apps with PAT minting enabled. Most apps should use the OAuth access token for API calls instead. |
 
 ### Deep linking
 
@@ -367,7 +368,7 @@ This endpoint is gated on the `provisioning_can_issue_deep_links` flag on your p
 
 ### Rotate project credentials
 
-Rotate the project token and create a new personal API key for an existing provisioned project:
+Rotate the project token for an existing provisioned project:
 
 ```bash
 curl -X POST https://us.posthog.com/api/agentic/provisioning/resources/12345/rotate_credentials \
@@ -383,9 +384,9 @@ curl -X POST https://us.posthog.com/api/agentic/provisioning/resources/12345/rot
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `label_prefix` | string | No | Label prefix for the new personal API key shown in PostHog, up to 25 characters. The key is labeled `{label_prefix} - {team_name}`. If omitted, empty, or whitespace-only, the key is labeled with just the team name. |
+| `label_prefix` | string | No | Label prefix for the new personal API key shown in PostHog, up to 25 characters. Only applies if the app has PAT minting enabled. The key is labeled `{label_prefix} - {team_name}`. If omitted, empty, or whitespace-only, the key is labeled with just the team name. |
 
-The response has the same shape as the project provisioning response and includes the rotated `api_key`, `host`, and new `personal_api_key`.
+The response has the same shape as the project provisioning response and includes the rotated `api_key` and `host`. If PAT minting is enabled for the app, the response also includes a new `personal_api_key`.
 
 ### Refresh tokens
 
@@ -607,6 +608,7 @@ async function provisionPostHogAccount(email, name) {
     type: 'provisioned',
     apiKey: resource.complete.access_configuration.api_key,
     host: resource.complete.access_configuration.host,
+    // personal_api_key is only present if PAT minting is enabled for the app
     personalApiKey: resource.complete.access_configuration.personal_api_key,
     projectId: resource.id,
     accessToken: tokens.access_token,
