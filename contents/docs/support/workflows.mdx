@@ -141,13 +141,18 @@ Changes one or more fields on a ticket. Only the fields you provide are changed.
 | `sla_amount` | string | No | Duration until SLA expires. Use `clear` to remove. |
 | `sla_unit` | choice | No | `minute`, `hour`, or `day` (default: `hour`) |
 | `assignee` | assignee | No | Assign to a user or role. Set to null to remove assignment. |
-| `tags` | tags | No | Replace all tags on the ticket. |
+| `tags` | tags | No | Tags to apply to the ticket. Behavior depends on the `tags_mode` setting. |
+| `tags_mode` | choice | No | How tags are applied: `add` (default), `set`, or `remove`. |
 
-<CalloutBox icon="IconWarning" title="Tags replace, not append" type="caution">
+#### Tag modes
 
-The `tags` input replaces all existing tags on the ticket. If you want to add a tag without removing existing ones, use **Get ticket** first to read the current tags, then merge them in your workflow logic.
+The `tags_mode` setting controls how the tags you specify interact with existing tags on the ticket:
 
-</CalloutBox>
+| Mode | Behavior |
+|------|----------|
+| `add` (default) | Adds tags to the ticket without removing existing ones. Safe when multiple workflows tag the same ticket. |
+| `set` | Replaces all existing tags with the specified tags. |
+| `remove` | Removes the specified tags from the ticket, leaving other tags intact. |
 
 ## Building conditions
 
@@ -393,5 +398,4 @@ In the ticket list, SLAs show as one of three states:
 
 - **No infinite loops** – updates made by Workflows (via the external API) do not re-emit ticket events. A Workflow that changes a ticket's status will not trigger the "status changed" Workflow again.
 - **Event properties vs ticket data** – event properties give you a snapshot at the time of the event. If you need the latest ticket state (e.g. `message_count` or `sla_due_at`), use the **Get ticket** action first.
-- **Tags replace, not append** – the `tags` input on Update ticket replaces all existing tags. Merge manually if you need to preserve existing tags.
 - **Rate limits** – the external API used by Workflows is rate-limited to 60 requests/minute and 600 requests/hour per team.
