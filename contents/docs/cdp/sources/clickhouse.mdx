@@ -49,6 +49,31 @@ PostHog can sync data from any ClickHouse table engine, but row counts are only 
 - **View** — synced on demand. Row count shown as "Skipped" because counting would require a full scan.
 - **Memory, Buffer, Log, Kafka, URL, and other no-counter engines** — synced on demand. Row count shown as "Skipped".
 
+## Sync from filter
+
+By default, ClickHouse syncs pull all historical data from your table. You can limit how far back the sync goes by setting a **Sync from** filter. When configured, only rows where the chosen column is greater than or equal to your specified value are pulled – on every sync, including initial historical loads, incremental updates, and resets.
+
+This is useful when:
+
+- You have a large table but only need data from a certain point forward
+- You want to avoid backfilling years of historical data that isn't relevant to your analysis
+- You're testing a sync and want to limit the initial data volume
+
+To set a sync from filter:
+
+1. Go to your ClickHouse source and click the schema you want to configure.
+2. Click **Configuration** and scroll to the **Sync from** section.
+3. Choose a column from the dropdown. Eligible columns must be DateTime, Date, Integer, or Numeric types.
+4. Enter a value in the appropriate format:
+   - For DateTime or Timestamp columns – `2025-01-01T00:00:00`
+   - For Date columns – `2025-01-01`
+   - For Integer or Numeric columns – a number like `1000`
+5. Click **Save**.
+
+To remove the filter, clear all fields and save.
+
+> **Note:** The sync from filter is independent of the incremental sync cursor. You can use both together – for example, use an `updated_at` column for incremental syncing while filtering to only include rows where `created_at` is after January 2024.
+
 ## Incremental sync
 
 Incremental syncs are supported on integer (`Int8`–`Int256`, `UInt8`–`UInt256`) and temporal (`Date`, `Date32`, `DateTime`, `DateTime64`) cursor fields.
