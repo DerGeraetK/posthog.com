@@ -13,6 +13,7 @@ export default function SkillsFinderColumn<T extends { id: string; name: string 
     wrapLabels = false,
     widthClassName,
     header,
+    emptyLabel,
 }: {
     items: T[]
     selectedId: string | null
@@ -22,6 +23,7 @@ export default function SkillsFinderColumn<T extends { id: string; name: string 
     wrapLabels?: boolean
     widthClassName?: string
     header?: React.ReactNode
+    emptyLabel?: string
 }) {
     const reserveIconSpace = useMemo(
         () => items.some((item) => Boolean(getIcon?.(item)) || !isFolder(item)),
@@ -33,6 +35,9 @@ export default function SkillsFinderColumn<T extends { id: string; name: string 
             {header}
             <ScrollArea.Root className="flex-1 min-h-0 overflow-hidden">
                 <ScrollArea.Viewport className="h-full w-full p-1">
+                    {items.length === 0 && emptyLabel ? (
+                        <p className="text-sm text-secondary px-2 py-4 m-0">{emptyLabel}</p>
+                    ) : null}
                     <RadioGroup.Root
                         value={selectedId ?? ''}
                         onValueChange={(value) => {

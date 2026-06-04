@@ -2,6 +2,7 @@ import React from 'react'
 import ScrollArea from 'components/RadixUI/ScrollArea'
 import { Skill, getRelatedSkills, useResolveSkillResources } from 'hooks/skills'
 import ProductResourceChip from './ProductResourceChip'
+import FlowChips from './FlowChips'
 
 export default function SkillDetailPane({
     skill,
@@ -34,9 +35,7 @@ export default function SkillDetailPane({
         >
             <div className="max-w-2xl space-y-5">
                 <div>
-                    <p className="text-xs text-secondary m-0 mb-1">
-                        {skill.department} · {skill.category}
-                    </p>
+                    <p className="text-xs text-secondary m-0 mb-1">{skill.stage}</p>
                     <h2 className="text-xl font-bold m-0 mb-2">{skill.name}</h2>
                     <p className="text-sm m-0 leading-relaxed">{skill.description}</p>
                     {skill.tags.length > 0 && (
@@ -62,28 +61,31 @@ export default function SkillDetailPane({
                     </div>
                 </div>
 
-                <div>
-                    <h3 className="text-sm font-semibold m-0 mb-2">Workflow</h3>
-                    <ol className="list-decimal pl-5 m-0 space-y-1.5 text-sm leading-relaxed">
-                        {skill.flow.map((step, i) => (
-                            <li key={i}>{step}</li>
-                        ))}
-                    </ol>
-                </div>
+                {skill.flow.length > 0 && (
+                    <div>
+                        <h3 className="text-sm font-semibold m-0 mb-2">Tool flow</h3>
+                        <p className="text-xs text-secondary m-0 mb-2">
+                            The PostHog MCP tools an agent chains together for this skill.
+                        </p>
+                        <FlowChips flow={skill.flow} />
+                    </div>
+                )}
 
-                <div>
-                    <h3 className="text-sm font-semibold m-0 mb-2">Example prompts</h3>
-                    <ul className="list-none m-0 p-0 space-y-1.5">
-                        {skill.example_prompts.map((prompt, i) => (
-                            <li
-                                key={i}
-                                className="text-sm font-mono bg-accent/40 dark:bg-accent-dark/40 border border-primary rounded-sm px-2 py-1.5"
-                            >
-                                {prompt}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                {skill.example_prompts && skill.example_prompts.length > 0 && (
+                    <div>
+                        <h3 className="text-sm font-semibold m-0 mb-2">Example prompts</h3>
+                        <ul className="list-none m-0 p-0 space-y-1.5">
+                            {skill.example_prompts.map((prompt, i) => (
+                                <li
+                                    key={i}
+                                    className="text-sm font-mono bg-accent/40 dark:bg-accent-dark/40 border border-primary rounded-sm px-2 py-1.5"
+                                >
+                                    {prompt}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
 
                 {related.length > 0 && (
                     <div>

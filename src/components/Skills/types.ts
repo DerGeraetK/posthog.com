@@ -1,1 +1,1 @@
-export type BrowseMode = 'task' | 'product'
+export type BrowseMode = 'role' | 'product'

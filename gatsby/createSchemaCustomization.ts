@@ -358,6 +358,13 @@ export const createSchemaCustomization: GatsbyNode['createSchemaCustomization'] 
       required: Boolean
       description: String
     }
+    type AgentSkill implements Node @dontInfer {
+      product: String
+      name: String
+      description: String
+      sourcePath: String
+      mcpTools: [String]
+    }
     type PostHogSource implements Node @dontInfer {
       mdx: Mdx @link(by: "frontmatter.sourceId", from: "sourceId")
       sourceId: String
