@@ -343,7 +343,7 @@ curl -X POST https://us.posthog.com/api/agentic/provisioning/deep_links \
   }'
 ```
 
-Authenticate with the `access_token` you got from [Step 2](#step-2-exchange-the-code-for-tokens) – the same Bearer credential you use for `/resources`. The token is scoped to a single team, so the resulting deep link lands the user in the correct project.
+Authenticate with the `access_token` you got from [Step 2](#step-2-exchange-the-code-for-tokens) – the same Bearer credential you use for `/resources`. The token is scoped to a single team. Use the optional `path` parameter to send users directly to a specific page like a session recording, insight, or settings screen.
 
 **Request fields:**
 
