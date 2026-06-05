@@ -37,6 +37,8 @@ posthog.init('<ph_project_token>', {
 })
 ```
 
+Use hostnames only, without the protocol or path.
+
 ### Exception capture
 
 By default, the middleware captures exceptions and sends them to PostHog's error tracking using the globally configured `posthog` client. This includes Django view exceptions that Django converts into error responses.
