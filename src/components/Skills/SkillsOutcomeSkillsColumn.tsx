@@ -53,7 +53,7 @@ export default function SkillsOutcomeSkillsColumn({
                                             <RadioGroup.Item
                                                 key={node.id}
                                                 value={node.id}
-                                                className="group relative flex w-full select-none text-left items-start justify-start gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[state=checked]:bg-accent dark:data-[state=checked]:bg-accent-dark hover:bg-accent/50 dark:hover:bg-accent-dark/50"
+                                                className="group relative flex w-full select-none text-left items-start justify-start gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[state=checked]:bg-accent hover:bg-accent/50"
                                             >
                                                 <IconDocument className="size-4 text-secondary flex-shrink-0 mt-0.5" />
                                                 <span className="break-words leading-snug min-w-0 flex-1 text-left">

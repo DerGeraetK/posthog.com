@@ -31,7 +31,7 @@ export default function SkillsColumnRow({
     return (
         <RadioGroup.Item
             value={value}
-            className={`group relative flex w-full select-none text-left rounded-sm px-2 py-1.5 text-sm outline-none data-[state=checked]:bg-accent dark:data-[state=checked]:bg-accent-dark hover:bg-accent/50 dark:hover:bg-accent-dark/50 ${
+            className={`group relative flex w-full select-none text-left rounded-sm px-2 py-1.5 text-sm outline-none data-[state=checked]:bg-accent hover:bg-accent/50 ${
                 wrapLabel ? 'items-start gap-2' : 'items-center justify-between'
             }`}
         >
