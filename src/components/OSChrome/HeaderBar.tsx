@@ -173,6 +173,27 @@ export default function HeaderBar({
         }
     }, [focusedWindow, appWindow])
 
+    const hasContent =
+        Boolean(homeURL) ||
+        Boolean(hasLeftSidebar) ||
+        showBack ||
+        showForward ||
+        Boolean(showCustomLeft) ||
+        compact || // compact mode always renders the window title
+        Boolean(rightActionButtons) ||
+        (showSearch && Boolean(searchContentRef || onSearch)) ||
+        showOrderHistory ||
+        showCart ||
+        Boolean(bookmark?.title && bookmark?.description) ||
+        (showSidebar && showToc) ||
+        showDrawerToggle ||
+        exportToPdf ||
+        showFullScreen
+
+    if (!hasContent) {
+        return null
+    }
+
     return (
         <>
             <div

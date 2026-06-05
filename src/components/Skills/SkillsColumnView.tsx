@@ -136,7 +136,7 @@ export default function SkillsColumnView({
     return (
         <div
             data-scheme="primary"
-            className="flex h-full min-h-0 flex-1 items-stretch border border-primary rounded-md overflow-hidden bg-primary text-primary"
+            className="flex h-full min-h-0 flex-1 items-stretch overflow-hidden bg-primary text-primary"
         >
             {/* Primary (left) column. Always a SkillsFinderColumn so the search box in
                 its header stays mounted across browse/search — focus is never lost. */}

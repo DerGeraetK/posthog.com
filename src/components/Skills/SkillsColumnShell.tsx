@@ -9,7 +9,10 @@ export default function SkillsColumnShell({
     widthClassName?: string
 }) {
     return (
-        <div className={`flex flex-col self-stretch min-h-0 flex-shrink-0 border-r border-primary ${widthClassName}`}>
+        <div
+            data-scheme="secondary"
+            className={`flex flex-col self-stretch min-h-0 flex-shrink-0 border-r border-primary bg-primary ${widthClassName}`}
+        >
             {children}
         </div>
     )

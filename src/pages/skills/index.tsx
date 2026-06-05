@@ -76,7 +76,7 @@ export default function SkillsPage(): JSX.Element {
             />
             <div data-scheme="primary" className="@container flex flex-col h-full bg-primary text-primary">
                 <HeaderBar bookmark={{ title: 'Agent skills', description: '' }} />
-                <div className="flex flex-1 min-h-0 p-2">
+                <div className="flex flex-1 min-h-0">
                     <SkillsColumnView
                         skills={allSkills}
                         selectedSkill={selectedSkill}

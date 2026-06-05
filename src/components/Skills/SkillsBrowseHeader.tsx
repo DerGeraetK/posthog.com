@@ -28,7 +28,7 @@ export default function SkillsBrowseHeader({
     const isSearchMode = searchQuery.trim() !== ''
 
     return (
-        <div className="flex-shrink-0 border-b border-primary p-2 space-y-2">
+        <div data-scheme="primary" className="flex-shrink-0 border-b border-primary p-2 space-y-2 bg-primary">
             <div className="relative">
                 <IconSearch className="size-4 absolute left-2 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
                 <input

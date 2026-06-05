@@ -469,6 +469,8 @@ const appSettings: AppSettings = {
         position: {
             center: true,
         },
+        toolbar: true,
+        mesh: 'yellow',
     },
     '/session-replay': {
         mesh: 'yellow',
@@ -637,23 +639,6 @@ const appSettings: AppSettings = {
                 width: 850,
                 height: 1000,
             },
-        },
-    },
-    start: {
-        size: {
-            min: {
-                width: 850,
-                height: 580,
-            },
-            max: {
-                width: 850,
-                height: 580,
-            },
-            autoHeight: true,
-            fixed: true,
-        },
-        position: {
-            center: true,
         },
     },
     '/about': {

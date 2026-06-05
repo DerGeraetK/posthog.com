@@ -96,9 +96,14 @@ export default function SkillDetailPane({
                                     <button
                                         type="button"
                                         onClick={() => onSelectSkill(relatedSkill)}
-                                        className="text-sm text-left text-red dark:text-yellow hover:underline"
+                                        className="group text-sm text-left"
                                     >
-                                        {relatedSkill.name}
+                                        {relatedSkill.tags.length > 0 && (
+                                            <span className="text-secondary">{relatedSkill.tags.join(' / ')} › </span>
+                                        )}
+                                        <span className="text-red dark:text-yellow group-hover:underline">
+                                            {relatedSkill.name}
+                                        </span>
                                     </button>
                                 </li>
                             ))}
