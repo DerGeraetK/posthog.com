@@ -47,9 +47,13 @@ There currently isn't a toggle to _hide_ AI features altogether. However, in any
 
 Yes, PostHog AI retains your chat history.
 
-## Can I self-host PostHog AI and use my own models?
+## Can I self-host PostHog AI?
 
-No, PostHog AI is only available in the cloud-hosted [PostHog app](https://app.posthog.com), which uses third-party LLM providers. PostHog automatically selects the most efficient model for each AI feature.
+Yes. On hobby deployments, you can enable PostHog AI by providing your own API keys. Set `ANTHROPIC_API_KEY` in your `.env` file to enable the main AI assistant. You can also set `OPENAI_API_KEY` to enable SQL and regex AI assist features.
+
+See [environment variables](/docs/self-host/configure/environment-variables) for configuration details.
+
+AI session replay summaries are only available on PostHog Cloud.
 
 ## Solved community questions
 
