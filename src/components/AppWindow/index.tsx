@@ -804,7 +804,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                             onPointerDown={(e) => controls.start(e)}
                                             onDoubleClick={toggleMaximize}
                                         >
-                                            <IconDrag className="size-5 rotate-90 opacity-25 group-hover:opacity-50" />
+                                            <IconDrag className="size-5 rotate-90 opacity-25 group-hover:opacity-50 text-primary" />
                                         </div>
                                         <div
                                             data-scheme="tertiary"
