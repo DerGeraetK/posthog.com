@@ -1,0 +1,57 @@
+---
+title: Linking Ashby as a source
+sidebar: Docs
+showTitle: true
+availability:
+  free: full
+  selfServe: full
+  enterprise: full
+sourceId: Ashby
+---
+
+The Ashby connector syncs your recruiting data from Ashby into PostHog, including candidates, applications, jobs, offers, interviews, and more.
+
+## Adding a data source
+
+1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
+2. Click **+ New source** and select Ashby by clicking the **Link** button.
+3. Enter your Ashby API key:
+   - In Ashby, go to **Admin > API Keys**.
+   - Click **Create API key** and give it a name (e.g., "PostHog data warehouse").
+   - Grant read permissions for the data you want to sync, such as `candidatesRead`, `applicationsRead`, `jobsRead`, `offersRead`, `interviewsRead`, and `usersRead`.
+   - Copy the key and paste it into PostHog.
+4. _Optional:_ Add a prefix to your table names.
+5. Click **Next**.
+
+The data warehouse then starts syncing your Ashby data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
+
+## Available tables
+
+The Ashby source syncs the following tables:
+
+| Table               | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| candidates          | All candidates in your Ashby instance              |
+| applications        | Job applications submitted by candidates           |
+| jobs                | Job positions in your organization                 |
+| job_postings        | Published job postings                             |
+| offers              | Job offers extended to candidates                  |
+| interviews          | Scheduled and completed interviews                 |
+| interview_schedules | Interview scheduling configurations                |
+| users               | Ashby users in your organization                   |
+| departments         | Organizational departments                         |
+| locations           | Office locations                                   |
+| sources             | Candidate sources (referrals, job boards, etc.)    |
+| archive_reasons     | Reasons for archiving candidates                   |
+| candidate_tags      | Tags applied to candidates                         |
+| custom_fields       | Custom field definitions                           |
+| openings            | Job openings (headcount positions)                 |
+| projects            | Recruiting projects                                |
+
+## Sync modes
+
+Ashby tables support **full refresh only**. Each sync re-downloads all data from Ashby. Incremental syncing isn't available because the Ashby API doesn't provide timestamp-based filtering with ordering guarantees.
+
+## Configuration
+
+<SourceParameters />
