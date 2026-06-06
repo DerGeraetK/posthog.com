@@ -1,0 +1,49 @@
+---
+title: Linking Iterable as a source
+sidebar: Docs
+showTitle: true
+availability:
+  free: full
+  selfServe: full
+  enterprise: full
+sourceId: Iterable
+---
+
+The Iterable connector syncs your marketing automation data – campaigns, channels, lists, message types, and templates – into PostHog.
+
+## Adding a data source
+
+1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
+2. Click **+ New source** and select Iterable by clicking the **Link** button.
+3. Enter your Iterable API key:
+   - In Iterable, go to **Integrations** > **API keys** in your [account settings](https://app.iterable.com/settings/apiKeys).
+   - Click **New API key** and select **Server-side** as the key type.
+   - Give your key read permissions for the resources you want to sync.
+   - Copy the API key and paste it into PostHog.
+4. Select your data center:
+   - Choose **US** if your Iterable account is hosted at `app.iterable.com`.
+   - Choose **EU** if your Iterable account is hosted at `app.eu.iterable.com`.
+5. _Optional:_ Add a prefix to your table names.
+6. Click **Next**.
+
+The data warehouse then starts syncing your Iterable data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
+
+> **Note:** Client-side API keys (Mobile, Browser, or JWT-enabled keys) aren't supported – you must use a server-side API key. Your API key only works with the data center that issued it, so make sure you select the correct region.
+
+## Available tables
+
+The Iterable source syncs the following tables:
+
+| Table         | Description                                | Sync mode    |
+| ------------- | ------------------------------------------ | ------------ |
+| campaigns     | Marketing campaigns and their settings     | Full refresh |
+| channels      | Communication channels (email, push, etc.) | Full refresh |
+| lists         | Contact lists and segments                 | Full refresh |
+| message_types | Message type configurations                | Full refresh |
+| templates     | Email and message templates                | Full refresh |
+
+All tables use **Full refresh** sync mode, meaning the entire table is re-downloaded on each sync. Iterable's list endpoints return complete datasets and don't support server-side filtering by update time.
+
+## Configuration
+
+<SourceParameters />
