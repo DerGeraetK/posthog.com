@@ -4,14 +4,14 @@ sidebar: Docs
 showTitle: true
 ---
 
-PostHog Error Tracking comes with a generous free tier and transparent, usage-based pricing. Our large free tier means more than 90% of companies *use PostHog for free*.
+PostHog Error Tracking comes with a generous free tier and transparent, usage-based pricing. Our large free tier means more than 90% of companies _use PostHog for free_.
 
 No credit card is required to get started. You can also set billing limits to avoid any surprise
 charges.
 
 Error Tracking is billed by the number of `$exception` events you capture. The price per event changes based on your usage. You can estimate your costs using our pricing calculator below or by visiting our [pricing page](/pricing) for a more detailed breakdown.
 
-import Pricing from 'components/Pricing/PricingCalculator/SingleProduct.tsx'
+import Pricing from "components/Pricing/PricingCalculator/SingleProduct.tsx";
 
 <Pricing productType="error_tracking" />
 
@@ -22,6 +22,7 @@ We aim to be significantly cheaper than our competitors. Below are tips to reduc
 Error tracking bills you based on the number of `$exception` events **_ingested_** by PostHog _each month_. This means if you send exception events to PostHog, they will be billed (events dropped before ingestion are not billed).
 
 This also means:
+
 - The total number of exceptions stored in PostHog does not contribute to your bill.
 - The number of [issues](/docs/error-tracking/issues-and-exceptions) in PostHog does not affect your bill, only the individual exception events that make up the issues.
 - Merging and resolving issues in PostHog do not reduce your bill.
@@ -30,7 +31,25 @@ This also means:
 
 ## Prevent surprises with billing limits
 
-Like all PostHog products, you can set a [billing limit](https://us.posthog.com/organization/billing) for error tracking. When a project exceeds this limit, PostHog will no longer capture exception events until your billing period resets.
+Like all PostHog products, you can set a [billing limit](https://app.posthog.com/organization/billing) for error tracking. When a project exceeds this limit, PostHog will no longer capture exception events until your billing period resets.
+
+## Project-wide rate limits
+
+You can configure a project-wide rate limit to cap the number of exceptions ingested per time period. This helps control costs and protect against unexpected spikes. Exceptions received above the configured rate are dropped at ingestion.
+
+To configure project-wide rate limits, go to [**Error Tracking** > **Configuration** > **Rate limits**](https://app.posthog.com/error_tracking/configuration#selectedSetting=error-tracking-rate-limiting).
+
+Set the maximum number of exceptions allowed per time bucket (1 minute, 5 minutes, 1 hour, or 1 day). Leave the value empty for no limit.
+
+### Rate limit charts
+
+The rate limit configuration includes two chart views to help you understand your exception traffic:
+
+- **Simulation** – Shows your past traffic to help you choose an appropriate rate limit. Use this to visualize what would have been dropped had a limit been in place.
+
+- **History** – Shows how many exceptions were actually recorded vs dropped based on your configured rate limits. This helps you understand the real impact of your rate limiting settings over time.
+
+You can toggle between views and refresh the chart with the latest data.
 
 ## Tips to reduce your bill
 
@@ -38,7 +57,7 @@ The best way to reduce your bill is to reduce the number of `$exception` events 
 
 ### Configure exception autocapture
 
-By default, we capture all unhandled errors and rejections. This can capture more than you need. To reduce which exceptions that are captured, you can configure which types of exceptions are autocaptured in the JS SDK config like this: 
+By default, we capture all unhandled errors and rejections. This can capture more than you need. To reduce which exceptions that are captured, you can configure which types of exceptions are autocaptured in the JS SDK config like this:
 
 ```json
 {
@@ -54,18 +73,18 @@ Alternatively, you can disable exception autocapture completely in your [project
 
 ### Suppression rules
 
-import SuppressionRules from './_snippets/suppression-rules.mdx'
+import SuppressionRules from "./_snippets/suppression-rules.mdx";
 
 <SuppressionRules />
 
 ### Burst protection
 
-import BurstProtection from './_snippets/burst-protection.mdx'
+import BurstProtection from "./_snippets/burst-protection.mdx";
 
 <BurstProtection />
 
 ### Using the `before_send` hook
 
-import BeforeSendHook from './_snippets/before-send-hook.mdx'
+import BeforeSendHook from "./_snippets/before-send-hook.mdx";
 
 <BeforeSendHook />
