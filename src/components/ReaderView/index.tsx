@@ -53,6 +53,13 @@ const algoliaSearchClient = algoliasearch(
     process.env.GATSBY_ALGOLIA_SEARCH_API_KEY as string
 )
 
+// Frosted chrome applied to the sidebar / ToC when background/tocBackground is `true`.
+// The border is intentionally NOT included here — it always stays on the asides.
+const FROSTED_BG = 'bg-primary/75 dark:bg-primary backdrop-blur'
+
+const resolveBackground = (value?: boolean | string): string =>
+    value === true ? FROSTED_BG : typeof value === 'string' ? value : ''
+
 // Wrapper component that conditionally renders CopyMarkdownActionsDropdown based on whether the markdown URL exists
 const ConditionalMarkdownDropdown = ({ pageUrl }: { pageUrl: string | undefined }) => {
     const isAllowedPath = pageUrl && isMarkdownContentPath(pageUrl)
@@ -141,6 +148,18 @@ interface ReaderViewProps {
      */
     productSelect?: React.ReactNode
     hideMenu?: boolean
+    /**
+     * Background for the LeftSidebar panel. Defaults to transparent (no bg) so the
+     * desktop wallpaper shows through. Pass `true` for the frosted default
+     * (`bg-primary/75 dark:bg-primary backdrop-blur`), or a string of custom classes
+     * (e.g. `"bg-accent/50"`). The border always stays regardless.
+     */
+    background?: boolean | string
+    /**
+     * Background for the FloatingTOC column. Same shape as `background`, controlled
+     * separately. Defaults to transparent.
+     */
+    tocBackground?: boolean | string
 }
 
 interface BackgroundImageOption {
@@ -450,6 +469,8 @@ export default function ReaderView({
     menuTabs,
     productSelect,
     hideMenu = false,
+    background = false,
+    tocBackground = false,
 }: ReaderViewProps) {
     return (
         <ReaderViewProvider defaultNavVisible={defaultNavVisible}>
@@ -481,6 +502,8 @@ export default function ReaderView({
                 menuTabs={menuTabs}
                 productSelect={productSelect}
                 hideMenu={hideMenu}
+                background={background}
+                tocBackground={tocBackground}
             >
                 {children}
             </ReaderViewContent>
@@ -806,6 +829,7 @@ interface LeftSidebarProps {
     contentRef?: React.RefObject<HTMLElement>
     currentPath?: string
     isMdx?: boolean
+    background?: boolean | string
 }
 
 const SIDEBAR_TRANSITION = { type: 'spring' as const, stiffness: 380, damping: 36 }
@@ -954,6 +978,7 @@ const LeftSidebar = ({
     contentRef,
     currentPath,
     isMdx = false,
+    background = false,
 }: LeftSidebarProps) => {
     const { websiteMode } = useApp()
     const { searchQuery } = useSearch()
@@ -1104,9 +1129,9 @@ const LeftSidebar = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 data-scheme="secondary"
-                className={`absolute inset-y-0 left-0 flex flex-col min-h-0 overflow-hidden bg-primary/75 dark:bg-primary border-r border-primary backdrop-blur will-change-[transform,backdrop-filter] transform-gpu ${
-                    !isPinned && expanded ? 'z-50 shadow-2xl' : 'z-30'
-                }`}
+                className={`absolute inset-y-0 left-0 flex flex-col min-h-0 overflow-hidden border-r border-primary will-change-[transform,backdrop-filter] transform-gpu ${resolveBackground(
+                    background
+                )} ${!isPinned && expanded ? 'z-50 shadow-2xl' : 'z-30'}`}
             >
                 {/* Top icon stack: edit-related actions */}
                 <div className="flex flex-col items-center gap-px p-1 flex-shrink-0">
@@ -1296,6 +1321,7 @@ interface FloatingTOCProps {
     toggleToc: () => void
     tableOfContents: any
     contentRef: React.RefObject<HTMLDivElement>
+    background?: boolean | string
 }
 
 /**
@@ -1305,13 +1331,19 @@ interface FloatingTOCProps {
  * scroll viewport so the TOC never extends past the visible area; an inner
  * ScrollArea handles overflow within that height.
  */
-const FloatingTOC = ({ isTocVisible, toggleToc, tableOfContents, contentRef }: FloatingTOCProps) => {
+const FloatingTOC = ({
+    isTocVisible,
+    toggleToc,
+    tableOfContents,
+    contentRef,
+    background = false,
+}: FloatingTOCProps) => {
     return (
         <aside
             data-scheme="secondary"
-            className={`flex-shrink-0 flex flex-col bg-primary/75 dark:bg-primary border-l border-primary backdrop-blur transition-[width] duration-300 overflow-hidden ${
-                isTocVisible ? 'w-[250px]' : 'w-12'
-            }`}
+            className={`flex-shrink-0 flex flex-col border-l border-primary transition-[width] duration-300 overflow-hidden ${resolveBackground(
+                background
+            )} ${isTocVisible ? 'w-[250px]' : 'w-12'}`}
         >
             <div className="flex-1 min-h-0 flex flex-col w-[250px]">
                 {isTocVisible && (
@@ -1363,6 +1395,8 @@ function ReaderViewContent({
     menuTabs,
     productSelect,
     hideMenu = false,
+    background = false,
+    tocBackground = false,
 }: ReaderViewProps) {
     const { compact, websiteMode } = useApp()
     const { appWindow, activeInternalMenu } = useWindow()
@@ -1467,6 +1501,7 @@ function ReaderViewContent({
                         contentRef={onSearch ? undefined : contentRef}
                         currentPath={appWindow?.path}
                         isMdx={body?.type === 'mdx'}
+                        background={background}
                     >
                         {leftSidebar || (!hideMenu && <Menu parent={parent as MenuItem} />)}
                     </LeftSidebar>
@@ -1698,6 +1733,7 @@ function ReaderViewContent({
                                 toggleToc={toggleToc}
                                 tableOfContents={tableOfContents}
                                 contentRef={contentRef}
+                                background={tocBackground}
                             />
                         )}
                     </div>
