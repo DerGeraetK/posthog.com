@@ -91,10 +91,22 @@ The `filters_override` parameter has been removed. Requests using `filters_overr
 
 If endpoints are slow:
 
+- Check the endpoint's [Logs tab](/docs/endpoints/execution-logs) to see `duration_ms` and `cache` values for recent runs
 - Look at the [endpoints usage tab](https://app.posthog.com/endpoints/usage) with the filter for the slow endpoint
 - Check if the underlying query is optimized
 - Consider materializing your endpoint
 - Review the query performance in the query log
+
+## Debugging endpoint failures
+
+When an endpoint starts failing:
+
+1. Open the endpoint and go to the **Logs** tab
+2. Filter by **ERROR** level to see failed runs
+3. Check the `error` token in the log message to identify the failure type
+4. Look at the `version` token to see if a recent version change caused the issue
+
+See [Execution logs](/docs/endpoints/execution-logs) for details on interpreting log entries.
 
 ## Further reading
 

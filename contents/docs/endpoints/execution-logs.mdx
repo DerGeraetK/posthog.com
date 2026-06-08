@@ -1,0 +1,62 @@
+---
+title: Execution logs
+sidebar: Docs
+showTitle: true
+---
+
+The **Logs** tab on an endpoint's page shows a log entry for each execution. Use it to debug failures, track cache behavior, and understand performance.
+
+## What you can see
+
+Each endpoint run produces one log entry. The log level indicates the outcome:
+
+- **INFO** - The endpoint executed successfully
+- **ERROR** - The endpoint failed
+
+The log message includes searchable `key=value` tokens with execution details:
+
+| Token | Description |
+|-------|-------------|
+| `path` | Execution path: `materialized`, `inline`, or `ducklake` |
+| `cache` | Cache outcome: `hit` or `miss` |
+| `duration_ms` | Execution time in milliseconds |
+| `rows` | Number of result rows returned |
+| `version` | Endpoint version that ran |
+| `error` | Error type (failures only) |
+
+Example log messages:
+
+```text
+Endpoint executed · path=materialized cache=hit duration_ms=142 rows=1024 version=3
+Endpoint execution failed · path=inline version=3 error=ResolutionError
+```
+
+## Filtering logs
+
+Use the filters to narrow down what you're looking for:
+
+- **Level** - Show only INFO or ERROR entries
+- **Search** - Filter by any text in the message, including `key=value` tokens like `cache=miss` or `error=ResolutionError`
+- **Time range** - Limit to a specific date range
+
+Logs are grouped by execution so you can see the complete context for each run.
+
+## Debugging with logs
+
+When an endpoint fails:
+
+1. Go to the endpoint's **Logs** tab
+2. Filter by **ERROR** level to see failed runs
+3. Check the `error` token to identify the failure type (e.g., `ResolutionError`, `HogVMException`)
+4. Look at the `path` and `version` tokens to understand which execution path and version failed
+
+When investigating cache behavior:
+
+1. Search for `cache=miss` to see runs that didn't hit cache
+2. Compare `duration_ms` between cache hits and misses to understand the performance impact
+
+When tracking down a regression:
+
+1. Filter by time range around when the issue started
+2. Look for changes in the `version` token to see if a version bump caused the problem
+3. Compare successful runs before the issue to failed runs after

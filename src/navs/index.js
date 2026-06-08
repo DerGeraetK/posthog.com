@@ -7098,6 +7098,12 @@ export const docsMenu = {
                     color: 'blue',
                 },
                 {
+                    name: 'Execution logs',
+                    url: '/docs/endpoints/execution-logs',
+                    icon: 'IconTerminal',
+                    color: 'yellow',
+                },
+                {
                     name: 'Resources',
                 },
                 {
