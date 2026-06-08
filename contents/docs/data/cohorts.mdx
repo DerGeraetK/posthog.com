@@ -263,6 +263,18 @@ Has or doesn't have a person property with the following operators:
 
 For a complete list of all available operators, including semver operators for version-based filtering, see the [property filter operators reference](/docs/data/property-filters).
 
+#### Person metadata
+
+Filter by metadata about the person record itself, not properties you've set.
+
+| **Criteria**                      | **Example**                                                                                         |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| First seen                        | Person was `first seen` in the `last 7 days`                                                        |
+
+**First seen** filters by when the person was created in PostHog. This is useful for targeting users who signed up recently without tracking a separate signup event or setting a custom property.
+
+> **Note:** Person metadata filters are not supported in realtime cohorts.
+
 #### Lifecycle
 
 | **Criteria**                      | **Example**                                                                                         |
