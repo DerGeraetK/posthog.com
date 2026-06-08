@@ -48,6 +48,22 @@ Properties can be accessed with dot notation like `person.properties.$initial_br
 
 > **Note:** PostHog's properties always include `$` as a prefix, while custom properties do not (unless you add it).
 
+### When to use bracket notation
+
+Dot notation only works when property keys are valid identifiers – they must start with a letter, underscore, or `$` and contain only letters, digits, underscores, and `$`.
+
+Use bracket notation for keys that contain hyphens, dots, spaces, or start with a digit. For example, survey response properties like `$survey_response_0196e96d-7705-7d32` contain hyphens, so dot notation fails:
+
+```sql
+-- ❌ Fails: hyphens are parsed as subtraction
+SELECT properties.$survey_response_0196e96d-7705-7d32 FROM events
+
+-- ✅ Works: bracket notation with quoted string
+SELECT properties['$survey_response_0196e96d-7705-7d32'] FROM events
+```
+
+This applies to all JSON columns, including `person.properties` and data warehouse sources.
+
 Property identifiers must be known at query time. For dynamic access, use the JSON manipulation functions from below on the `properties` field directly.
 
 ### Types
