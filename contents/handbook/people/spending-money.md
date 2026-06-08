@@ -190,15 +190,7 @@ You can ask for access to team/company tools by submitted a request in Slack. Fi
   - [Granola](https://granola.ai): It’s absolutely okay to use AI note-takers so you can stay engaged in meetings without writing everything down. Feel free to choose your own but please be aware of who the sub-processors are to ensure they do not use a competitor for analytics.
 - IDEs: Visual Studio, VIM and PyCharm are the most popular within our team. IDEs range widely in cost; best in class IDE suites can cost up to $700, which is not a great value proposition for most engineers.
 
-#### AI tools and coding agents
-AI coding tools (Cursor, Claude Code, etc.) are a great investment in your productivity, and you're encouraged to use them. But usage-based pricing means costs can climb quickly if a tool is misconfigured or used inefficiently, so a little awareness goes a long way.
-
-- As a rule of thumb, most engineers' monthly AI coding spend lands around the cost of a single max-tier subscription (for example, a [Claude Max](https://www.anthropic.com/pricing) plan is ~$200/month). That's a reasonable benchmark for what "productive" looks like.
-- If your spend is running several times higher than that, it's almost always a sign of a misconfiguration or an inefficient workflow rather than a genuine need - not a reason to feel bad, but a prompt to investigate.
-  - Check in with your teammates to compare setups and figure out what's driving the cost. They've likely solved the same problem.
-  - Common culprits: leaving expensive models selected for routine work, running agents on huge contexts unnecessarily, or stacking multiple overlapping subscriptions.
-- Apply the same [guiding principles](#guiding-principles) as any other expense: would you be comfortable explaining this spend to the whole team? If your AI bill is an outlier, you should be able to say why.
-- When in doubt, ask in [#team-people-and-ops](https://posthog.slack.com/archives/C017WDX3BFZ) - we'd much rather help you tune your setup early than flag it after a surprising invoice.
+- AI coding tools (Cursor, Claude Code, etc.) are encouraged, but usage-based pricing can climb fast. Most engineers' monthly spend lands around a single max-tier subscription (~$200/month). If yours is running several times higher, that's usually a misconfiguration or inefficient workflow rather than a genuine need - compare setups with your teammates and ask in [#team-people-and-ops](https://posthog.slack.com/archives/C017WDX3BFZ) if you're unsure.
 
 ### Travel
 - We travel in economy by default and do not pay for business class
