@@ -28,7 +28,11 @@ Configure auto-suspension to reclaim disk space from stale worktrees. Set a max 
 
 ## Signals
 
-Connect GitHub, toggle which data sources feed your [Inbox](/docs/posthog-code/inbox), and set a priority threshold (P0 through P4) that controls when the agent auto-starts tasks assigned to you.
+Connect GitHub, toggle which data sources feed your [Inbox](/docs/posthog-code/inbox), and set a priority threshold (P0–P4) that controls when the agent auto-starts tasks assigned to you.
+
+### PR base branch overrides
+
+Auto-started Inbox PRs target each repository's default branch. To target a different branch (like `staging` or `develop`), add per-repo overrides in **PR base branch overrides**. Enter the repository in `organization/repository` format (e.g., `acme/web`) and specify the target branch.
 
 ## Task defaults
 
