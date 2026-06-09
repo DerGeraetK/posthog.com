@@ -141,7 +141,7 @@ Changes one or more fields on a ticket. Only the fields you provide are changed.
 | `sla_amount` | string | No | Duration until SLA expires. Use `clear` to remove. |
 | `sla_unit` | choice | No | `minute`, `hour`, or `day` (default: `hour`) |
 | `assignee` | assignee | No | Assign to a user or role. Set to null to remove assignment. |
-| `tags` | tags | No | Tags to apply to the ticket. Behavior depends on the `tags_mode` setting. |
+| `tags` | tags | No | Tags to apply to the ticket. Supports variable templating (e.g., `{event.properties.region}`). Behavior depends on the `tags_mode` setting. |
 | `tags_mode` | choice | No | How tags are applied: `add` (default), `set`, or `remove`. |
 
 #### Tag modes
@@ -153,6 +153,14 @@ The `tags_mode` setting controls how the tags you specify interact with existing
 | `add` (default) | Adds tags to the ticket without removing existing ones. Safe when multiple workflows tag the same ticket. |
 | `set` | Replaces all existing tags with the specified tags. |
 | `remove` | Removes the specified tags from the ticket, leaving other tags intact. |
+
+#### Tag templating
+
+Tag values support variable templating, so you can construct tags dynamically from event properties or workflow variables:
+
+- `{event.properties.region}` – use an event property directly as a tag
+- `zendesk/{variables.zendesk_ticketid}` – combine literal text with a workflow variable
+- `{variables.ticket.channel_source}` – use data fetched by a **Get ticket** action
 
 ## Building conditions
 
