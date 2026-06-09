@@ -82,13 +82,13 @@ If any validation fails, the analysis stops and returns appropriate error messag
 
 #### Effect size calculation
 
-The effect size quantifies how much better (or worse) the treatment variant performs compared to control. PostHog uses relative differences by default, which express changes as percentages:
+The effect size quantifies how much better (or worse) the treatment variant performs compared to the baseline. PostHog uses relative differences by default, which express changes as percentages:
 
 ```
-effect_size = (treatment_mean - control_mean) / control_mean
+effect_size = (treatment_mean - baseline_mean) / baseline_mean
 ```
 
-For example, if control has a 10% conversion rate and treatment has 12%, the relative difference is +20%. This is what PostHog displays in the UI (e.g., "Variant B: +20% conversion rate"). Relative differences are intuitive for business metrics because they show the proportional change, making it easy to understand the business impact.
+For example, if the baseline has a 10% conversion rate and the treatment has 12%, the relative difference is +20%. This is what PostHog displays in the UI (e.g., "Variant B: +20% conversion rate"). Relative differences are intuitive for business metrics because they show the proportional change, making it easy to understand the business impact.
 
 #### Variance calculation
 
@@ -232,8 +232,8 @@ This first-order Taylor approximation works well when the coefficient of variati
 ### What about multiple variants?
 
 When testing multiple variants (A/B/C/D tests):
-- Each variant is compared to control independently
-- The chance to win is calculated for each variant vs. control
+- Each variant is compared to the baseline independently
+- The chance to win is calculated for each variant vs. the baseline
 - No correction for multiple comparisons
 - This is philosophically consistent: each comparison stands on its own
 
