@@ -46,7 +46,7 @@ The **Webhooks** write permission is only required if you want PostHog to set up
 If your Stripe account is in a language other than English, we suggest you update it to English before following the steps above to guarantee the correct permissions are set.
 
 3. Paste your API key into PostHog.
-4. _Optional:_ Add your Stripe Account ID. You can find it by going to **Settings** > **Business**, selecting the [Account details](https://dashboard.stripe.com/settings/account) tab, and clicking your **Account ID** or pressing `⌘` + `I` to copy your ID.
+4. _Optional:_ Add your Stripe Account ID. This is only needed if you're using [Stripe Connect](https://stripe.com/connect) and want to sync data from a connected account instead of your platform account. Leave it blank for standard Stripe accounts. To find your Account ID, go to **Settings** > **Business**, select the [Account details](https://dashboard.stripe.com/settings/account) tab, and click your **Account ID** or press `⌘` + `I` to copy it.
 5. _Optional:_ Add a prefix to your table names.
 6. Click **Next**.
 
@@ -54,7 +54,7 @@ If your Stripe account is in a language other than English, we suggest you updat
 
 1. Select **OAuth connection** as the authentication type.
 2. Click the **Connect** button and follow the prompts to authorize PostHog with your Stripe account.
-3. _Optional:_ Add your Stripe Account ID. You can find it by going to **Settings** > **Business**, selecting the [Account details](https://dashboard.stripe.com/settings/account) tab, and clicking your **Account ID** or pressing `⌘` + `I` to copy your ID.
+3. _Optional:_ Add your Stripe Account ID. This is only needed if you're using [Stripe Connect](https://stripe.com/connect) and want to sync data from a connected account instead of your platform account. Leave it blank for standard Stripe accounts. To find your Account ID, go to **Settings** > **Business**, select the [Account details](https://dashboard.stripe.com/settings/account) tab, and click your **Account ID** or press `⌘` + `I` to copy it.
 4. _Optional:_ Add a prefix to your table names.
 5. Click **Next**.
 
