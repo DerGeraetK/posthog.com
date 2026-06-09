@@ -739,8 +739,12 @@ export const handbookSidebar = [
                         url: '/handbook/engineering/customer-comms',
                     },
                     {
-                        name: 'Writing docs (as an engineer)',
+                        name: 'Writing docs as an engineer',
                         url: '/handbook/engineering/writing-docs',
+                    },
+                    {
+                        name: 'Writing blogs as an engineer',
+                        url: '/handbook/engineering/writing-blogs',
                     },
                     {
                         name: 'Working with Data Warehouse',
@@ -4107,25 +4111,6 @@ export const docsMenu = {
                     url: '/docs/session-replay/changelog',
                     icon: 'IconRocket',
                     color: 'purple',
-                },
-            ],
-        },
-        {
-            name: 'Replay Vision',
-            url: '/docs/replay-vision',
-            color: 'yellow',
-            icon: 'IconEye',
-            description: 'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
-            featureFlag: 'replay-vision-docs',
-            children: [
-                {
-                    name: 'Replay Vision',
-                },
-                {
-                    name: 'Overview',
-                    url: '/docs/replay-vision',
-                    icon: 'IconEye',
-                    color: 'seagreen',
                 },
             ],
         },
