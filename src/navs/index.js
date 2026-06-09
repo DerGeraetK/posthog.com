@@ -1088,27 +1088,31 @@ export const handbookSidebar = [
                     },
                     {
                         name: 'Email marketing',
-                        url: '/handbook/brand/email-comms',
+                        url: '/handbook/marketing/email-comms',
                     },
                     {
                         name: 'In-app messaging',
-                        url: '/handbook/brand/in-app',
+                        url: '/handbook/marketing/in-app',
+                    },
+                    {
+                        name: 'Slack messaging',
+                        url: '/handbook/marketing/slack-messaging',
                     },
                     {
                         name: 'Partnerships',
-                        url: '/handbook/brand/partners',
+                        url: '/handbook/marketing/partners',
                     },
                     {
                         name: 'Press & PR',
-                        url: '/handbook/brand/press',
+                        url: '/handbook/marketing/press',
                     },
                     {
                         name: 'Startups & YC Programs',
-                        url: '/handbook/brand/startups',
+                        url: '/handbook/marketing/startups',
                     },
                     {
                         name: 'Testimonials & G2',
-                        url: '/handbook/brand/testimonials',
+                        url: '/handbook/marketing/testimonials',
                     },
                     {
                         name: 'Campaigns & coupons',
@@ -4103,6 +4107,25 @@ export const docsMenu = {
             ],
         },
         {
+            name: 'Replay Vision',
+            url: '/docs/replay-vision',
+            color: 'yellow',
+            icon: 'IconEye',
+            description: 'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
+            featureFlag: 'replay-vision-docs',
+            children: [
+                {
+                    name: 'Replay Vision',
+                },
+                {
+                    name: 'Overview',
+                    url: '/docs/replay-vision',
+                    icon: 'IconEye',
+                    color: 'seagreen',
+                },
+            ],
+        },
+        {
             name: 'Feature Flags',
             icon: 'IconToggle',
             color: 'seagreen',
@@ -5025,6 +5048,13 @@ export const docsMenu = {
                     url: '/docs/error-tracking/spikes',
                     icon: 'IconGraph',
                     color: 'yellow',
+                    featured: true,
+                },
+                {
+                    name: 'Rate limiting',
+                    url: '/docs/error-tracking/rate-limiting',
+                    icon: 'IconThrottle',
+                    color: 'orange',
                     featured: true,
                 },
                 {
@@ -6841,6 +6871,12 @@ export const docsMenu = {
                     color: 'blue',
                 },
                 {
+                    name: 'Link logs to a person',
+                    url: '/docs/logs/link-person',
+                    icon: 'IconPerson',
+                    color: 'blue',
+                },
+                {
                     name: 'Set up alerts',
                     url: '/docs/logs/alerts',
                     icon: 'IconBell',
@@ -6886,18 +6922,18 @@ export const docsMenu = {
             ],
         },
         {
-            name: 'Tracing',
+            name: 'Distributed tracing',
             icon: 'IconListTree',
             color: 'purple',
-            url: '/docs/tracing',
+            url: '/docs/distributed-tracing',
             description: 'Capture and explore distributed traces with OpenTelemetry.',
             children: [
                 {
-                    name: 'Tracing',
+                    name: 'Distributed tracing',
                 },
                 {
                     name: 'Overview',
-                    url: '/docs/tracing',
+                    url: '/docs/distributed-tracing',
                     icon: 'IconHome',
                     color: 'seagreen',
                 },
@@ -6906,14 +6942,14 @@ export const docsMenu = {
                 },
                 {
                     name: 'Start here',
-                    url: '/docs/tracing/start-here',
+                    url: '/docs/distributed-tracing/start-here',
                     icon: 'IconListCheck',
                     color: 'orange',
                     featured: true,
                 },
                 {
-                    name: 'Why you need tracing',
-                    url: '/docs/tracing/basics',
+                    name: 'Why you need distributed tracing',
+                    url: '/docs/distributed-tracing/basics',
                     icon: 'IconBook',
                     color: 'seagreen',
                 },
