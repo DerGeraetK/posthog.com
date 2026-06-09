@@ -76,6 +76,17 @@ The response contains the endpoints and capabilities you need, including:
 
 The scopes available through OAuth are listed in the `scopes_supported` field of the metadata document and mirror the scopes available for [personal API keys in our REST API](/docs/api). Request only the scopes your application actually needs – this is a security best practice and reduces friction for users on the authorization screen.
 
+## Editing scopes on the consent screen
+
+When authorizing an application, you can customize the permissions you grant. The consent screen gives you two ways to reduce requested scopes:
+
+- **Read-only mode** – If the application requests write scopes, a toggle lets you downgrade all write access to read access. For example, `feature_flag:write` becomes `feature_flag:read`.
+- **Per-resource opt-out** – Each requested resource appears as a checkbox you can uncheck to remove that permission entirely.
+
+Identity scopes (`openid`, `profile`, `email`) are always granted and can't be removed.
+
+These controls only let you narrow what an application receives – never widen it. The application still operates under the server-side scope ceiling, so the final grant is the intersection of what you approve and what the application is allowed to request.
+
 ## Claiming your OAuth integration
 
 The <SmallTeam slug="growth" /> is working on creating a better, more streamlined process for partners to register and claim OAuth integrations with PostHog. In the meantime, CIMD provides a reliable way to integrate with PostHog's OAuth system without a manual registration step.

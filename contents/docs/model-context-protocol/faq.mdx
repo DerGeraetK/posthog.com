@@ -33,7 +33,11 @@ The MCP server acts as a proxy to your PostHog instance and is automatically rou
 
 ### Is it safe to let an agent write to my project?
 
-Be mindful of prompt injection – LLMs can be tricked into following untrusted commands, so always review tool calls before executing them. You can also restrict the session to specific tools or feature categories using [tool filtering](#filtering-available-tools), and pin the agent to a specific organization or project to limit blast radius.
+LLMs can be tricked into following untrusted commands (prompt injection), so always review tool calls before executing them. You have several ways to limit what an agent can do:
+
+- **Scope reduction at authorization** – When you authorize via OAuth, the consent screen lets you toggle to [read-only mode](/docs/api/oauth#editing-scopes-on-the-consent-screen) (downgrading all write permissions to read) or uncheck individual resources. This is the simplest way to ensure an agent can only read your data.
+- **Tool filtering** – Restrict the session to specific tools or feature categories using [tool filtering](#filtering-available-tools).
+- **Project pinning** – Pin the agent to a specific organization or project to limit blast radius.
 
 ## Advanced configuration
 
