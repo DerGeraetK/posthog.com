@@ -3919,6 +3919,12 @@ export const docsMenu = {
                     featured: true,
                 },
                 {
+                    name: 'Analyze heatmaps with PostHog AI',
+                    url: '/docs/web-analytics/analyze-heatmaps-ai',
+                    icon: 'IconSparkles',
+                    color: 'purple',
+                },
+                {
                     name: 'Query traffic with MCP',
                     url: '/docs/web-analytics/query-traffic-mcp',
                     icon: 'IconLlmPromptEvaluation',

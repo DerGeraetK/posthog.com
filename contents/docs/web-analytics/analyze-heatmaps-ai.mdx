@@ -1,0 +1,56 @@
+---
+title: Analyze heatmaps with PostHog AI
+---
+
+[PostHog AI](/docs/posthog-ai) can analyze [heatmap](/docs/toolbar/heatmaps) data and recommend changes based on how users interact with your pages. Ask about click patterns, rage clicks, scroll depth, or what to change – PostHog AI pulls the heatmap data and cross-references it with autocapture to identify what users are clicking.
+
+## How it works
+
+Give PostHog AI a page URL and it:
+
+- Pulls **click, rageclick, and scroll-depth** data for that page
+- Analyzes the **above/below-the-fold split** to see how much content users see without scrolling
+- Calculates **scroll reach** to show what percentage of users scroll to different depths
+- **Cross-references autocapture** clicks to identify which elements are under the hot spots – turning coordinates like "clicks at (450, 320)" into "clicks on the Pricing link"
+
+The result is a structured analysis you can use to inform UX decisions.
+
+## Try it
+
+Open the [Web analytics](/docs/web-analytics) section in PostHog and ask PostHog AI:
+
+- [`Assess the heatmap for my pricing page`](https://app.posthog.com/#panel=max:Assess%20the%20heatmap%20for%20my%20pricing%20page)
+- [`Why are people not clicking my main CTA?`](https://app.posthog.com/#panel=max:Why%20are%20people%20not%20clicking%20my%20main%20CTA%3F)
+- [`Where do users rage-click on my homepage?`](https://app.posthog.com/#panel=max:Where%20do%20users%20rage-click%20on%20my%20homepage%3F)
+- [`How far do users scroll on /docs?`](https://app.posthog.com/#panel=max:How%20far%20do%20users%20scroll%20on%20%2Fdocs%3F)
+
+## Tips for better results
+
+- **Provide the full URL** – PostHog AI needs the exact page URL including scheme and host (e.g., `https://example.com/pricing`), not just a path
+- **Specify a date range** – By default, PostHog AI looks at the last 7 days. Ask for a longer window if traffic is low: "Assess the heatmap for my pricing page over the last 30 days"
+- **Filter by device type** – Desktop and mobile have different fold lines and click patterns. Ask about one at a time for clearer insights: "Assess the heatmap for my homepage on mobile"
+
+## Prerequisites
+
+To use heatmap analysis, you need:
+
+1. **Heatmap capture enabled** – Turn this on in [project settings](https://us.posthog.com/settings/project-heatmaps#heatmaps) or with the `enable_heatmaps` config option
+2. **Autocapture enabled** – PostHog AI uses autocapture events to identify what elements users are clicking. Without autocapture, you get coordinates but not element names
+3. **Pageleave events** – Required for scroll depth data
+
+See the [heatmaps documentation](/docs/toolbar/heatmaps) for setup details.
+
+## What's in the analysis
+
+PostHog AI's heatmap analysis includes:
+
+| Section | What it shows |
+|---------|---------------|
+| **Scroll and fold** | Median viewport height (the fold line), percentage of clicks below the fold, and how far users scroll (75%, 50%, 25% reach) |
+| **Rage clicks** | Locations where users clicked repeatedly in frustration – often indicating broken, slow, or misleading elements |
+| **Click hotspots** | Top click coordinates with their position relative to the viewport |
+| **Elements under clicks** | The actual UI elements being clicked, identified by cross-referencing autocapture |
+
+## Get started
+
+[Set up PostHog AI](/docs/posthog-ai/start-here) and enable [heatmap capture](/docs/toolbar/heatmaps).
