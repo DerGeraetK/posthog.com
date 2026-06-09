@@ -9,7 +9,11 @@ availability:
 sourceId: Salesforce
 ---
 
-The Salesforce connector syncs your Salesforce data to PostHog. The following objects are supported:
+The Salesforce connector syncs your Salesforce data to PostHog.
+
+## Standard objects
+
+The following standard objects are supported:
 
 | Object | Description |
 |---|---|
@@ -28,12 +32,18 @@ The Salesforce connector syncs your Salesforce data to PostHog. The following ob
 | User | Salesforce users |
 | UserRole | User roles |
 
+## Custom objects
+
+You can also sync custom Salesforce objects. Custom objects have names ending in `__c` (for example, `Employee__c` or `Invoice__c`). When you connect Salesforce, any queryable custom objects in your organization automatically appear in the schema list alongside standard objects.
+
+Custom objects support incremental syncing using the `SystemModstamp` field, so only records modified since the last sync are updated.
+
 To link Salesforce:
 
 1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and the sources tab in PostHog
 2. Click **Link Source** and select Salesforce
 3. Log in to your Salesforce account and authorize PostHog to access your data
-4. Select the objects you want to sync from the table above
+4. Select the standard or custom objects you want to sync
 5. *Optional:* Add a prefix to your table names
 6. Click **Next**
 
