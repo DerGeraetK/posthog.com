@@ -1,0 +1,53 @@
+---
+title: Query engine
+sidebar: Docs
+showTitle: true
+---
+
+PostHog's Web Analytics uses an optimized query engine to make your dashboards load faster. This page explains how it works and what it means for your data.
+
+## How the query engine works
+
+When you view the Web Analytics dashboard, PostHog can fetch your data in two ways:
+
+- **Live queries** - Run against your raw event data in real time. This gives you exact numbers but can be slower for large datasets.
+
+- **Pre-computed roll-ups** - Use aggregated data that PostHog calculates periodically. These load faster but may show slight differences from live data.
+
+The dashboard shows which method was used with a small icon in the top-right corner of each tile:
+
+- **Bolt icon** - The tile is optimized with the new query engine (pre-aggregated tables)
+- **Database bolt icon** - The tile loaded from a pre-computed roll-up dataset
+
+## Accuracy and variance
+
+Pre-computed data is freshly recomputed by the query engine rather than queried live. Results are typically within ~1% of live data, but aren't guaranteed to be exact.
+
+The small variance comes from:
+
+- **Timing differences** - Roll-ups are calculated at set intervals, so very recent events might not be included
+- **Aggregation rounding** - Some metrics are pre-aggregated in ways that can produce minor rounding differences
+
+For most use cases, this variance is negligible. If you need exact numbers for a specific analysis, switch to live data.
+
+## Toggle between pre-computed and live data
+
+To always use live queries instead of pre-computed data:
+
+1. Click the database bolt icon on any tile showing pre-computed data
+2. Click **Always query live data** in the tooltip
+
+This disables pre-computed data for your account. The setting persists across sessions.
+
+To re-enable pre-computed data, go to [Web Analytics settings](https://app.posthog.com/settings/project-web-analytics) and toggle the option back on.
+
+## When to use each mode
+
+| Use case | Recommended mode |
+|----------|------------------|
+| Day-to-day dashboard monitoring | Pre-computed (default) |
+| Quick overview of traffic trends | Pre-computed |
+| Detailed analysis for a specific report | Live data |
+| Debugging data discrepancies | Live data |
+
+Pre-computed data is the default because it provides a faster, smoother experience for routine dashboard use. Switch to live data when you need exact precision for specific analyses.
