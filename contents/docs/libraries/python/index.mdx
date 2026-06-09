@@ -176,6 +176,35 @@ posthog.capture_exception(e, distinct_id='user_distinct_id', properties=addition
 
 Contexts automatically capture exceptions thrown inside them, unless disable it by passing `capture_exceptions=False` to `new_context()`.
 
+### Client-side rate limiting
+
+The Python SDK includes built-in rate limiting to prevent a crash loop from flooding the server with exceptions. Rate limiting runs locally on each client before any network call is made.
+
+```python
+posthog = Posthog(
+    "<ph_project_token>",
+    enable_exception_autocapture=True,
+    exception_capture_max_per_window=100,
+    exception_capture_window_seconds=60.0,
+    exception_capture_sample_rate=1.0,
+    exception_capture_post_limit_every=10,
+)
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `exception_capture_max_per_window` | `100` | Maximum exceptions allowed per window before rate limiting kicks in. |
+| `exception_capture_window_seconds` | `60.0` | Duration of the rate limiting window in seconds. |
+| `exception_capture_sample_rate` | `1.0` | Fraction of exceptions to forward after rate limiting (0.0–1.0). Set to `0.5` to sample half of all exceptions. |
+| `exception_capture_post_limit_every` | `10` | After hitting the limit, allows 1 in N exceptions through as a heartbeat signal. Set to `1` to allow all exceptions after the limit. |
+
+Rate limiting applies in two stages:
+
+1. **Fixed-window limiting** – Up to `max_per_window` exceptions pass freely. After that, only 1 in `post_limit_every` exceptions gets through (the "heartbeat").
+2. **Sampling** – Exceptions that pass the first stage are randomly sampled based on `sample_rate`.
+
+To cap exception volume across your whole project (not just per client), set a server-side [rate limit](/docs/error-tracking/rate-limiting).
+
 ### Code variables capture
 
 The Python SDK can automatically capture the state of local variables when an exception occurs. This gives you a debugger-like view of your application state at the time of the error:
