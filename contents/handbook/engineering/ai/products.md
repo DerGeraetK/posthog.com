@@ -390,13 +390,13 @@ The Wizard handles installation and basic setup across PostHog's supported SDKs.
 - Configuring autocapture and basic options
 
 It's no longer just a one-time setup tool, though. The Wizard now bundles a growing set of agent skills (sourced from [context-mill](/handbook/docs-and-wizard/context-mill)) that work just as well on an existing PostHog integration as on a new project. Each is invoked as a command, for example:
-- `npx @posthog/wizard doctor` — diagnose a project for configuration issues and setup warnings
-- `npx @posthog/wizard audit` — audit an existing integration for correctness, best practices, and cost-optimization opportunities (with an `audit web-analytics` variant for web analytics misconfigurations)
-- `npx @posthog/wizard events-audit` — inventory every captured event, mapped to its file, area, and 30-day volume
-- `npx @posthog/wizard migrate` — migrate an existing analytics or feature flag vendor to PostHog
-- `npx @posthog/wizard revenue` — set up Stripe revenue analytics
-- `npx @posthog/wizard upload-source-maps` — upload source maps to PostHog error tracking
-- `npx @posthog/wizard mcp add` — install the PostHog MCP server
+- `npx @posthog/wizard doctor` – diagnose a project for configuration issues and setup warnings
+- `npx @posthog/wizard audit` – audit an existing integration for correctness, best practices, and cost-optimization opportunities (with an `audit web-analytics` variant for web analytics fixes)
+- `npx @posthog/wizard events-audit` – inventory every captured event, mapped to its file, area, and 30-day volume
+- `npx @posthog/wizard migrate` – migrate an existing analytics or feature flag vendor to PostHog
+- `npx @posthog/wizard revenue` – set up Stripe Revenue Analytics
+- `npx @posthog/wizard upload-source-maps` – upload source maps to PostHog Error Tracking
+- `npx @posthog/wizard mcp add` – install the PostHog MCP server
 
 ### Future direction
 
