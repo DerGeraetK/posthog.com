@@ -9,6 +9,8 @@ availability:
 sourceId: Supabase
 ---
 
+import { CalloutBox } from "components/Docs/CalloutBox";
+
 The Supabase connector can link your Supabase database tables to PostHog. Supabase is built on top of Postgres, so this connector uses the same underlying integration as the [Postgres source](/docs/cdp/sources/postgres).
 
 To link Supabase:
@@ -60,6 +62,14 @@ Supabase sources created after February 18, 2026 require SSL/TLS encryption for 
 </CalloutBox>
 
 > **Permissions** The Supabase source only requires read permissions on the schemas and tables you intend to sync. We recommend creating a dedicated read-only role in Supabase rather than using the default `postgres` superuser.
+
+<CalloutBox icon="IconWarning" title="Row-level security may hide data" type="caution">
+
+Supabase enables row-level security (RLS) on many tables by default. If RLS is active for your sync role, PostHog can only read rows the policy permits—syncs may return zero rows or fewer than expected. PostHog shows an **"RLS may hide rows"** warning in the table picker and logs a warning during sync if this applies.
+
+To sync all rows, either grant `BYPASSRLS` to the sync role or create a permissive policy. See the [Postgres RLS documentation](/docs/cdp/sources/postgres#row-level-security-warning) for details.
+
+</CalloutBox>
 
 import InboundIpAddresses from "../_snippets/inbound-ip-addresses.mdx";
 

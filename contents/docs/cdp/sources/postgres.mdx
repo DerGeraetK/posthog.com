@@ -415,6 +415,14 @@ To sync all rows regardless of RLS policies, either:
 
 If the RLS policy is intentional and you only want PostHog to see a subset of rows (for example, to exclude sensitive data), ignore the warning. The sync works correctly with the rows the policy permits.
 
+### Sync-time RLS detection
+
+For existing sources, PostHog also checks for RLS during each sync. If row-level security becomes active on a table after the source was created (or if you missed the warning during setup), you'll see a warning in the sync logs:
+
+> Row-level security is active for the sync role on schema.table_name (rows visible to this sync: X). Grant the role BYPASSRLS or a permissive policy if it should see all rows.
+
+Check the **Syncs** tab on your source to view logs and identify affected tables.
+
 ## Troubleshooting
 
 ### `wal_level must be set to logical`
@@ -437,5 +445,9 @@ This happens in self-managed mode when PostHog can't find the publication name y
 ### Source is errored because of WAL lag
 
 Check the slot lag query above. If PostHog-managed slot protection dropped the slot, [disable and re-enable CDC](#managing-cdc-after-source-creation) or run a full resync after fixing the underlying issue. If you're in self-managed mode, your DBA must decide whether to keep, advance, or drop the slot.
+
+### Sync returns zero rows
+
+If your sync completes successfully but returns zero rows (or fewer than expected), check the sync logs for a row-level security warning. RLS policies can silently filter out all rows if the sync role doesn't match the policy criteria. See [Row-level security warning](#row-level-security-warning) for how to resolve this.
 
 > **Looking for an example of the Postgres source?** Check out our tutorial where we [connect and query Supabase data](/tutorials/supabase-query).
