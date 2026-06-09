@@ -28,7 +28,7 @@ The RevenueCat connector syncs your in-app subscription data into PostHog, inclu
 
    The **Integrations** write permission is required so PostHog can automatically register a webhook for real-time event syncing. If you don't grant write access, you can still [set up the webhook manually](#creating-the-webhook-manually-in-revenuecat).
 
-4. Enter your **Project ID**. Find this in the RevenueCat dashboard URL: `app.revenuecat.com/projects/<project_id>`.
+4. Enter your **Project ID**. This is the ID that starts with `proj`, found in your RevenueCat dashboard URL: `app.revenuecat.com/projects/<project_id>`. You can paste either the ID or the full URL.
 5. _Optional:_ Add a prefix to your table names.
 6. Click **Next**.
 
