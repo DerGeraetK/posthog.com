@@ -6,7 +6,6 @@ availability:
   free: full
   selfServe: full
   enterprise: full
-beta: true
 sourceId: GoogleSearchConsole
 ---
 
@@ -16,17 +15,19 @@ You can sync SEO performance data from Google Search Console by configuring it a
 
 Google Search Console syncs data from the [Search Analytics API](https://developers.google.com/webmaster-tools/search-console-api-original/v3/searchanalytics). The following tables are available:
 
-| Table | Description |
-|-------|-------------|
-| `search_analytics_by_date` | Daily totals for clicks, impressions, CTR, and average position. |
-| `search_analytics_by_query` | Daily performance broken out by search query (keyword). |
-| `search_analytics_by_page` | Daily performance broken out by landing page URL. |
-| `search_analytics_by_country` | Daily performance broken out by country (ISO 3166-1 alpha-3). |
-| `search_analytics_by_device` | Daily performance broken out by device (DESKTOP, MOBILE, TABLET). |
-| `search_analytics_by_query_page` | Daily performance broken out by both query and landing page (enabled by default). |
-| `search_analytics_by_search_appearance` | Daily performance broken out by search result presentation type (e.g., RICH_RESULT, FAQ_RICH_RESULT, VIDEO). |
+| Table | Description | Sync method |
+|-------|-------------|-------------|
+| `search_analytics_by_date` | Daily totals for clicks, impressions, CTR, and average position. | Incremental |
+| `search_analytics_by_query` | Daily performance broken out by search query (keyword). | Incremental |
+| `search_analytics_by_page` | Daily performance broken out by landing page URL. | Incremental |
+| `search_analytics_by_country` | Daily performance broken out by country (ISO 3166-1 alpha-3). | Incremental |
+| `search_analytics_by_device` | Daily performance broken out by device (DESKTOP, MOBILE, TABLET). | Incremental |
+| `search_analytics_by_query_page` | Daily performance broken out by both query and landing page (enabled by default). | Incremental |
+| `search_analytics_by_search_appearance` | Daily performance broken out by search result presentation type (e.g., RICH_RESULT, FAQ_RICH_RESULT, VIDEO). | Incremental |
 
 All tables include these metrics: `clicks`, `impressions`, `ctr` (click-through rate), and `position` (average ranking position).
+
+**Incremental** tables sync only new or updated records on each run.
 
 > **Note:** Only `search_analytics_by_query_page` is enabled by default. Enable additional tables manually during source configuration based on your analysis needs.
 
