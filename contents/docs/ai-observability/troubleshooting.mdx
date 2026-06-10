@@ -16,6 +16,26 @@ After this, we charge a small amount for each `$ai_*` event you send.
 
 Go to the [pricing page](/pricing) to use our calculator to get an estimate. You can also view an estimate on [your billing page](https://app.posthog.com/organization/billing).
 
+## Why am I seeing a "double-counted and double-billed" warning?
+
+If you see this console warning:
+
+```
+[PostHog] The PostHog AI wrapper is pointed at the PostHog AI Gateway. Both capture $ai_generation, so every call is double-counted and double-billed. Use one or the other.
+```
+
+This means your `@posthog/ai` SDK wrapper is pointing at the PostHog AI Gateway (for example, a `baseURL` like `gateway.us.posthog.com`). Both the wrapper and the gateway capture `$ai_generation` events, so each LLM call gets recorded twice.
+
+**How to fix it:**
+
+Choose one capture method:
+
+1. **Use the SDK wrapper only** (recommended for most users) – Point your LLM client directly at your provider's API (e.g., `api.openai.com`). The `@posthog/ai` wrapper captures events for you.
+
+2. **Use the AI Gateway only** – If you're using the PostHog AI Gateway for routing, remove the `@posthog/ai` wrapper from your code. The gateway handles event capture automatically.
+
+The warning appears once per process and doesn't affect your application's behavior – it's a heads-up about the billing impact.
+
 ## Why can't I see any of my LLM events?
 
 There are a few reasons why you might not be seeing any LLM events:
