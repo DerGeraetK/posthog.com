@@ -49,6 +49,9 @@ All events include these base properties: `ticket_id`, `ticket_number`, `channel
 |----------|------|-------------|
 | `old_status` | string | Previous status |
 | `new_status` | string | New status (`new`, `open`, `pending`, `on_hold`, `resolved`) |
+| `actor_type` | string | Who performed the action: `user`, `system`, `external`, or `customer` |
+| `actor_id` | int or null | PostHog user ID if `actor_type` is `user`, otherwise null |
+| `actor_email` | string or null | Email of the actor if `actor_type` is `user`, otherwise null |
 
 ### Ticket priority changed
 
@@ -59,6 +62,9 @@ All events include these base properties: `ticket_id`, `ticket_number`, `channel
 |----------|------|-------------|
 | `old_priority` | string or null | Previous priority |
 | `new_priority` | string or null | New priority |
+| `actor_type` | string | Who performed the action: `user`, `system`, `external`, or `customer` |
+| `actor_id` | int or null | PostHog user ID if `actor_type` is `user`, otherwise null |
+| `actor_email` | string or null | Email of the actor if `actor_type` is `user`, otherwise null |
 
 ### Ticket assigned
 
@@ -69,6 +75,9 @@ All events include these base properties: `ticket_id`, `ticket_number`, `channel
 |----------|------|-------------|
 | `assignee_type` | string | `user` or `role` |
 | `assignee_id` | int or null | ID of the assigned user or role |
+| `actor_type` | string | Who performed the action: `user`, `system`, `external`, or `customer` |
+| `actor_id` | int or null | PostHog user ID if `actor_type` is `user`, otherwise null |
+| `actor_email` | string or null | Email of the actor if `actor_type` is `user`, otherwise null |
 
 ### Ticket message sent (team reply)
 
@@ -80,7 +89,9 @@ All events include these base properties: `ticket_id`, `ticket_number`, `channel
 | `message_id` | string | The message UUID |
 | `message_content` | string | Message text (truncated to 1,000 chars) |
 | `author_type` | string | Always `team` |
-| `author_id` | int or null | PostHog user ID of the sender |
+| `actor_type` | string | Who performed the action: `user`, `system`, `external`, or `customer` |
+| `actor_id` | int or null | PostHog user ID if `actor_type` is `user`, otherwise null |
+| `actor_email` | string or null | Email of the actor if `actor_type` is `user`, otherwise null |
 
 ### Ticket message received (customer message)
 
