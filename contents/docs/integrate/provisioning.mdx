@@ -201,6 +201,7 @@ curl -X POST https://us.posthog.com/api/agentic/provisioning/account_requests \
 | `code_challenge`                  | string | Yes      | Base64url-encoded SHA-256 hash of your code verifier (43-128 chars)                      |
 | `code_challenge_method`           | string | Yes      | Must be `"S256"`                                                                         |
 | `scopes`                          | list   | No       | OAuth scopes to request for the access token. See [available scopes](#available-scopes). |
+| `link_method`                     | string | No       | How to handle existing accounts: `"browser"` (default) redirects to a consent page; `"email_code"` emails the user a one-time code they can enter in the terminal. See [email code linking](#email-code-linking). |
 | `configuration.region`            | string | No       | `"US"` (default) or `"EU"`                                                               |
 | `configuration.organization_name` | string | No       | Organization name (defaults to `"Partner (email)"`)                                      |
 
@@ -231,6 +232,22 @@ The user receives a welcome email with a link to set their password and access t
 ```
 
 When `type` is `requires_auth`, redirect the user to the provided URL. After they approve, PostHog redirects them to your `redirect_uris` with a `code` query parameter that you use in step 2.
+
+**Existing user response with email code** (HTTP 200):
+
+If you set `link_method` to `"email_code"` and your partner app has email code linking enabled, you'll get this response instead:
+
+```json
+{
+  "id": "req_unique_request_id",
+  "type": "requires_otp",
+  "requires_otp": {
+    "expires_in": 600
+  }
+}
+```
+
+When `type` is `requires_otp`, PostHog has emailed a one-time code to the account owner. The email includes the partner name and the exact scopes being granted. Prompt the user to enter the code, then use it as the authorization code in [step 2](#step-2-exchange-the-code-for-tokens). See [email code linking](#email-code-linking) for the full flow.
 
 ```mermaid
 sequenceDiagram
@@ -467,6 +484,49 @@ The `scopes` field in the account request controls what permissions the access t
 | `hog_flow:read` | Read Hog flows |
 | `hog_flow:write` | Create and update Hog flows |
 
+## Email code linking
+
+CLI and agent-driven integrations can't redirect users to a browser without breaking the terminal flow. Email code linking lets existing users authorize entirely in the terminal by entering a one-time code from their inbox.
+
+### How it works
+
+1. Your app calls `/account_requests` with `link_method: "email_code"` and a PKCE `code_challenge`.
+2. PostHog emails the account owner a one-time code along with your app's name and the exact scopes being granted.
+3. The API returns `{"type": "requires_otp", "requires_otp": {"expires_in": 600}}`.
+4. Your app prompts the user (or their agent) to enter the code.
+5. Your app exchanges the code at `/oauth/token` with the PKCE `code_verifier`, just like the browser flow.
+
+```mermaid
+sequenceDiagram
+    participant P as Partner CLI
+    participant PH as PostHog
+    participant U as User Inbox
+
+    P->>PH: POST /account_requests (link_method=email_code, code_challenge)
+    PH->>U: Email with one-time code + scope disclosure
+    PH-->>P: requires_otp (expires_in: 600)
+
+    U-->>P: User enters code
+    P->>PH: POST /oauth/token (code, code_verifier)
+    PH-->>P: access_token + refresh_token
+```
+
+### Security model
+
+The emailed code doubles as the authorization code. Redemption requires both the code (proving email control) and the PKCE verifier (proving it's the same session that started the request). An intercepted email alone isn't enough to mint a token.
+
+The email also serves as the consent surface: it names your app and lists the exact scopes being granted, so the user knows what they're authorizing before entering the code.
+
+### Requirements
+
+- Your partner app must have `provisioning_can_link_via_email_code` enabled. Contact PostHog to request access.
+- You must include a non-empty `scopes` array in the request. Empty scopes are rejected because the email must disclose exactly what's being granted.
+- Rate limit: 3 codes per email address per hour. After that, requests return HTTP 429 with a `Retry-After` header.
+
+### Fallback behavior
+
+If your app doesn't have email code linking enabled, or if you omit `link_method` or set it to `"browser"`, the API falls back to `requires_auth` with a browser consent URL. Your client should handle both response types.
+
 ## What the user gets
 
 When you provision a new account, the user receives:
@@ -530,6 +590,10 @@ All provisioning endpoints are rate limited.
 
 - 10/hour for unverified CIMD partners
 - 100/hour for partners linked to a PostHog organization via a [verification token](#link-your-partner-app-to-a-posthog-organization-optional)
+
+**Email code linking** (per email address):
+
+- 3 codes per hour per recipient address
 
 Email [team-growth@posthog.com](mailto:team-growth@posthog.com) if you need a higher limit for production use.
 
