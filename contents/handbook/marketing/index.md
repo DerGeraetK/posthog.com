@@ -26,7 +26,7 @@ To keep up with what's shipped and what's about to ship across the company, join
 
 Both channels are populated by agentic workflows that scan merged PRs and feature flag changes in the `posthog/posthog` repo and summarize them into the relevant channel. Engineers can also opt their PR in (or out) manually via the *Publish to changelog?* and *Alert Sales and Marketing teams?* checkboxes on the PR template, or via the `@posthog` Slack app. See [how to publish changelog](/handbook/docs-and-wizard/how-to-publish-changelog) for the full flow.
 
-> **Tip:** The [`@posthog` Slack app](/docs/slack-app) can also answer questions about our own product data — `@PostHog` it in any channel to pull metrics, dig into an insight, or check how a launch or campaign is performing without leaving Slack.
+> **Tip:** The [`@posthog` Slack app](/docs/slack-app) can also answer questions about our own product data — `@PostHog` it in any channel to pull metrics, a PR something to the website.
 
 ## Marketing values
 
