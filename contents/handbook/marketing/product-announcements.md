@@ -38,6 +38,8 @@ Major announcements involve changes which have a noticeable impact on the experi
 
 We might do anything and everything for a major announcement.
 
+Whenever we make a major announcement — including beta launches and pricing changes — add an annotation (no emoji) in [our PostHog project](https://us.posthog.com/project/2/data-management/annotations) on the day it happens, so we can tie shifts in our metrics back to it later.
+
 Examples of major announcements include [the surveys beta](/changelog?id=1945) or [the analytics pricing change](/changelog?id=1907).
 
 ### New product announcements
@@ -53,6 +55,7 @@ For new product announcements we generally apply the following best practices:
 - Ensure launch activities (such as changelog) link clearly to the docs.
 - Ensure the product is added to email and in-app onboarding flows.
 - Ensure the product is added to the [pricing page](/pricing) (this is typically owned by the product team's PM and the <SmallTeam slug="billing" />)
+- Add a 🚀 annotation in [our PostHog project](https://us.posthog.com/project/2/data-management/annotations) on the launch date, so the launch's impact is visible on dashboards.
 - Submit an [art request](/handbook/brand/art-requests) for any creative assets needed for the email campaign, blog post, social media posts etc...
 
 Comms should also be aware of [the engineering best practices for product launches](/handbook/engineering/development-process#best-practices-for-full-releases), so we can be sure that features launch well.

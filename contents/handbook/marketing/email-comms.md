@@ -34,6 +34,8 @@ We regularly send three types of email broadcasts.
 
 Occasionally we send other ad-hoc email broadcasts for specific activities such as outages, reminders, announcements, or deprecations. 
 
+Whenever we send a broadcast, add an annotation (no emoji) in [our PostHog project](https://us.posthog.com/project/2/data-management/annotations) on the send date, so we can see its impact on our metrics later.
+
 ### Changelog
 The changelog email is part of [the new release process](/handbook/marketing/product-announcements) and is used for [product announcements](/handbook/marketing/product-announcements).
 
