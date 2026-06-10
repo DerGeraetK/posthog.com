@@ -17,7 +17,7 @@ The log message includes searchable `key=value` tokens with execution details:
 
 | Token | Description |
 |-------|-------------|
-| `path` | Execution path: `materialized`, `inline`, or `ducklake` |
+| `path` | Execution path: `materialized`, `inline`, `ducklake`, or `ducklake_fallback` |
 | `cache` | Cache outcome: `hit` or `miss` |
 | `duration_ms` | Execution time in milliseconds |
 | `rows` | Number of result rows returned |
@@ -60,3 +60,13 @@ When tracking down a regression:
 1. Filter by time range around when the issue started
 2. Look for changes in the `version` token to see if a version bump caused the problem
 3. Compare successful runs before the issue to failed runs after
+
+## Tracing API results
+
+When you call an endpoint via the API, the response includes an `execution_id` field. Use this ID to find the exact log entry for that run:
+
+1. Copy the `execution_id` from your API response
+2. Go to the endpoint's **Logs** tab
+3. Search for the execution ID to find the matching log entry
+
+This helps you correlate a specific API result with its execution details – whether it hit cache, how long it took, or which version ran.
