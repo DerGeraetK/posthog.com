@@ -1,0 +1,25 @@
+---
+title: Web analytics FAQ
+sidebar: Docs
+showTitle: true
+---
+
+## What does the pre-computed badge mean?
+
+Some tiles in the web analytics dashboard display a **pre-computed** badge. This means the data shown was loaded from a pre-computed state instead of running a live query against all events.
+
+### Why pre-computed?
+
+Running live queries across every event can be slow at scale. Pre-computed data speeds up page loads by caching query results so the dashboard renders almost instantly.
+
+### How accurate is pre-computed data?
+
+Pre-computed data is very close to live data — typically within ~1% — but it isn't guaranteed to be exact. Small differences can appear because the cached results may not yet reflect the very latest events.
+
+### Can I switch to live data?
+
+Yes. When you see the pre-computed badge, click the **Always query live data** link in the tooltip. This disables the pre-computed optimization and runs queries directly against all events. Expect slower load times when using live data.
+
+### What does "optimized with our new query engine" mean?
+
+Some tiles show an **optimized** badge instead. This indicates the tile uses PostHog's new query engine, which is designed to return results faster without relying on pre-computed snapshots. The data from the new query engine is live.
