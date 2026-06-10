@@ -65,6 +65,15 @@ Or to construct a custom JSON payload that conforms to an existing API specifica
 
 Destination templates also support [Liquid templating](https://liquidjs.com/filters/overview.html). This is useful for transforming values before sending them to a destination.
 
+When you switch a field to use Liquid templating, use double braces `{{ }}` instead of single braces:
+
+| Engine | Syntax | Example |
+|--------|--------|---------|
+| Hog (default) | Single braces `{ }` | `{person.properties.email}` |
+| Liquid | Double braces `{{ }}` | `{{ person.properties.email }}` |
+
+Expressions without any braces (like `person.properties.email`) are sent as literal text in both engines.
+
 <CalloutBox icon="IconInfo" title="Tip: Converting strings to numbers" type="fyi">
 
 Some destinations (like Google Ads) expect numeric values. If your value is stored as a string, you can convert it using Liquid's `plus` filter:
