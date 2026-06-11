@@ -14,7 +14,17 @@ import Pricing from 'components/Pricing/PricingCalculator/SingleProduct.tsx'
 
 <Pricing productType="logs" />
 
-Retention is 14 days by default (30 and 90 day options soon).
+## Retention options
+
+Logs are retained for 14 days by default. Paid plans offer extended retention:
+
+| Retention | Availability |
+|-----------|--------------|
+| 14 days | All plans (default) |
+| 30 days | Paid plans |
+| 90 days | Paid plans |
+
+Extended retention is priced separately from ingestion and billed per GB stored. Change your retention setting in [**Settings** > **Environment** > **Logs**](https://app.posthog.com/settings/environment-logs). Changes only apply to new logs — existing logs keep their original retention period.
 
 We aim to be significantly cheaper than our competitors. Below are tips to reduce your logs costs.
 
