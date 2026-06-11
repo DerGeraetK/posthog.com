@@ -55,7 +55,7 @@ For example, "alert if count goes above 100 in the last 10 minutes" fires when m
 An alert without a destination has nowhere to send notifications. Add at least one of:
 
 - **[Slack](/docs/cdp/destinations/slack)** – pick a connected Slack workspace and channel.
-- **Microsoft Teams** – paste a URL from a Teams "Workflows" (Power Automate) or incoming webhook connector. Notifications are delivered as formatted Adaptive Cards.
+- **[Microsoft Teams](/docs/cdp/destinations/microsoft-teams)** – paste a URL from a Teams Workflows, Azure Logic Apps, or Power Automate connector. Notifications are delivered as formatted Adaptive Cards.
 - **[Webhook](/docs/cdp/destinations/webhook)** – provide a URL to receive an HTTP POST when the alert fires.
 
 Destinations are delivered through hog functions under the hood, so they reuse the same infrastructure as other PostHog destinations. The **Notifications** column in the alert list shows a struck-through bell when no destinations are configured.
