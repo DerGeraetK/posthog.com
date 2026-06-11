@@ -11,8 +11,7 @@ import CloudinaryImage from 'components/CloudinaryImage'
 import { SingleCodeBlock } from 'components/CodeBlock'
 import WizardCTA from 'components/WizardCTA'
 import usePlatformList from 'hooks/docs/usePlatformList'
-import { IconGraph, IconWarning, IconRewindPlay, IconChevronDown } from '@posthog/icons'
-import ElevenLabsLogo from 'components/CustomerLogos/ElevenLabsLogo'
+import { IconGraph, IconWarning, IconRewindPlay } from '@posthog/icons'
 import LovableLogo from 'components/CustomerLogos/LovableLogo'
 import PostHogLogo from 'components/CustomerLogos/PostHogLogo'
 
@@ -39,13 +38,20 @@ const PLATFORM_ORDER = [
 export default function AIObservabilityLanding(): JSX.Element {
     const [showMore, setShowMore] = useState(false)
     const [isIdle, setIsIdle] = useState(false)
-    const [openQuestion, setOpenQuestion] = useState<number | null>(null)
     const [installMCPCopied, setInstallMCPCopied] = useState(false)
 
     const handleCopyMCP = () => {
         navigator.clipboard.writeText('npx @posthog/wizard mcp add')
         setInstallMCPCopied(true)
         setTimeout(() => setInstallMCPCopied(false), 2000)
+    }
+
+    const handleScrollToMCP = () => {
+        const el = document.getElementById('quest-item-query-ai-traces-from-your-editor')
+        if (el) {
+            window.history.pushState(null, '', '#quest-item-query-ai-traces-from-your-editor')
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
     }
 
     const allPlatforms = usePlatformList('docs/ai-observability/installation', 'AI Observability installation')
@@ -96,7 +102,7 @@ export default function AIObservabilityLanding(): JSX.Element {
                 contentMaxWidthClass="max-w-5xl"
                 showQuestions={false}
             >
-                <div className="grid grid-cols-1 @lg:grid-cols-[1.2fr_1fr] gap-10 items-center mb-6 max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 @lg:grid-cols-[1.2fr_1fr] gap-10 items-center mb-4 max-w-7xl mx-auto">
                     <div>
                         <h1 className="text-3xl md:text-5xl !mb-4">X-ray vision for your AI product</h1>
                         <p className="text-lg md:text-xl mb-6 text-secondary">
@@ -112,13 +118,8 @@ export default function AIObservabilityLanding(): JSX.Element {
                             <CallToAction type="primary" size="md" to="https://app.posthog.com/signup">
                                 Get started free
                             </CallToAction>
-                            <CallToAction
-                                type="secondary"
-                                size="md"
-                                to="/docs/ai-observability"
-                                state={{ newWindow: true }}
-                            >
-                                Read the docs
+                            <CallToAction type="secondary" size="md" onClick={handleScrollToMCP}>
+                                Install MCP
                             </CallToAction>
                         </div>
                         <p className="text-sm !mb-0 text-secondary">
@@ -142,10 +143,14 @@ export default function AIObservabilityLanding(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="mb-12 max-w-7xl mx-auto">
+                <div className="mb-6 max-w-7xl mx-auto">
                     <div className="flex flex-wrap items-center gap-x-12 gap-y-6 text-primary dark:text-primary-dark">
                         <LovableLogo className="fill-current object-contain max-w-full h-6" />
-                        <ElevenLabsLogo className="fill-current object-contain max-w-full h-8" />
+                        <CloudinaryImage
+                            src="https://res.cloudinary.com/dmukukwp6/image/upload/kilocode_logo_c58c88f029.webp"
+                            alt="Kilo Code"
+                            imgClassName="object-contain max-w-full h-8 w-auto"
+                        />
                         <PostHogLogo className="fill-current object-contain max-w-full h-6" />
                     </div>
                     <p className="text-xs mt-3 !mb-0">
@@ -205,6 +210,117 @@ export default function AIObservabilityLanding(): JSX.Element {
                         </QuestLogItem>
 
                         <QuestLogItem
+                            title="Query AI traces from your editor"
+                            subtitle="MCP tools so your agent can investigate without leaving the IDE"
+                            icon="IconSparkles"
+                        >
+                            <p>
+                                Install the PostHog MCP and your coding agent can query your LLM data directly — costs,
+                                errors, latency, traces — without switching to a browser.
+                            </p>
+
+                            <SingleCodeBlock language="bash" showAskAI={false}>
+                                npx @posthog/wizard mcp add
+                            </SingleCodeBlock>
+
+                            <ul>
+                                <li>
+                                    <em>"Why did my LLM costs spike 40% since last deploy?"</em>
+                                </li>
+                                <li>
+                                    <em>"Which model is the most expensive for the chat feature this week?"</em>
+                                </li>
+                                <li>
+                                    <em>"Are there any generation errors in the last 30 minutes?"</em>
+                                </li>
+                                <li>
+                                    <em>"Show me the 10 slowest traces from today."</em>
+                                </li>
+                                <li>
+                                    <em>"Compare token usage between GPT-4 and Claude on the search endpoint."</em>
+                                </li>
+                            </ul>
+
+                            <div className="flex flex-wrap gap-2 mt-4">
+                                <CallToAction type="primary" size="md" onClick={handleCopyMCP}>
+                                    {installMCPCopied ? 'Copied! 🚀' : 'Copy install command'}
+                                </CallToAction>
+                                <CallToAction
+                                    type="secondary"
+                                    size="md"
+                                    to="/docs/ai-observability/query-traces-mcp"
+                                    state={{ newWindow: true }}
+                                >
+                                    MCP docs
+                                </CallToAction>
+                            </div>
+                        </QuestLogItem>
+
+                        <QuestLogItem
+                            title="Working in Slack? Talk to the Hog."
+                            subtitle="Turn AI signals into shipped improvements"
+                            icon="IconBell"
+                        >
+                            <p>
+                                PostHog watches your LLM metrics and pings your Slack channel when something's wrong —
+                                cost threshold crossed, error rate spiked, latency jumped. Then tag{' '}
+                                <code>@PostHog</code> to go from signal to fix without ever opening a dashboard.
+                            </p>
+
+                            <h3>Ask @PostHog about your AI product</h3>
+
+                            <ul>
+                                <li>
+                                    <em>"Why did generation costs jump 40% since last deploy?"</em>
+                                </li>
+                                <li>
+                                    <em>"Which users are hitting the most LLM errors today?"</em>
+                                </li>
+                                <li>
+                                    <em>"Is average LLM latency trending up or down this week?"</em>
+                                </li>
+                                <li>
+                                    <em>"Are error rates higher for Claude or GPT-4 on the search feature?"</em>
+                                </li>
+                            </ul>
+
+                            <CloudinaryImage
+                                src="https://res.cloudinary.com/dmukukwp6/image/upload/slack_app_chat_1_c6573ce6da.png"
+                                alt="@PostHog answering questions about LLM data in a Slack thread"
+                                className="rounded-md shadow border border-primary overflow-hidden my-4"
+                                imgClassName="w-full"
+                            />
+
+                            <h3>Tag @PostHog to ship the fix</h3>
+
+                            <p>
+                                Once you've found the problem, tag <code>@PostHog</code> to fix it. It reads your
+                                codebase, writes the change, and opens a draft PR — from the same Slack thread where you
+                                spotted the issue. No editor required.
+                            </p>
+
+                            <CloudinaryImage
+                                src="https://res.cloudinary.com/dmukukwp6/image/upload/slack_app_chat_2_e5993b2331.png"
+                                alt="@PostHog opening a draft PR from a Slack thread"
+                                className="rounded-md shadow border border-primary overflow-hidden my-4"
+                                imgClassName="w-full"
+                            />
+
+                            <div className="flex flex-wrap gap-2 mt-4">
+                                <CallToAction
+                                    type="primary"
+                                    size="md"
+                                    to="https://app.posthog.com/settings/project-integrations#integration-slack"
+                                >
+                                    Connect Slack
+                                </CallToAction>
+                                <CallToAction type="secondary" size="md" to="/slack-app" state={{ newWindow: true }}>
+                                    Learn more
+                                </CallToAction>
+                            </div>
+                        </QuestLogItem>
+
+                        <QuestLogItem
                             title="Every LLM call, captured in full"
                             subtitle="Inputs, outputs, tokens, cost, and latency — automatically"
                             icon="IconRecord"
@@ -244,6 +360,32 @@ export default function AIObservabilityLanding(): JSX.Element {
                         </QuestLogItem>
 
                         <QuestLogItem
+                            title="Your AI dashboard, zero config"
+                            subtitle="Costs, latency, errors, and usage — out of the box"
+                            icon="IconLineGraph"
+                        >
+                            <p>
+                                First generation in, dashboard on. Costs by model, active users, latency trends, error
+                                rates — all pre-built. Fully customizable when you need more.
+                            </p>
+
+                            <ProductScreenshot
+                                imageLight="https://res.cloudinary.com/dmukukwp6/image/upload/llma_dashboard_c710e66b5e.png"
+                                imageDark="https://res.cloudinary.com/dmukukwp6/image/upload/llma_dashboard_dark_aef0f67baf.png"
+                                alt="AI Observability dashboard"
+                                classes="rounded"
+                                padding={false}
+                                zoom={undefined}
+                            />
+
+                            <div className="mt-4">
+                                <CallToAction type="primary" size="md" to="https://app.posthog.com/ai-observability">
+                                    Open the dashboard
+                                </CallToAction>
+                            </div>
+                        </QuestLogItem>
+
+                        <QuestLogItem
                             title="Trace multi-step AI workflows end to end"
                             subtitle="Traces, spans, and sessions for agents, RAG, and pipelines"
                             icon="IconGraph"
@@ -271,32 +413,6 @@ export default function AIObservabilityLanding(): JSX.Element {
                                     state={{ newWindow: true }}
                                 >
                                     Explore traces
-                                </CallToAction>
-                            </div>
-                        </QuestLogItem>
-
-                        <QuestLogItem
-                            title="Your AI dashboard, zero config"
-                            subtitle="Costs, latency, errors, and usage — out of the box"
-                            icon="IconLineGraph"
-                        >
-                            <p>
-                                First generation in, dashboard on. Costs by model, active users, latency trends, error
-                                rates — all pre-built. Fully customizable when you need more.
-                            </p>
-
-                            <ProductScreenshot
-                                imageLight="https://res.cloudinary.com/dmukukwp6/image/upload/llma_dashboard_c710e66b5e.png"
-                                imageDark="https://res.cloudinary.com/dmukukwp6/image/upload/llma_dashboard_dark_aef0f67baf.png"
-                                alt="AI Observability dashboard"
-                                classes="rounded"
-                                padding={false}
-                                zoom={undefined}
-                            />
-
-                            <div className="mt-4">
-                                <CallToAction type="primary" size="md" to="https://app.posthog.com/ai-observability">
-                                    Open the dashboard
                                 </CallToAction>
                             </div>
                         </QuestLogItem>
@@ -348,115 +464,6 @@ export default function AIObservabilityLanding(): JSX.Element {
                             />
 
                             <div className="mt-4">
-                                <CallToAction type="primary" size="md" to="https://app.posthog.com/signup">
-                                    Get started free
-                                </CallToAction>
-                            </div>
-                        </QuestLogItem>
-
-                        <QuestLogItem
-                            title="Query AI traces from your editor"
-                            subtitle="MCP tools so your agent can investigate without leaving the IDE"
-                            icon="IconSparkles"
-                        >
-                            <p>
-                                Install the PostHog MCP and your coding agent can check costs, monitor errors, compare
-                                models, and drill into traces — without opening a browser.
-                            </p>
-
-                            <SingleCodeBlock language="bash" showAskAI={false}>
-                                npx @posthog/wizard mcp add
-                            </SingleCodeBlock>
-
-                            <ul>
-                                <li>
-                                    <em>"What are my total LLM costs this week, broken down by model?"</em>
-                                </li>
-                                <li>
-                                    <em>"Are there any LLM errors in the last hour?"</em>
-                                </li>
-                                <li>
-                                    <em>"Compare latency between GPT-4 and Claude for the search feature."</em>
-                                </li>
-                                <li>
-                                    <em>"Show me traces where a single call cost more than $0.50."</em>
-                                </li>
-                            </ul>
-
-                            <div className="flex flex-wrap gap-2 mt-4">
-                                <CallToAction type="primary" size="md" onClick={handleCopyMCP}>
-                                    {installMCPCopied ? 'Copied! 🚀' : 'Copy install command'}
-                                </CallToAction>
-                                <CallToAction
-                                    type="secondary"
-                                    size="md"
-                                    to="/docs/ai-observability/query-traces-mcp"
-                                    state={{ newWindow: true }}
-                                >
-                                    MCP docs
-                                </CallToAction>
-                            </div>
-                        </QuestLogItem>
-
-                        <QuestLogItem
-                            title="Questions engineers ask us"
-                            subtitle="Real questions, honest answers"
-                            icon="IconThoughtBubble"
-                        >
-                            <div className="not-prose divide-y divide-border">
-                                {[
-                                    {
-                                        question: 'How is this different from LangSmith, Langfuse, or Helicone?',
-                                        answer: 'Those are LLM-only tools. PostHog is LLM observability plus your product data — analytics, error tracking, session replay — in one place. No correlation across three dashboards.',
-                                        url: '',
-                                    },
-                                    {
-                                        question: 'Do I need to rewrite my LLM calls to use the wrappers?',
-                                        answer: "Mostly no. Initialize the PostHog client, swap the import, and you're capturing. For LangChain or LlamaIndex it's a callback — you don't touch the core logic.",
-                                        url: '/docs/ai-observability/installation',
-                                    },
-                                    {
-                                        question: "What if I don't want PostHog to see my LLM inputs and outputs?",
-                                        answer: "Privacy mode captures metadata (tokens, cost, latency, model) without sending conversation content to PostHog. Your users' prompts stay yours.",
-                                        url: '/docs/ai-observability/privacy-mode',
-                                    },
-                                    {
-                                        question: 'What happens when I hit the free tier limit?',
-                                        answer: 'Usage-based pricing at $0.00006/event. Set billing limits to cap your spend. More than 90% of companies use PostHog completely free.',
-                                        url: '/pricing',
-                                    },
-                                ].map((item, i) => (
-                                    <div key={i} className="py-3">
-                                        <button
-                                            onClick={() => setOpenQuestion(openQuestion === i ? null : i)}
-                                            className="w-full text-left flex items-center justify-between gap-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
-                                        >
-                                            <span>{item.question}</span>
-                                            <IconChevronDown
-                                                className={`shrink-0 size-4 transition-transform duration-200 ${
-                                                    openQuestion === i ? 'rotate-180' : ''
-                                                }`}
-                                            />
-                                        </button>
-                                        {openQuestion === i && (
-                                            <div className="mt-2 text-sm">
-                                                <p className="text-secondary !mb-2">{item.answer}</p>
-                                                {item.url && (
-                                                    <Link
-                                                        to={item.url}
-                                                        state={{ newWindow: true }}
-                                                        className="text-red dark:text-yellow font-semibold text-xs hover:underline"
-                                                    >
-                                                        Read the docs →
-                                                    </Link>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="mt-6">
                                 <CallToAction type="primary" size="md" to="https://app.posthog.com/signup">
                                     Get started free
                                 </CallToAction>
