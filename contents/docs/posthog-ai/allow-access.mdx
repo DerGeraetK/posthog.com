@@ -21,9 +21,13 @@ In order to use PostHog AI, you need to grant access to your project. This actio
 
 Because PostHog AI features use third-party LLM providers, we require organizations to opt in with admin approval. In most cases, this is just a formality, but we've made it explicit as we take data governance seriously.
 
-There are two ways to grant PostHog AI access to your project as an organization admin.
+There are three ways to grant PostHog AI access to your project as an organization admin.
 
-### Option 1: PostHog AI chat
+### Option 1: During onboarding
+
+When you first set up PostHog, you'll see an AI consent toggle on the first step of onboarding. This toggle is enabled by default. If you leave it on, PostHog AI is available immediately after you finish onboarding.
+
+### Option 2: PostHog AI chat
 
 The very first time you enter a prompt in the chat, PostHog AI will ask you to grant it access to your project. As an admin, you can enable it directly within the chat. 
 
@@ -34,7 +38,7 @@ The very first time you enter a prompt in the chat, PostHog AI will ask you to g
   autoPlay={true}
 />
 
-### Option 2: Organization settings
+### Option 3: Organization settings
 
 Alternatively, you can enable PostHog AI in your [organization settings](https://app.posthog.com/settings/organization-details#organization-ai-consent).
 
@@ -48,6 +52,12 @@ Alternatively, you can enable PostHog AI in your [organization settings](https:/
     alt="PostHog AI settings"
     classes="rounded"
 />
+
+## Non-admin access
+
+If you're not an organization admin and PostHog AI isn't enabled for your organization, you'll see a popup explaining that an admin needs to enable access.
+
+Click **Request access** to notify your organization's admins. This sends a request to your organization owner and admins so they can enable PostHog AI.
 
 ## MCP tools
 
