@@ -9,6 +9,12 @@ availability:
 sourceId: Mailgun
 ---
 
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+
+This source is currently in **alpha**. The interface and available tables may change.
+
+</CalloutBox>
+
 The Mailgun connector syncs your email delivery data into PostHog, including domains, events (deliveries, opens, clicks, bounces), suppressions (bounces, complaints, unsubscribes), mailing lists, tags, and templates.
 
 To link Mailgun:
