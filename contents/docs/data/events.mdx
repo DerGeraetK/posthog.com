@@ -120,6 +120,14 @@ Below is a list of some of the properties that PostHog captures by default in cl
 | Plugins Deferred            | `$plugins_deferred`      | `['plugin4']`                  |
 | IP Address                  | `$ip`                    | `192.168.1.1`                  |
 
+### Server-controlled properties
+
+Some event properties are set by PostHog during ingestion and cannot be set by clients.
+
+| Name                        | Key                      | Description                    |
+|-----------------------------|--------------------------|--------------------------------|
+| Verified                    | `$verified`              | `true` when the event was captured using the project's [secret API token](#verified-events). Any client-supplied value is stripped. |
+
 ### Different timestamp properties
 
 An event has 2 `DATETIME` type fields - `timestamp` and `created_at`.
@@ -170,3 +178,91 @@ You can rely on deduplication to modify events, for example if some events were 
 - Downstream consumers like realtime destinations, webhooks, and [batch exports](/docs/cdp/batch-exports) may re-trigger or duplicate rows.
 
 </CalloutBox>
+
+## Verified events
+
+Events captured using your project's **secret API token** (`phs_`) instead of the public project token (`phc_`) are automatically marked with `$verified: true`. This property is server-controlled and can't be forged by clients.
+
+This helps you distinguish between events from trusted server infrastructure and events that could be spoofed. For example:
+
+- **Error tracking automations** - Only trigger workflows for exceptions captured by your actual backend, not forged events
+- **Billing or usage tracking** - Ensure events driving critical business logic come from authenticated sources
+- **Data integrity checks** - Filter insights or exports to verified events when you need high-confidence data
+
+### How to capture verified events
+
+Configure your server-side SDK to use the secret API token instead of the public project token. No other code changes are required.
+
+<MultiLanguage>
+
+```python
+from posthog import Posthog
+
+posthog = Posthog(
+    'phs_your_secret_token',  # Use secret token instead of phc_ public token
+    host='<ph_client_api_host>'
+)
+
+posthog.capture('user_123', 'backend_event')
+# This event will have $verified: true
+```
+
+```node
+import { PostHog } from 'posthog-node'
+
+const client = new PostHog(
+    'phs_your_secret_token',  // Use secret token instead of phc_ public token
+    { host: '<ph_client_api_host>' }
+)
+
+client.capture({
+    distinctId: 'user_123',
+    event: 'backend_event'
+})
+// This event will have $verified: true
+```
+
+```go
+package main
+
+import "github.com/posthog/posthog-go"
+
+func main() {
+    client := posthog.New("phs_your_secret_token") // Use secret token
+    defer client.Close()
+
+    client.Enqueue(posthog.Capture{
+        DistinctId: "user_123",
+        Event:      "backend_event",
+    })
+    // This event will have $verified: true
+}
+```
+
+```ruby
+require 'posthog'
+
+posthog = PostHog::Client.new(
+  api_key: 'phs_your_secret_token',  # Use secret token
+  host: '<ph_client_api_host>'
+)
+
+posthog.capture(distinct_id: 'user_123', event: 'backend_event')
+# This event will have $verified: true
+```
+
+</MultiLanguage>
+
+### Finding your secret API token
+
+1. Go to [**Settings** > **Project** > **Feature Flags**](https://us.posthog.com/settings/environment-feature-flags)
+2. Find the **Feature Flags Secure API Key** section
+3. Copy the `phs_` token
+
+> **Important:** Keep the secret API token secure. Never expose it in client-side code or commit it to version control.
+
+### Security behavior
+
+- Events captured with a `phs_` token get `$verified: true` set automatically during ingestion
+- Any `$verified` property sent by clients using the public `phc_` token is stripped
+- Feature flag evaluation (`/flags` endpoint) works with both public and secret tokens, so SDKs configured with the secret token can evaluate flags locally
