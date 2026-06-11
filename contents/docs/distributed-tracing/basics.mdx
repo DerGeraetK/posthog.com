@@ -76,7 +76,7 @@ Useful tracing is about instrumenting the right boundaries, not every line of co
 
 **No vendor lock-in** - PostHog ingests traces over [OpenTelemetry (OTLP)](/docs/distributed-tracing/start-here). Use standard OTel libraries in any language, with no proprietary SDK. If you already export traces, point them at PostHog and you're done.
 
-**Built on the same pipeline as Logs** - Tracing uses the same OpenTelemetry-based ingestion as [Logs](/docs/logs), so a single OTel setup covers both.
+**Built on the same pipeline as Logs** - Tracing uses the same OpenTelemetry-based ingestion as [Logs](/docs/logs), so a single OTel setup covers both. When inspecting a span, click the **Logs** tab to see logs emitted during that span's execution, or toggle to **Whole trace** to see all logs across the entire request. Click **Open in Logs** to jump to the full Logs view with filters pre-applied.
 
 **One platform, not another vendor** - Your traces live in the same PostHog project as [Session Replay](/docs/session-replay), [Error Tracking](/docs/error-tracking), and [Product Analytics](/docs/product-analytics), so you have one less observability tool to run and pay for.
 
