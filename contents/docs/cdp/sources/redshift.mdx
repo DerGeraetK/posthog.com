@@ -21,10 +21,18 @@ To link Redshift:
     - **Database:** The name of the database you want like `analytics_db`.
     - **User:** The username with the necessary permissions to access the database.
     - **Password:** The password for the user.
-    - **Schema:** The schema for your database where your tables are located. The default is `public`.
+    - **Schema:** (Optional) The schema where your tables are located. Leave blank to import tables from all schemas, or specify a single schema like `public` to import only from that schema.
 4. Click **Next**
 
 The data warehouse then starts syncing your Redshift data. You can see details and progress in the [sources tab](https://app.posthog.com/data-management/sources).
+
+## Multi-schema import
+
+Leave the **Schema** field blank to import tables from all non-system schemas. Tables appear with qualified names like `schema.table` (for example, `analytics.users` or `reporting.orders`), so tables with the same name in different schemas won't conflict.
+
+PostHog automatically excludes system schemas like `pg_catalog`, `information_schema`, and `pg_internal`.
+
+To import from a single schema, enter it in the **Schema** field.
 
 > **Permissions:** The Redshift source only requires read permissions on the schemas and tables you intend to sync.
 
