@@ -1,0 +1,54 @@
+---
+title: Linking Rollbar as a source
+sidebar: Docs
+showTitle: true
+availability:
+  free: full
+  selfServe: full
+  enterprise: full
+sourceId: Rollbar
+---
+
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+
+This source is currently in **alpha**. The interface and available tables may change.
+
+</CalloutBox>
+
+The Rollbar connector syncs error tracking data from a Rollbar project into PostHog's data warehouse, including error groups, individual occurrences, deploys, and environments.
+
+## Adding a data source
+
+1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+2. Click **+ New source** and then click **Link** next to Rollbar.
+3. Get your Rollbar project access token:
+   - In Rollbar, go to your project and navigate to **Settings > Project Access Tokens**.
+   - Create a new token or use an existing one with **read** scope.
+   - Copy the token and paste it into PostHog.
+4. Click **Next**.
+5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+
+Each Rollbar source connects to a single Rollbar project. To sync data from multiple projects, create a separate source for each.
+
+## Available tables
+
+| Table | Description | Sync method |
+| ----- | ----------- | ----------- |
+| `items` | Error groups (unique errors aggregated by fingerprint) | Full refresh |
+| `occurrences` | Individual error events (from the `/instances` endpoint) | Incremental |
+| `deploys` | Deployment records | Full refresh |
+| `environments` | Environment configurations | Full refresh |
+
+**Incremental** tables sync only new records on each run. **Full refresh** tables reload all data on each sync.
+
+## Sync behavior
+
+Only the `occurrences` table supports incremental sync. Rollbar returns occurrences in descending order by ID, so PostHog uses a high-water-mark strategy: it fetches from the newest occurrence backward and stops when it reaches previously synced data. This keeps API usage proportional to the volume of new errors.
+
+The `items` table uses full refresh because error groups mutate in place – counters increment and statuses change as new occurrences arrive. Deploys and environments are typically small datasets, so full refresh works well.
+
+PostHog uses a pull-based sync model rather than webhooks. Rollbar's webhook is a single per-project notification channel, and auto-managing it could overwrite an existing destination you've configured.
+
+## Configuration
+
+<SourceParameters />
