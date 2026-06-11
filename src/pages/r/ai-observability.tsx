@@ -145,13 +145,13 @@ export default function AIObservabilityLanding(): JSX.Element {
 
                 <div className="mb-6 max-w-7xl mx-auto">
                     <div className="flex flex-wrap items-center gap-x-12 gap-y-6 text-primary dark:text-primary-dark">
-                        <LovableLogo className="fill-current object-contain max-w-full h-6" />
+                        <LovableLogo className="fill-current object-contain max-w-full h-10" />
                         <CloudinaryImage
-                            src="https://res.cloudinary.com/dmukukwp6/image/upload/kilocode_logo_c58c88f029.webp"
+                            src="https://res.cloudinary.com/dmukukwp6/image/upload/e_trim,q_auto,f_auto/kilocodelogo_93f0668287.png"
                             alt="Kilo Code"
-                            imgClassName="object-contain max-w-full h-8 w-auto"
+                            imgClassName="object-contain max-w-full h-10 w-auto"
                         />
-                        <PostHogLogo className="fill-current object-contain max-w-full h-6" />
+                        <PostHogLogo className="fill-current object-contain max-w-full h-10" />
                     </div>
                     <p className="text-xs mt-3 !mb-0">
                         <span className="font-semibold">AI teams using PostHog AI Observability in production.</span>
