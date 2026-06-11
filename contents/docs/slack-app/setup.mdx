@@ -11,7 +11,7 @@ tableOfContents:
   ]
 ---
 
-You need two integrations to use `@PostHog` in Slack: one workspace-wide Slack connection per PostHog project (set up by a project admin), and a personal GitHub connection per teammate who wants to ship code.
+You need two integrations to use `@PostHog` in Slack: one workspace-wide Slack connection per PostHog project (set up by a project admin), and either a personal GitHub connection per teammate who wants PRs under their own name, or a team-level GitHub integration so teammates can author PRs as the PostHog bot.
 
 <Steps>
 
@@ -43,15 +43,19 @@ The bot picked up new OAuth scopes on 2026-05-04 (`app_mentions:read`, `users:re
 
 </Step>
 
-<Step title="Connect your personal GitHub" badge="required">
+<Step title="Connect your personal GitHub" badge="recommended">
 
-A personal GitHub integration is **required** for the coding agent to run. Without one, the bot refuses to start any repo-bound task and replies in-thread:
+Connect your personal GitHub so the agent commits and opens PRs as you. Each teammate who wants PRs under their own name connects their account at [**Settings → Personal integrations**](https://app.posthog.com/settings/user-personal-integrations) and clicks **Connect GitHub**. You can connect multiple accounts or organizations – the agent uses them for repo access, commit attribution, and PR authorship.
 
-> I can't start this task yet – you haven't connected your personal GitHub. Connect it so I can open the pull request as you, then mention me again.
+### Without a personal GitHub connection
 
-This is a hard block on the whole task, not just the PR step – the agent doesn't plan, edit, or run anything until you've connected GitHub. Each teammate who wants to ship code connects their own account at [**Settings → Personal integrations**](https://app.posthog.com/settings/user-personal-integrations) and clicks **Connect GitHub**. You can connect multiple accounts or organizations – the agent uses them for repo access, commit attribution, and pull request authorship.
+If your team has an organization-level GitHub integration but you haven't connected a personal account, the bot prompts you to choose:
 
-PRs can't be authored under the bot itself – the agent always commits and opens PRs as whichever teammate triggered the task.
+> You have no personal integration setup yet. The PR will be authored by the PostHog bot. To change this, set up a personal integration.
+
+Click **Continue as PostHog** to let the agent author the PR under the PostHog bot. Or click **Connect GitHub** to link your personal account first – the task waits for you to finish the OAuth flow. This prompt times out after 15 minutes; re-mention the bot to try again.
+
+If there's no team GitHub integration either, personal GitHub is required – the bot won't start until you connect.
 
 <ProductScreenshot
   imageLight="https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto,w_800/personal_github_integration_5e2b3142ba.png"
@@ -65,7 +69,7 @@ If GitHub's **Save** button is greyed out at the end of the install flow, toggle
 
 </CalloutBox>
 
-If you start a task before connecting, the agent stops and posts a **Connect GitHub** button in the thread. Click it, finish the OAuth flow, and re-mention the bot – the task picks up where it left off.
+If you start a task before connecting and no team GitHub integration exists, the agent stops and posts a **Connect GitHub** button in the thread. Click it, finish the OAuth flow, and re-mention the bot – the task picks up where it left off.
 
 </Step>
 

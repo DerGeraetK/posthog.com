@@ -18,9 +18,9 @@ Mention `@PostHog` with a fix, an edit, or a feature idea and it plans the work 
     alt="A PostHog Code task running in a Slack thread"
 />
 
-Before you can mention the bot you'll need to [connect the integrations](/docs/slack-app/setup).You'll need to connect:
+Before you can mention the bot you'll need to [connect the integrations](/docs/slack-app/setup). You'll need to connect:
 - A Slack workspace connection for each project
-- A personal GitHub connection for each teammate who wants to ship PRs.
+- A personal GitHub connection for each teammate who wants PRs authored under their own name, or your team's organization-level GitHub so teammates can author PRs as the PostHog bot instead.
 
 ## Start a task
 
@@ -54,7 +54,7 @@ Once the agent finishes, you can reply to it by sending a new message in the thr
 
 Anyone in the thread can send follow-ups. Each message is forwarded to the running agent as a new turn in the same conversation, so teammates can steer the run together, drop in extra context, or answer a question the agent asked.
 
-Heads up: the resulting PR is still authored under whoever started the task – their personal GitHub integration is the one wired up – so a teammate's follow-up edits land under the original requester's name. If you want the PR credited to you, start your own task.
+Heads up: the resulting PR is authored under whoever started the task – either their personal GitHub integration or the PostHog bot if they chose that option – so a teammate's follow-up edits land under the original requester's attribution. If you want the PR credited to you, start your own task.
 
 ## Emoji cues
 
