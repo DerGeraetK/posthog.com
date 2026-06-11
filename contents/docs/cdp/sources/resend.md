@@ -9,12 +9,6 @@ availability:
 sourceId: Resend
 ---
 
-<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
-
-This source is currently in **alpha**. The interface and available tables may change.
-
-</CalloutBox>
-
 The Resend connector pulls your Resend data – audiences, broadcasts, contacts, domains, and emails – into the PostHog data warehouse.
 
 ## Adding a data source
