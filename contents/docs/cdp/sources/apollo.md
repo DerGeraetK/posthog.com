@@ -39,7 +39,7 @@ Once syncing completes, you can start using Apollo data in PostHog.
 | `accounts`      | Your saved accounts in Apollo    | Incremental |
 | `opportunities` | Your opportunities (deals)       | Full refresh |
 
-**Incremental** tables sync only records modified since the last sync. **Full refresh** tables reload all data on each sync.
+**Incremental** tables sync only records modified since the last sync, based on the `updated_at` field. **Full refresh** tables reload all data on each sync because Apollo's API doesn't support sorting opportunities by update time.
 
 ## Sync limitations
 
