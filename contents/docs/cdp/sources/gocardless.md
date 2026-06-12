@@ -15,40 +15,45 @@ This source is currently in **alpha**. The interface and available tables may ch
 
 </CalloutBox>
 
-The GoCardless connector syncs your bank-debit payments data – customers, mandates, payments, subscriptions, payouts, refunds, and events – into PostHog.
+The GoCardless connector syncs your bank debit payments data into PostHog, including customers, mandates, payments, subscriptions, payouts, refunds, and events.
 
-## Adding a data source
+## Linking GoCardless
 
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+
 2. Click **+ New source** and then click **Link** next to GoCardless.
-3. Select your environment:
-   - **Live** for production data
-   - **Sandbox** for test data
-4. You need an access token from GoCardless. In your [GoCardless dashboard](https://manage.gocardless.com/developers), go to **Developers** and create a new **Access token**. For security, create a read-only token dedicated to this integration.
-5. Back in PostHog, enter your access token and click **Next**.
-6. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+
+3. Select your **Environment** — either **Live** or **Sandbox**. Sandbox and live environments use separate API hosts and tokens, so make sure the environment matches your token.
+
+4. You need an access token from GoCardless. In your [GoCardless dashboard](https://manage.gocardless.com/developers), go to **Developers** > **Create** > **Access token**. Copy the token value.
+
+5. Back in PostHog, paste your access token into the **Access token** field.
+
+6. Click **Next**.
+
+7. Select the schemas you want to sync and configure the sync method and frequency. Click **Import**.
 
 Once the syncs are complete, you can start using GoCardless data in PostHog.
 
-<CalloutBox icon="IconWarning" title="Environment must match token" type="caution">
-
-Sandbox and live environments use separate hosts and tokens. Make sure the environment you select in PostHog matches the environment your access token was created for, otherwise authentication will fail.
-
-</CalloutBox>
-
 ## Available tables
 
-| Table           | Description                                          | Sync method  |
-| --------------- | ---------------------------------------------------- | ------------ |
-| `customers`     | Customers set up to pay via GoCardless               | Full refresh |
-| `mandates`      | Direct Debit mandates authorizing payments           | Full refresh |
-| `payments`      | Individual payment transactions                      | Full refresh |
-| `subscriptions` | Recurring payment schedules                          | Full refresh |
-| `payouts`       | Payouts from GoCardless to your bank account         | Full refresh |
-| `refunds`       | Refunds issued against payments                      | Full refresh |
-| `events`        | GoCardless event log tracking changes across objects | Incremental  |
+| Table         | Description                         | Sync mode    |
+| ------------- | ----------------------------------- | ------------ |
+| customers     | Customer records                    | Full refresh |
+| mandates      | Bank mandate authorizations         | Full refresh |
+| payments      | Payment transactions                | Full refresh |
+| subscriptions | Recurring payment subscriptions     | Full refresh |
+| payouts       | Payouts to your bank account        | Full refresh |
+| refunds       | Refund records                      | Full refresh |
+| events        | Change log of all GoCardless events | Incremental  |
 
-Most tables use **full refresh** because GoCardless records change status over time (for example, a payment moves from pending to confirmed) and the API doesn't support filtering by update time. The **events** table is the exception – it's an append-only change log that supports incremental sync via `created_at`.
+## Sync modes
+
+Only the `events` table supports incremental syncing. All other tables use full refresh.
+
+This is because the GoCardless API only supports filtering on `created_at` — there's no `updated_at` filter. Since core records like payments, mandates, and subscriptions mutate their status over time, an incremental sync based on `created_at` alone would miss those changes.
+
+The `events` table is GoCardless's append-only change log, making it the only table where incremental sync reliably captures all data. This is the same pattern used by other GoCardless connectors like Fivetran.
 
 ## Configuration
 
