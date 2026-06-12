@@ -30,7 +30,9 @@ Mollie's API doesn't support filtering by creation or update date, and objects l
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
 2. Click **+ New source** and select Mollie.
 3. Enter your Mollie API key.
-4. Click **Next**, select the tables you want to sync, then click **Link**.
+4. Select the tables you want to sync.
+5. _Optional:_ Add a prefix to your table names.
+6. Click **Next**, then click **Link**.
 
 ### Getting your API key
 
