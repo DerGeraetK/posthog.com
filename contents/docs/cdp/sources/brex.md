@@ -29,7 +29,11 @@ The Brex connector syncs corporate spend data into PostHog, including card and c
 
 Once syncing completes, you can query Brex data in PostHog.
 
-> **Note:** Brex API user tokens expire after 90 days of inactivity. If syncs stop working, generate a new token in your Brex dashboard.
+<CalloutBox icon="IconWarning" title="Token expiration" type="caution">
+
+Brex API user tokens expire after 90 days without API activity. If your syncs start failing with authentication errors, generate a new token in your Brex dashboard and reconnect the source.
+
+</CalloutBox>
 
 ## Available tables
 
