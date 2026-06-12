@@ -186,6 +186,18 @@ When creating a button tile, you can configure:
 - **Style** – Choose between primary (filled) or secondary (outlined) button styles.
 - **Transparent background** – Toggle to remove the tile's background for a cleaner look.
 
+### Adding widget tiles
+
+Widget tiles embed live data from other PostHog features directly on a dashboard without creating a separate insight. They're useful for getting a quick view of recent activity.
+
+Click the dropdown on the **Add...** button and select the widget you want to add:
+
+- **Recent events** – Shows the latest events captured in your project, similar to the [Activity > Explore](/docs/data/events) view. Displays event name, person, URL/screen, and timestamp for each event. Use the date range filter on the tile to adjust the time window (default: last 24 hours).
+- **Error tracking issues** – Shows recent issues from [Error tracking](/docs/error-tracking). Requires Error tracking to be set up.
+- **Session recordings** – Shows recent recordings from [Session replay](/docs/session-replay). Requires Session replay to be enabled.
+
+Widget tiles update when you refresh the dashboard. Click the tile title to jump to the full view for that feature (e.g., Activity > Explore for recent events).
+
 ### Toggling labels and values on insights
 
 You can toggle the visibility of labels or values on insight charts directly from the dashboard without editing the insight. Click the **...** icon on an insight card and select the toggle option. For pie charts, the option is **Show/Hide labels on series**. For other supported chart types (trends, lifecycle, stickiness, and funnel trends), the option is **Show/Hide values on series**. This change is saved to the insight.
