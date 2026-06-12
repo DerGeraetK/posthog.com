@@ -24,7 +24,24 @@ You need the following credentials from your Coupa instance:
 - **Instance URL** – your Coupa host, e.g. `https://myorg.coupahost.com`
 - **Client ID** and **Client secret** – from an OIDC client configured in your Coupa instance
 
-A Coupa admin creates the OIDC client under **Setup > Integrations > OAuth2/OpenID Connect Clients**. Choose the **client credentials** grant type and assign read scopes for the objects you want to sync (e.g., `core.invoice.read`, `core.purchase_order.read`).
+A Coupa admin creates the OIDC client under **Setup > Integrations > OAuth2/OpenID Connect Clients**. Choose the **client credentials** grant type and assign read scopes for the objects you want to sync:
+
+| Table             | Required scope             |
+| ----------------- | -------------------------- |
+| `invoices`        | `core.invoice.read`        |
+| `purchase_orders` | `core.purchase_order.read` |
+| `requisitions`    | `core.requisition.read`    |
+| `suppliers`       | `core.supplier.read`       |
+| `contracts`       | `core.contract.read`       |
+| `expense_reports` | `core.expense.read`        |
+| `users`           | `core.user.read`           |
+| `approvals`       | `core.approval.read`       |
+
+<CalloutBox icon="IconWarning" title="Save your client secret" type="caution">
+
+The client secret is only shown once when you create the OIDC client. If you lose it, you'll need to create a new client.
+
+</CalloutBox>
 
 ## Linking Coupa to PostHog
 
