@@ -218,6 +218,106 @@ You can also explicitly chose to enable or disable GeoIP for a single capture re
 posthog.capture('test_event', disable_geoip=True|False)
 ```
 
+## Filtering or modifying events before sending
+
+The `before_send` callback lets you modify or filter events before they're sent to PostHog. Common use cases include:
+
+- **Privacy** - Removing or masking sensitive data (PII)
+- **Filtering** - Dropping unwanted events (test events, internal users, bot traffic)
+- **Enhancement** - Adding custom properties to all events
+- **Transformation** - Modifying event names or property formats
+
+Pass a `before_send` function when initializing the client. It receives the event dictionary and returns either the modified event or `None` to drop it:
+
+```python
+from posthog import Posthog
+from typing import Optional, Any
+
+def my_before_send(event: dict[str, Any]) -> Optional[dict[str, Any]]:
+    properties = event.get("properties", {})
+    
+    # Filter out internal users
+    if properties.get("is_internal_user"):
+        return None
+    
+    # Mask email addresses but keep the domain
+    if "email" in properties:
+        email = properties["email"]
+        if "@" in email:
+            domain = email.split("@")[1]
+            properties["email"] = f"***@{domain}"
+    
+    # Add custom context to all events
+    properties["app_version"] = "2.1.0"
+    properties["environment"] = "production"
+    
+    return event
+
+posthog = Posthog(
+    "<ph_project_token>",
+    before_send=my_before_send
+)
+```
+
+### Common use cases
+
+**Filter events by property or name:**
+
+```python
+def filter_events(event: dict[str, Any]) -> Optional[dict[str, Any]]:
+    properties = event.get("properties", {})
+    
+    # Drop events from internal sources
+    if properties.get("source", "").endswith("internal"):
+        return None
+    
+    # Drop test events
+    if event.get("event") == "test_event":
+        return None
+    
+    return event
+```
+
+**Filter bot and internal traffic:**
+
+```python
+import re
+
+def filter_traffic(event: dict[str, Any]) -> Optional[dict[str, Any]]:
+    properties = event.get("properties", {})
+    
+    # Filter bot traffic
+    user_agent = properties.get("$user_agent", "")
+    if re.search(r'bot|crawler|spider', user_agent, re.I):
+        return None
+    
+    # Filter internal IP ranges
+    ip = properties.get("$ip", "")
+    if ip.startswith("192.168.") or ip.startswith("10."):
+        return None
+    
+    return event
+```
+
+**Log events during development:**
+
+```python
+def log_and_drop_in_dev(event: dict[str, Any]) -> Optional[dict[str, Any]]:
+    print(event)
+    return None  # Drop all events in dev mode
+```
+
+### Error handling
+
+If your `before_send` function raises an exception, the SDK logs the error and sends the original event unchanged. Your application won't crash:
+
+```python
+def risky_before_send(event: dict[str, Any]) -> Optional[dict[str, Any]]:
+    # If this raises, the original event is sent anyway
+    risky_operation()
+    return event
+```
+
 ## Debug mode
 
 If you're not seeing the expected events being captured, the feature flags being evaluated, or the surveys being shown, you can enable debug mode to see what's happening.
