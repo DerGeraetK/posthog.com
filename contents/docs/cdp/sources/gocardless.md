@@ -15,35 +15,45 @@ This source is currently in **alpha**. The interface and available tables may ch
 
 </CalloutBox>
 
-Enter your GoCardless API credentials to pull your bank debit payment data into the PostHog data warehouse.
+The GoCardless connector syncs your bank debit payments data into PostHog, including customers, mandates, payments, subscriptions, payouts, refunds, and events.
 
-## Adding a data source
+## Linking GoCardless
 
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+
 2. Click **+ New source** and then click **Link** next to GoCardless.
-3. You need two things from GoCardless:
-   - **Environment** – select **Live** or **Sandbox**. Live and sandbox use different API hosts and require separate tokens.
-   - **Access token** – create one in the [GoCardless dashboard](https://manage.gocardless.com/developers) under **Developers > Create > Access token**. Generate a read-only token for the environment you selected.
-4. Back in PostHog, enter the credentials and click **Next**.
-5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+
+3. Select your **Environment** — either **Live** or **Sandbox**. Sandbox and live environments use separate API hosts and tokens, so make sure the environment matches your token.
+
+4. You need an access token from GoCardless. In your [GoCardless dashboard](https://manage.gocardless.com/developers), go to **Developers** > **Create** > **Access token**. Copy the token value.
+
+5. Back in PostHog, paste your access token into the **Access token** field.
+
+6. Click **Next**.
+
+7. Select the schemas you want to sync and configure the sync method and frequency. Click **Import**.
 
 Once the syncs are complete, you can start using GoCardless data in PostHog.
 
 ## Available tables
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `customers` | Customer records | Full refresh |
-| `mandates` | Direct debit mandates linking customers to bank accounts | Full refresh |
-| `payments` | Individual payment records | Full refresh |
-| `subscriptions` | Recurring payment subscriptions | Full refresh |
-| `payouts` | Payout records to your bank account | Full refresh |
-| `refunds` | Refund records | Full refresh |
-| `events` | Change log / audit trail | Incremental |
+| Table         | Description                                              | Sync mode    |
+| ------------- | -------------------------------------------------------- | ------------ |
+| customers     | Customer records                                         | Full refresh |
+| mandates      | Direct debit mandates linking customers to bank accounts | Full refresh |
+| payments      | Individual payment records                               | Full refresh |
+| subscriptions | Recurring payment subscriptions                          | Full refresh |
+| payouts       | Payout records to your bank account                      | Full refresh |
+| refunds       | Refund records                                           | Full refresh |
+| events        | Change log / audit trail                                 | Incremental  |
 
-Most tables use **full refresh** because core records (payments, mandates, subscriptions) mutate status over time, and GoCardless only supports filtering by `created_at`, not `updated_at`.
+## Sync modes
 
-The **events** table is append-only and supports **incremental sync** via `created_at` filtering. It contains the complete change log for all resources.
+Only the `events` table supports incremental syncing. All other tables use full refresh.
+
+This is because the GoCardless API only supports filtering on `created_at` — there's no `updated_at` filter. Since core records like payments, mandates, and subscriptions mutate their status over time, an incremental sync based on `created_at` alone would miss those changes.
+
+The `events` table is GoCardless's append-only change log, making it the only table where incremental sync reliably captures all data.
 
 ## Sync behavior
 
