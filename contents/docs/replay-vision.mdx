@@ -125,6 +125,20 @@ GROUP BY day
 ORDER BY day
 ```
 
+## Chat about scanner results
+
+Each scanner page (except summarizers, which have their own chat entry point) includes a **Chat about these sessions** card that opens [PostHog AI](/docs/posthog-ai) scoped to that scanner's observations.
+
+When you ask a question, PostHog AI searches the model's reasoning from every observation the scanner has produced – not just keywords, but the meaning of what the AI saw in each session. This helps you find patterns, investigate trends, or understand why certain sessions got a particular result.
+
+Example prompts vary by scanner type:
+
+- **Monitor** – "What are common trends across sessions that resulted in 'yes'?"
+- **Classifier** – "What are the common themes across sessions tagged 'frustrated'?"
+- **Scorer** – "What's driving the lowest-scoring sessions?"
+
+You can also filter by exact outcome – ask about sessions with a specific verdict, tag, or score range and PostHog AI narrows its search before ranking by meaning.
+
 ## Signals
 
 When you enable **Signals** on a scanner, notable findings (such as a monitor returning true, or a scorer crossing a threshold) can surface as actionable [Signals](/docs/signals) – so a human gets notified about important sessions without anyone manually reviewing replays.
