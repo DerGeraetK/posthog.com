@@ -88,6 +88,7 @@ Enable **Incremental sync** on a stream to only fetch new or updated records on 
 | **Cursor JSONPath**    | The field in each record used as the sync cursor (e.g. `updated_at`). Required when incremental sync is enabled.                                                                                  |
 | **Cursor query param** | Query parameter name to send the cursor value (e.g. `since`).                                                                                                                                     |
 | **Cursor type**        | Type of the cursor field: Datetime (default), Date, Timestamp (epoch), or Integer.                                                                                                                |
+| **Datetime format**    | strftime pattern for formatting datetime/date cursors when sending to the API (e.g. `%Y-%m-%dT%H:%M:%SZ`). Leave blank for ISO-8601. Only applies to Datetime, Date, and Timestamp cursor types. |
 | **Upstream row order** | Whether the API returns rows in ascending (oldest first) or descending (newest first) order. Pick **Descending** when the API returns newest rows first – otherwise a resumed sync may skip rows. |
 
 ## Example configurations
