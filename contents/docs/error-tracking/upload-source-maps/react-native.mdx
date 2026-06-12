@@ -169,6 +169,18 @@ If you are not using the Expo plugin (step 1), you will need to also disable Use
 
 </Steps>
 
+## Native crash symbolication
+
+When `nativeCrashes` is enabled in your `errorTracking.autocapture` config, native iOS and Android crashes are captured automatically. To get readable stack traces, upload platform-specific debug symbols.
+
+### iOS
+
+Upload dSYM files to symbolicate native iOS crashes. Follow the [iOS dSYMs guide](/docs/error-tracking/upload-source-maps/ios) to set up a build phase script in Xcode that uploads dSYMs automatically.
+
+### Android
+
+If your app uses ProGuard or R8 minification, upload mapping files to deobfuscate native Android stack traces. Follow the [Android mappings guide](/docs/error-tracking/upload-mappings/android) to set up the PostHog Gradle plugin for automatic uploads.
+
 ## Troubleshooting
 
 **Build fails with `Sandbox: bash deny(1) file-read-data`**
