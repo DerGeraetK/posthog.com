@@ -15,53 +15,44 @@ This source is currently in **alpha**. The interface and available tables may ch
 
 </CalloutBox>
 
-The Mailgun connector syncs your email delivery data into PostHog, including domains, events (deliveries, opens, clicks, bounces), suppressions (bounces, complaints, unsubscribes), mailing lists, tags, and templates.
+The Mailgun connector syncs your transactional and bulk email data into PostHog, including events, bounces, complaints, unsubscribes, templates, and more.
 
-To link Mailgun:
+## Adding a data source
 
-1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
-2. Click **New source** and select Mailgun.
-3. Enter your Mailgun private API key. You can find this in the [Mailgun dashboard](https://app.mailgun.com/settings/api_security) under **Settings** > **API security**.
-4. Select your region:
-   - **US** (`api.mailgun.net`) – for accounts hosted in the United States
-   - **EU** (`api.eu.mailgun.net`) – for accounts hosted in Europe
-5. *Optional:* Add a prefix to your table names.
-6. Click **Next** and select the tables you want to sync.
+1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+2. Click **+ New source** and then click **Link** next to Mailgun.
+3. Enter your **Private API key**. You can find this in the [Mailgun dashboard](https://app.mailgun.com/settings/api_security) under **Settings** > **API security**.
+4. Select your **Region** — choose **US** (`api.mailgun.net`) or **EU** (`api.eu.mailgun.net`) to match where your Mailgun account is hosted.
+5. Click **Next**.
+6. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
 
-The data warehouse then starts syncing your Mailgun data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
+Once the syncs are complete, you can start using Mailgun data in PostHog.
+
+## Available tables
+
+| Table           | Description                                                 | Sync method  |
+| --------------- | ----------------------------------------------------------- | ------------ |
+| `domains`       | Sending domains configured in your Mailgun account          | Full refresh |
+| `events`        | Email events such as deliveries, opens, clicks, and bounces | Incremental  |
+| `bounces`       | Bounced email addresses per domain                          | Full refresh |
+| `complaints`    | Spam complaint addresses per domain                         | Full refresh |
+| `unsubscribes`  | Unsubscribed addresses per domain                           | Full refresh |
+| `mailing_lists` | Mailing lists                                               | Full refresh |
+| `tags`          | Tags per domain                                             | Full refresh |
+| `templates`     | Email templates per domain                                  | Full refresh |
+
+**Incremental** tables sync only new records on each run. **Full refresh** tables reload all data on each sync.
+
+## Sync limitations
+
+- **Incremental sync for events only** – Only the `events` table supports incremental syncing using the `timestamp` field. All other tables use full refresh because those Mailgun API endpoints don't expose a server-side time filter.
+
+- **Event retention limits** – Mailgun retains events for a limited period depending on your plan (1 day on free plans, up to 30 days on paid plans). The initial events sync is bounded by your plan's retention window.
+
+- **30-minute event lag** – Events sync with a 30-minute lag to account for Mailgun's eventual consistency. Recent events within this window appear on the next sync.
+
+- **Domain-scoped data** – Most tables (`events`, `bounces`, `complaints`, `unsubscribes`, `tags`, `templates`) are scoped per sending domain. The source automatically enumerates all your domains and syncs data for each one. A `domain` column is added to these tables so records stay unique across domains.
 
 ## Configuration
 
 <SourceParameters />
-
-## Available tables
-
-| Table | Description |
-| --- | --- |
-| `domains` | Sending domains configured in your Mailgun account |
-| `events` | Email events including deliveries, opens, clicks, and bounces |
-| `bounces` | Addresses that have bounced (per domain) |
-| `complaints` | Addresses that have complained/marked as spam (per domain) |
-| `unsubscribes` | Addresses that have unsubscribed (per domain) |
-| `mailing_lists` | Mailing lists in your account |
-| `tags` | Message tags (per domain) |
-| `templates` | Email templates (per domain) |
-
-## Sync methods
-
-Most Mailgun tables use full refresh syncing because the Mailgun API doesn't expose update timestamps.
-
-The `events` table supports incremental syncing using the `timestamp` field. Mailgun events are eventually consistent with about 30 minutes of lag, so incremental syncs keep the watermark behind the consistency window.
-
-## Event data retention
-
-Mailgun retains event data for a limited time based on your plan:
-
-- **Free plans** – 1 day
-- **Paid plans** – up to 30 days
-
-The initial sync of the `events` table is bounded by your plan's retention period. Historical events beyond this window aren't available from Mailgun's API.
-
-## Per-domain data
-
-Most Mailgun data is scoped per sending domain. The connector automatically discovers all domains in your account and syncs data for each one. A `domain` column is added to domain-scoped tables so you can filter and analyze data by sending domain.
