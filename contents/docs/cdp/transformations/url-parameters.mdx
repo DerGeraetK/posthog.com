@@ -1,0 +1,124 @@
+---
+title: URL parameters to event properties
+templateId:
+    - plugin-posthog-app-url-parameters-to-event-properties
+---
+
+import FeedbackQuestions from "../_snippets/feedback-questions.mdx"
+import PostHogMaintained from "../_snippets/posthog-maintained.mdx"
+
+Automatically capture URL query parameters from `$current_url` and store them as event properties. This is useful for tracking marketing attribution, campaign parameters, referral codes, or any other data passed through URLs.
+
+## Installation
+
+1. In PostHog, click the [Data pipeline](https://app.posthog.com/data-management/transformations) tab in the left sidebar.
+2. Click the [Transformations](https://app.posthog.com/data-management/transformations) tab.
+3. Search for **URL parameters to event properties** and click **+ Create**.
+4. Configure the parameters you want to capture.
+5. Press **Create & Enable** to start capturing URL parameters.
+
+<HideOnCDPIndex>
+
+## Configuration
+
+<TemplateParameters />
+
+### URL query parameters to convert
+
+A comma-separated list of URL query parameters to capture. For example, entering `utm_source, utm_medium, utm_campaign` captures those three parameters from URLs like `https://example.com?utm_source=google&utm_medium=cpc`.
+
+Leave this blank if you only want to capture parameters defined in the custom property names field.
+
+### Custom property names
+
+Map URL parameters to custom property names using key-value pairs. The key is the URL parameter name and the value is the property name to store it as.
+
+For example, to store `?fid=123` as a property called `follower_id`, add an entry with key `fid` and value `follower_id`.
+
+Parameters listed in the custom names map:
+
+- Are captured automatically without needing to be in the "URL query parameters to convert" list
+- Use the exact custom name you specify, ignoring any prefix or suffix settings
+- Work with `$set` and `$set_once` options using the custom name
+
+### Prefix and suffix
+
+Add a prefix or suffix to property names. For example, setting prefix to `url_` converts `utm_source` to `url_utm_source`.
+
+Prefix and suffix aren't applied to parameters with a custom property name.
+
+### Case sensitivity
+
+By default, parameter matching is case-sensitive. Enable **Ignore case** to match parameters regardless of case.
+
+When using custom names with case-insensitive matching, the custom name lookup also ignores case.
+
+### User properties
+
+Enable **Set as user properties** to set the captured parameters as [person properties](/docs/data/user-properties) using `$set`. This updates the current values on the person profile.
+
+Enable **Set as initial user properties** to use `$set_once` instead, which only sets the property if it doesn't already exist. This is useful for tracking initial attribution. Initial properties are prefixed with `initial_` followed by the property name.
+
+### JSON encoding
+
+Enable **Encode values as JSON** to always store values as JSON strings. By default, single values are stored as plain strings and multiple values (from repeated parameters) are stored as arrays.
+
+## Examples
+
+### Track marketing attribution
+
+Capture UTM parameters for marketing attribution:
+
+- **URL query parameters to convert** - `utm_source, utm_medium, utm_campaign, utm_content, utm_term`
+- Enable **Set as initial user properties** to preserve original attribution
+
+### Map short parameter names
+
+Use custom property names to map abbreviated URL parameters to descriptive property names:
+
+| URL parameter | Custom property name |
+|---------------|---------------------|
+| `src` | `traffic_source` |
+| `ref` | `referrer_code` |
+| `cid` | `campaign_id` |
+
+### Combine with prefix
+
+Capture some parameters with a prefix and others with custom names:
+
+- **URL query parameters to convert** - `page, section`
+- **Prefix** - `nav_`
+- **Custom property names** - `fid` → `follower_id`
+
+Results:
+- `?page=home` → property `nav_page` with value `home`
+- `?fid=123` → property `follower_id` with value `123`
+
+## Testing
+
+Use the built-in testing interface to verify your configuration:
+
+1. Go to the **Testing** section of your transformation
+2. Select or paste an event with a `$current_url` containing your query parameters
+3. Run the test to see the captured properties
+4. Adjust your configuration and iterate until you're satisfied
+
+## FAQ
+
+### Is the source code for this transformation available?
+
+PostHog is open-source and so are all the transformations on the platform. The [source code](https://github.com/PostHog/posthog/blob/master/nodejs/src/cdp/legacy-plugins/_transformations/posthog-app-url-parameters-to-event-properties/index.ts) is available on GitHub.
+
+### What happens if a parameter appears multiple times?
+
+If a URL contains the same parameter multiple times (like `?tag=a&tag=b`), the values are stored as an array unless you enable JSON encoding, which stores them as a JSON array string.
+
+### Do custom names work with user properties?
+
+Yes. When you enable **Set as user properties** or **Set as initial user properties**, the custom property name is used. For initial properties, the format is `initial_<custom_name>`.
+
+<PostHogMaintained />
+
+<FeedbackQuestions />
+
+</HideOnCDPIndex>

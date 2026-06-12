@@ -306,6 +306,10 @@ export const dataPipelines = {
                     name: 'Drop Events',
                     url: '/docs/cdp/transformations/drop-events',
                 },
+                {
+                    name: 'URL parameters to event properties',
+                    url: '/docs/cdp/transformations/url-parameters',
+                },
             ],
             dynamicChildren: 'data-pipeline-transformations',
         },
