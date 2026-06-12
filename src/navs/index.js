@@ -4119,6 +4119,26 @@ export const docsMenu = {
             ],
         },
         {
+            name: 'Replay Vision',
+            url: '/docs/replay-vision',
+            color: 'yellow',
+            icon: 'IconEye',
+            description:
+                'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
+            featureFlag: 'replay-vision-docs',
+            children: [
+                {
+                    name: 'Replay Vision',
+                },
+                {
+                    name: 'Overview',
+                    url: '/docs/replay-vision',
+                    icon: 'IconEye',
+                    color: 'seagreen',
+                },
+            ],
+        },
+        {
             name: 'Feature Flags',
             icon: 'IconToggle',
             color: 'seagreen',
@@ -6745,7 +6765,7 @@ export const docsMenu = {
             name: 'Slack app',
             icon: 'IconAtSign',
             color: 'purple',
-            url: '/docs/slack-app',
+            url: '/docs/slack',
             description: 'Run PostHog from any Slack channel — agent tasks, analytics, and notifications.',
             children: [
                 {
@@ -6753,25 +6773,25 @@ export const docsMenu = {
                 },
                 {
                     name: 'Overview',
-                    url: '/docs/slack-app',
+                    url: '/docs/slack',
                     icon: 'IconHome',
                     color: 'seagreen',
                 },
                 {
                     name: 'Setup',
-                    url: '/docs/slack-app/setup',
+                    url: '/docs/slack/setup',
                     icon: 'IconWrench',
                     color: 'blue',
                 },
                 {
                     name: 'Commands',
-                    url: '/docs/slack-app/commands',
+                    url: '/docs/slack/commands',
                     icon: 'IconTerminal',
                     color: 'purple',
                 },
                 {
                     name: 'Pricing',
-                    url: '/docs/slack-app/pricing',
+                    url: '/docs/slack/pricing',
                     icon: 'IconShield',
                     color: 'red',
                 },
