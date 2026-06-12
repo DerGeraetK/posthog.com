@@ -213,6 +213,20 @@ For example:
  * If a user closes the browser tab or window there may not be enough time to send the data to the backend
  * If you have [conditional triggers set](https://us.posthog.com/settings/project-replay#replay-triggers) we don't send data to the backend until the trigger conditions are met
 
+## Recording can't be played (missing full snapshot)
+
+You may see a message saying "This recording can't be played" because the initial screen snapshot never reached PostHog. This happens when the browser closes or goes offline before the first recording payload finishes uploading.
+
+Session Replay captures an initial DOM snapshot of the page and then records incremental changes. Without this initial snapshot, there's no baseline to apply changes to – nothing can be rendered.
+
+This is most common when:
+
+- The user has a slow internet connection
+- The browser closes quickly after page load
+- The device goes offline during the initial upload
+
+This data is unrecoverable. If you consistently see this issue, consider optimizing page load performance or ensuring the page has time to complete the initial upload before users navigate away.
+
 ## Person not found
 
 If you are able to capture a replay, but the entry says "person not found," this is replay has been captured from an anonymous user and a [person profile](/docs/data/persons) has **not** been created for them. 
