@@ -46,7 +46,7 @@ Use `posthog.onFeatureFlags()` to wait for flags to load, then `posthog.getFeatu
 ### PostHog MCP Notes
 
 - The MCP may default to a different project than the one your API key sends events to. Use `PostHog_projects-get` to list projects and `PostHog_switch-project` to point at the correct one before querying.
-- Use `PostHog_query-run` with HogQL to verify events are flowing.
+- Use `PostHog_execute-sql` with HogQL to verify events are flowing.
 - Experiments created via `PostHog_experiment-create` use `control` as the default variant key (not the variant name). Map `control` to your first variant in code.
 ```
 
