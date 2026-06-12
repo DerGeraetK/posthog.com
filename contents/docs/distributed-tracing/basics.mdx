@@ -78,6 +78,8 @@ Useful tracing is about instrumenting the right boundaries, not every line of co
 
 **Built on the same pipeline as Logs** - Tracing uses the same OpenTelemetry-based ingestion as [Logs](/docs/logs), so a single OTel setup covers both. When inspecting a span, click the **Logs** tab to see logs emitted during that span's execution, or toggle to **Whole trace** to see all logs across the entire request. Click **Open in Logs** to jump to the full Logs view with filters pre-applied.
 
+**Deep span inspection** - Click any span to view its attributes, raw JSON data, and – for database spans – the SQL query with syntax highlighting.
+
 **One platform, not another vendor** - Your traces live in the same PostHog project as [Session Replay](/docs/session-replay), [Error Tracking](/docs/error-tracking), and [Product Analytics](/docs/product-analytics), so you have one less observability tool to run and pay for.
 
 **Free during alpha** - Tracing is currently in alpha and free to use while we build it out.
