@@ -1,0 +1,61 @@
+---
+title: Linking Personio as a source
+sidebar: Docs
+showTitle: true
+availability:
+  free: full
+  selfServe: full
+  enterprise: full
+sourceId: Personio
+---
+
+import { CalloutBox } from "components/Docs/CalloutBox";
+
+The Personio connector syncs HR data from Personio into PostHog's data warehouse.
+
+## Synced tables
+
+The connector imports the following tables:
+
+| Table | Description |
+|-------|-------------|
+| `persons` | Employee records from your Personio account |
+| `absence_periods` | Time-off and leave records |
+| `attendance_periods` | Work attendance and time tracking records |
+
+## Prerequisites
+
+Before linking Personio, you need API credentials from your Personio account. An admin can create these in Personio under **Settings > Integrations > API credentials**.
+
+Grant the following read scopes for the datasets you want to sync:
+
+- `personio:persons:read` for the persons table
+- `personio:absences:read` for the absence_periods table
+- `personio:attendances:read` for the attendance_periods table
+
+<CalloutBox icon="IconWarning" title="Whitelist employee attributes" type="caution">
+
+Personio requires you to explicitly whitelist which employee attributes are accessible through the API. Attributes that aren't whitelisted are silently omitted from responses. Configure the attribute whitelist in the same API credential settings where you create the credentials.
+
+</CalloutBox>
+
+## Linking Personio
+
+To link Personio:
+
+1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and the sources tab in PostHog
+2. Click **New source** and select Personio
+3. Enter your Personio API credentials:
+   - **Client ID:** The client ID from your Personio API credentials
+   - **Client secret:** The client secret from your Personio API credentials
+4. Click **Next**, select the tables to sync, choose the sync method for each table, then click **Link**
+
+The data warehouse then starts syncing your Personio data. You can see details and progress in the [sources tab](https://app.posthog.com/data-management/sources).
+
+## Configuration
+
+<SourceParameters />
+
+## Sync methods
+
+All Personio tables support full table and incremental sync methods using the `updated_at` field.
