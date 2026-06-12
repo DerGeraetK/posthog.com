@@ -10,7 +10,7 @@ This page is the wire-level contract for the `@posthog/mcp` SDK. Every event the
 
 | Event name | When it fires | Notable extras |
 |---|---|---|
-| `$mcp_tool_call` | Every `tools/call` request | `$mcp_tool_name`, `$mcp_tool_description`, `$mcp_parameters`, `$mcp_response`, `$mcp_duration_ms`, `$mcp_is_error`, optionally `$mcp_intent`/`$mcp_intent_source` |
+| `$mcp_tool_call` | Every `tools/call` request | `$mcp_tool_name`, `$mcp_tool_description`, `$mcp_tool_category`, `$mcp_parameters`, `$mcp_response`, `$mcp_duration_ms`, `$mcp_is_error`, optionally `$mcp_intent`/`$mcp_intent_source` |
 | `$mcp_tools_list` | Every `tools/list` response | `$mcp_listed_tool_names` (string[] of advertised tool names) |
 | `$mcp_initialize` | Every client/server handshake | `$mcp_client_name`, `$mcp_client_version`, `$mcp_server_name`, `$mcp_server_version` |
 | `$mcp_resources_list` | Every `resources/list` request | — |
@@ -33,6 +33,7 @@ Present on most `mcp_*` events.
 | `$mcp_resource_name` | string | Tool, resource, or prompt name |
 | `$mcp_tool_name` | string | Same as `$mcp_resource_name`, but only on `$mcp_tool_call` |
 | `$mcp_tool_description` | string | The tool's `description` at the moment of the call. Cached from `tools/list` and (for `McpServer`) seeded from `_registeredTools`. Only on `$mcp_tool_call` and the paired `$exception` event. |
+| `$mcp_tool_category` | string | Product category declared on the tool's `_meta.category` (e.g. `"Logs"`, `"Tracing"`). Cached from `tools/list` and seeded from `_registeredTools`. Only on `$mcp_tool_call` and the paired `$exception` event. See below for how to declare categories on your tools. |
 | `$mcp_listed_tool_names` | string[] | Names of tools advertised in a `tools/list` response. Only on `$mcp_tools_list`. Useful for joining against `$mcp_tool_call` via `$session_id` to find tools advertised but never called. |
 | `$mcp_duration_ms` | number (ms) | Wall-clock duration of the tool call |
 | `$mcp_is_error` | boolean | True if the tool threw or returned `isError: true` |
@@ -46,6 +47,27 @@ Present on most `mcp_*` events.
 | `$mcp_response` | object | Sanitized tool result |
 | `$mcp_conversation_id` | string | Present when `enableConversationId` is on. See [Conversation IDs](/docs/mcp-analytics/conversation-id). |
 
+### Declaring a tool category
+
+To attach a `$mcp_tool_category` to tool calls, declare a `category` in your tool's `_meta` block. The MCP spec allows arbitrary keys in `_meta`, and the SDK reads `_meta.category` automatically:
+
+```ts
+server.tool(
+  "query-logs",
+  {
+    description: "Search and filter application logs",
+    _meta: { category: "Logs" },
+  },
+  async (args) => {
+    // ...
+  }
+)
+```
+
+Every call to that tool includes `$mcp_tool_category: "Logs"`. Tools without `_meta.category` omit the property entirely.
+
+For [custom servers](/docs/mcp-analytics/custom-servers), pass `category` directly to `captureToolCall()`.
+
 ## Exception properties
 
 Present on `$exception` events emitted alongside any failed tool call. The SDK reuses `@posthog/core`'s error-tracking parser, so these are the same `$exception_list` properties every other PostHog SDK emits — they slot straight into [Error tracking](/docs/error-tracking). Set `enableExceptionAutocapture: false` (default `true`) to stop a failed tool call from emitting the `$exception` sibling.
@@ -55,7 +77,7 @@ Present on `$exception` events emitted alongside any failed tool call. The SDK r
 | `$exception_list` | Array of structured exceptions. Each has `type`, `value` (the message), `mechanism`, and a `stacktrace` with parsed `frames` (`filename`, `function`, `lineno`, `colno`, `in_app`). An `Error.cause` chain appears as additional entries. |
 | `$exception_level` | Severity, always `"error"`. |
 
-Plus `$session_id`, `$mcp_resource_name`, `$mcp_tool_name`, `$mcp_tool_description` (tool calls only), `$mcp_server_*`, and `$mcp_client_*` for context.
+Plus `$session_id`, `$mcp_resource_name`, `$mcp_tool_name`, `$mcp_tool_description`, `$mcp_tool_category` (tool calls only), `$mcp_server_*`, and `$mcp_client_*` for context.
 
 <CalloutBox icon="IconInfo" title="Symbolicating minified MCP servers" type="fyi">
 

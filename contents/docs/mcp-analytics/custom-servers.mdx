@@ -76,7 +76,7 @@ posthog.capture({
 
 ### Tool-call specific fields
 
-`toolName` → `$mcp_tool_name`, `toolDescription` → `$mcp_tool_description`, `parameters` → `$mcp_parameters`, `response` → `$mcp_response`, `durationMs` → `$mcp_duration_ms`, `isError` → `$mcp_is_error`. When `isError` is true and `enableExceptionAutocapture` isn't `false`, the `error` you pass becomes the `$exception` sibling event (if you don't pass one, a generic exception is synthesized from the tool name).
+`toolName` → `$mcp_tool_name`, `toolDescription` → `$mcp_tool_description`, `category` → `$mcp_tool_category`, `parameters` → `$mcp_parameters`, `response` → `$mcp_response`, `durationMs` → `$mcp_duration_ms`, `isError` → `$mcp_is_error`. When `isError` is true and `enableExceptionAutocapture` isn't `false`, the `error` you pass becomes the `$exception` sibling event (if you don't pass one, a generic exception is synthesized from the tool name).
 
 <CalloutBox icon="IconInfo" title="Analytics never breaks your request" type="fyi">
 
