@@ -136,8 +136,8 @@ export default function AIObservabilityLanding(): JSX.Element {
                     </div>
                     <div className="flex justify-center">
                         <CloudinaryImage
-                            src="https://res.cloudinary.com/dmukukwp6/image/upload/posthog_ai_hogs_d4c45b4550.png"
-                            alt="PostHog AI hedgehogs"
+                            src="https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/doctor_and_paitent_cf06d6a5df.png"
+                            alt="X-ray vision for your AI product"
                             className="w-full max-w-[450px] mx-auto"
                         />
                     </div>
