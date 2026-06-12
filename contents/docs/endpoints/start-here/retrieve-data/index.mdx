@@ -6,12 +6,36 @@ showStepsToc: true
 import { Steps, Step } from 'components/Docs/Steps'
 import RetrieveDataPlatforms from '../_snippets/retrieve-data-platforms'
 import { CalloutBox } from 'components/Docs/CalloutBox'
+import Tab from 'components/Tab'
 
 <Steps>
 
-<Step title="Create a personal API key" badge="required">
+<Step title="Create an API key" badge="required">
 
-Create a personal API key with the `endpoint:read` scope to authenticate your requests.
+Endpoints support two authentication methods:
+
+<Tab.Group>
+<Tab.List>
+<Tab>Project secret API key (recommended)</Tab>
+<Tab>Personal API key</Tab>
+</Tab.List>
+<Tab.Panels>
+<Tab.Panel>
+
+Project secret API keys are scoped to a project rather than a user. Use them for server-to-server integrations and production deployments.
+
+1. Go to [Project secret API keys](https://us.posthog.com/settings/project-secret-api-keys) in your project settings
+2. Click **Create project secret API key**
+3. Give it a name (e.g., "Endpoints")
+4. Select the `endpoint:read` scope
+5. Click **Create key** and copy it somewhere safe
+
+Project secret API keys can only run endpoints — they can't list, create, update, or delete them. This narrower permission set makes them safer for production use.
+
+</Tab.Panel>
+<Tab.Panel>
+
+Personal API keys are tied to your user account and inherit your permissions. They're useful for development and testing.
 
 1. Go to [Personal API Keys](https://us.posthog.com/settings/user-api-keys) in your PostHog settings
 2. Click **Create personal API key**
@@ -19,7 +43,11 @@ Create a personal API key with the `endpoint:read` scope to authenticate your re
 4. Select the `endpoint:read` scope
 5. Click **Create key** and copy it somewhere safe
 
-<CalloutBox icon="IconWarning" title="Personal API keys are secret!" type="caution">
+</Tab.Panel>
+</Tab.Panels>
+</Tab.Group>
+
+<CalloutBox icon="IconWarning" title="API keys are secret!" type="caution">
 Store your API key securely. Never expose it in client-side code or commit it to version control.
 </CalloutBox>
 
