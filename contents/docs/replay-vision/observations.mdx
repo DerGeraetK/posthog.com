@@ -192,15 +192,34 @@ Confidence is self-reported, so this is a heuristic, not a guarantee – but it'
 
 Each scanner page (except summarizers, which have their own chat entry point) includes a **Chat about these sessions** card that opens [PostHog AI](/docs/posthog-ai) scoped to that scanner's observations.
 
-When you ask a question, PostHog AI searches the model's reasoning from every observation the scanner has produced – not just keywords, but the meaning of what the AI saw in each session. This helps you find patterns, investigate trends, or understand why certain sessions got a particular result.
+When you ask a question, PostHog AI searches the model's reasoning from every observation the scanner has produced – not just keywords, but the meaning of what the AI saw in each session. "Sessions where checkout failed" matches recordings where the model mentioned payment errors, cart problems, or billing failures, even if those exact words weren't used.
 
-Example prompts vary by scanner type:
+### Try it
 
-- **Monitor** – "What are common trends across sessions that resulted in 'yes'?"
-- **Classifier** – "What are the common themes across sessions tagged 'frustrated'?"
-- **Scorer** – "What's driving the lowest-scoring sessions?"
+Select a prompt to try it out in the PostHog app:
 
-You can also filter by exact outcome – ask about sessions with a specific verdict, tag, or score range and PostHog AI narrows its search before ranking by meaning.
+- [`Find sessions where users struggled with checkout`](https://app.posthog.com/#panel=max:Find%20sessions%20where%20users%20struggled%20with%20checkout)
+- [`What patterns do you see in sessions with a verdict of yes?`](https://app.posthog.com/#panel=max:What%20patterns%20do%20you%20see%20in%20sessions%20with%20a%20verdict%20of%20yes%3F)
+- [`Which sessions scored lowest because of a broken button?`](https://app.posthog.com/#panel=max:Which%20sessions%20scored%20lowest%20because%20of%20a%20broken%20button%3F)
+- [`Summarize what's happening in sessions tagged 'abandoned'`](https://app.posthog.com/#panel=max:Summarize%20what%27s%20happening%20in%20sessions%20tagged%20%27abandoned%27)
+
+### Narrowing results
+
+Combine semantic search with structured filters when you're looking for a specific outcome:
+
+- **Verdict** – for monitors, filter to `yes`, `no`, or `inconclusive` results
+- **Tags** – for classifiers, filter to sessions carrying specific tags
+- **Score range** – for scorers, filter to sessions within a score range
+
+For example: "sessions that scored 0 because of a broken button" applies the score filter first, then searches semantically within those results.
+
+### Tips
+
+- **Describe meaning, not keywords** – "users who got confused" works better than searching for the word "confused"
+- **Ask about patterns** – "what's driving low scores?" synthesizes across multiple sessions instead of listing them
+- **Follow up** – after getting results, ask PostHog AI to summarize common themes or dig into specific sessions
+
+You can also ask about observations from the general session replay chat – PostHog AI finds recordings by what Vision observed across all your scanners.
 
 ## Wiring observations into the rest of PostHog
 
