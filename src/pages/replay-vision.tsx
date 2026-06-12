@@ -218,7 +218,7 @@ export default function ReplayVisionPage() {
             <SEO
                 title="Replay Vision - PostHog"
                 description="Point an AI scanner at your recordings, and let it watch every session for you: flagging bugs, scoring frustration, tagging behavior, and summarizing what happened."
-                image="https://res.cloudinary.com/dmukukwp6/image/upload/doctor_hogs_sub_ff499630e0.jpg"
+                image="https://res.cloudinary.com/dmukukwp6/image/upload/c_fill,g_auto,w_1200,h_630,f_auto,q_auto/doctor_hogs_sub_ff499630e0.jpg"
                 imageType="absolute"
             />
             <Editor slug="/replay-vision" maxWidth="100%" hasPadding={false}>
