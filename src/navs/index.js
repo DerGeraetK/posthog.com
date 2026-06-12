@@ -4123,9 +4123,7 @@ export const docsMenu = {
             url: '/docs/replay-vision',
             color: 'yellow',
             icon: 'IconEye',
-            description:
-                'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
-            featureFlag: 'replay-vision-docs',
+            description: 'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
             children: [
                 {
                     name: 'Replay Vision',
@@ -4134,7 +4132,55 @@ export const docsMenu = {
                     name: 'Overview',
                     url: '/docs/replay-vision',
                     icon: 'IconEye',
-                    color: 'seagreen',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Getting started',
+                    url: '/docs/replay-vision/start-here',
+                    icon: 'IconRocket',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Scanner types',
+                    url: '/docs/replay-vision/scanner-types',
+                    icon: 'IconShuffle',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Creating scanners',
+                    url: '/docs/replay-vision/creating-scanners',
+                    icon: 'IconPencil',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Running scanners',
+                    url: '/docs/replay-vision/running-scanners',
+                    icon: 'IconPlay',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Observations',
+                    url: '/docs/replay-vision/observations',
+                    icon: 'IconList',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Quota and limits',
+                    url: '/docs/replay-vision/quota-and-limits',
+                    icon: 'IconPercentage',
+                    color: 'yellow',
+                },
+                {
+                    name: 'MCP',
+                    url: '/docs/replay-vision/mcp',
+                    icon: 'IconTerminal',
+                    color: 'yellow',
+                },
+                {
+                    name: 'Troubleshooting',
+                    url: '/docs/replay-vision/troubleshooting',
+                    icon: 'IconQuestion',
+                    color: 'yellow',
                 },
             ],
         },
@@ -5187,6 +5233,7 @@ export const docsMenu = {
                     featured: true,
                     children: [
                         { name: 'Overview', url: '/docs/surveys/installation' },
+                        { name: 'Android', url: '/docs/surveys/installation/android' },
                         { name: 'Angular', url: '/docs/surveys/installation/angular' },
                         { name: 'Astro', url: '/docs/surveys/installation/astro' },
                         { name: 'Bubble', url: '/docs/surveys/installation/bubble' },
@@ -6955,6 +7002,7 @@ export const docsMenu = {
                         { name: 'React Native', url: '/docs/logs/installation/react-native' },
                         { name: 'iOS', url: '/docs/logs/installation/ios' },
                         { name: 'Android', url: '/docs/logs/installation/android' },
+                        { name: 'Flutter', url: '/docs/logs/installation/flutter' },
                         { name: 'Datadog', url: '/docs/logs/installation/datadog' },
                         { name: 'Other', url: '/docs/logs/installation/other' },
                     ],
