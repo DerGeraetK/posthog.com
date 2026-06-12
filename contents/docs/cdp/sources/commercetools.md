@@ -6,71 +6,93 @@ availability:
   free: full
   selfServe: full
   enterprise: full
-sourceId: commercetools
+sourceId: Commercetools
 ---
 
 <CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-This source is currently in **alpha**. The interface and available tables may change.
+The commercetools source is currently in alpha. It has been tested against the commercetools API documentation but not yet battle-tested with live production workloads. If you run into issues, please let us know.
 
 </CalloutBox>
 
-Enter your commercetools API client credentials to pull your commerce data into the PostHog data warehouse. The sync uses OAuth2 client credentials to authenticate.
+The commercetools connector syncs your commerce data into PostHog, including orders, customers, payments, carts, product projections, categories, discount codes, and inventory.
 
 ## Adding a data source
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-2. Click **+ New source** and then click **Link** next to commercetools.
-3. You need four things from commercetools:
-   - **Region** – select the region your commercetools project is hosted in (North America GCP, North America AWS, Europe GCP, Europe AWS, or Australia GCP).
-   - **Project key** – your commercetools project identifier, shown in the Merchant Center under Settings > Developer settings.
-   - **Client ID** – from your API client credentials.
-   - **Client secret** – from your API client credentials.
-4. Back in PostHog, enter the credentials and click **Next**.
-5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
+2. Click **+ New source** and select commercetools by clicking the **Link** button.
+3. Select your **Region** from the dropdown. This must match the region your commercetools project is hosted in:
 
-Once the syncs are complete, you can start using commercetools data in PostHog.
+| Label                                 | Value                      |
+| ------------------------------------- | -------------------------- |
+| North America (GCP, us-central1)      | `us-central1.gcp`          |
+| North America (AWS, us-east-2)        | `us-east-2.aws`            |
+| Europe (GCP, europe-west1)            | `europe-west1.gcp`         |
+| Europe (AWS, eu-central-1)            | `eu-central-1.aws`         |
+| Australia (GCP, australia-southeast1) | `australia-southeast1.gcp` |
 
-## Creating API credentials in commercetools
+4. Enter your **Project key**. You can find this in the commercetools Merchant Center under **Settings** > **Developer settings**, or on the API client details page alongside your generated credentials.
+5. Enter your **Client ID** and **Client secret**. These come from an API client you create in the Merchant Center (see [Creating an API client](#creating-an-api-client) below).
+6. Select the tables you want to import.
+7. Click **Import**.
 
-To create API credentials with the right scopes:
+The data warehouse then starts syncing your commercetools data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
 
-1. Open the [commercetools Merchant Center](https://mc.commercetools.com/).
-2. Go to **Settings > Developer settings > API clients**.
-3. Click **Create new API client**.
-4. Give the client a name (e.g., "PostHog Data Warehouse").
-5. Under **Scopes**, select the **view** scopes for the datasets you want to sync:
-   - `view_orders` – required for orders and carts
-   - `view_customers` – required for customers
-   - `view_payments` – required for payments
-   - `view_products` – required for product projections and inventory
-   - `view_categories` – required for categories
-   - `view_discount_codes` – required for discount codes
-6. Click **Create API client** and copy the credentials.
+## Creating an API client
 
-Your project key and region appear alongside the generated credentials.
+To connect commercetools to PostHog, create a dedicated API client with read-only scopes:
 
-## Available tables
+1. In the commercetools Merchant Center, go to **Settings** > **Developer settings**.
+2. Click **Create new API client**.
+3. Give it a descriptive name (e.g., "PostHog sync").
+4. Grant the following **view** scopes depending on which tables you want to sync:
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `orders` | Orders from your commercetools project | Incremental |
-| `customers` | Customer records | Incremental |
-| `payments` | Payment records | Incremental |
-| `carts` | Shopping carts | Incremental |
-| `product_projections` | Product data projections | Incremental |
-| `categories` | Product categories | Incremental |
-| `discount_codes` | Discount codes | Incremental |
-| `inventory` | Inventory entries | Incremental |
+| Table                 | Required scope        |
+| --------------------- | --------------------- |
+| `orders`              | `view_orders`         |
+| `customers`           | `view_customers`      |
+| `payments`            | `view_payments`       |
+| `carts`               | `view_orders`         |
+| `product_projections` | `view_products`       |
+| `categories`          | `view_categories`     |
+| `discount_codes`      | `view_discount_codes` |
+| `inventory`           | `view_products`       |
 
-All tables sync incrementally using the `lastModifiedAt` timestamp, so only new or updated records are fetched on each run.
+5. Click **Create API client**.
+6. Copy the **Client ID**, **Client secret**, **Project key**, and **Region** – you'll need all four when linking the source in PostHog.
 
-## Sync behavior
+<CalloutBox icon="IconWarning" title="Save your client secret" type="caution">
 
-commercetools limits offset pagination to 10,000 results. For large datasets, the sync automatically re-anchors the query window using `lastModifiedAt` timestamps to work around this limit. This ensures large initial syncs and incremental updates complete successfully.
+The client secret is only shown once when you create the API client. If you lose it, you'll need to create a new API client.
 
-Authentication tokens last approximately 48 hours. If a sync runs longer, the token refreshes automatically.
+</CalloutBox>
 
 ## Configuration
 
 <SourceParameters />
+
+## Sync modes
+
+commercetools tables support both incremental and full refresh syncing:
+
+- **Incremental** – Only imports records modified since the last sync, using the `lastModifiedAt` field. This is the most efficient option for ongoing syncs.
+- **Full refresh** – Re-imports all records from commercetools on every sync.
+
+All tables also support append-only syncing, which adds new records without updating existing ones.
+
+When you enable incremental sync for a table, the first sync performs a full import to establish a baseline. Subsequent syncs only fetch records where `lastModifiedAt` is at or after the last synced value.
+
+## Available tables
+
+All tables use `id` as the primary key and partition data by `createdAt` (monthly).
+
+| Table                 | Description                           |
+| --------------------- | ------------------------------------- |
+| `orders`              | Customer orders and their line items  |
+| `customers`           | Customer accounts and profiles        |
+| `payments`            | Payment transactions                  |
+| `carts`               | Active and inactive shopping carts    |
+| `product_projections` | Product catalog data (projected view) |
+| `categories`          | Product category hierarchy            |
+| `discount_codes`      | Promotional discount codes            |
+| `inventory`           | Stock levels across supply channels   |
