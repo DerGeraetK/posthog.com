@@ -38,12 +38,13 @@ Backstage API credentials (client ID and secret) are issued by your Taboola acco
 
 ## Configuring PostHog
 
-1. In PostHog, go to the **[Data pipelines](https://app.posthog.com/pipeline/sources)** tab.
+1. In PostHog, go to the **[Data pipelines](https://app.posthog.com/data-management/sources)** tab.
 2. Open the **+ New** drop-down menu in the top-right and select **Source**.
 3. Find Taboola in the sources list and click **Link**.
 4. Enter your **Account ID** (the alphabetic account identifier from Taboola Ads).
 5. Enter your **Client ID** and **Client Secret** from your Taboola account manager.
 6. (Optional) Add a prefix for the table name.
+7. Click **Next**, select the tables to sync, set the sync method and frequency, then click **Import**.
 
 ## Configuration
 
