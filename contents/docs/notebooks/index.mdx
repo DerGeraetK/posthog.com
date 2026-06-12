@@ -33,11 +33,13 @@ export const flagDark = "https://res.cloudinary.com/dmukukwp6/image/upload/posth
 export const surveyLight = "https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/docs/notebooks/survey-light-mode.png"
 export const surveyDark = "https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/docs/notebooks/survey-dark-mode.png"
 
-Notebooks enable you to combine the tools of PostHog into a single space for analysis. Rather than jumping between dashboards, insights, replays, experiment results, and more, your chain of analysis exists on a single page.
+Notebooks combine PostHog's tools into a single space for analysis. Instead of jumping between dashboards, insights, replays, and experiment results, your entire analysis chain lives on one page.
 
-It provides a flexible interface for organizing ad-hoc analysis, bug investigations, internal documentation, and feature releases by yourself or with your team.
+Notebooks store content as markdown, making them human-readable and easy to version control. This also means the content you see is exactly what PostHog AI reads and writes when you collaborate with it.
 
-You can get started with notebooks by going to [the notebook tab](https://app.posthog.com/notebooks) in your PostHog instance and clicking "New notebook."
+Use notebooks to organize ad-hoc analysis, bug investigations, internal documentation, and feature releases – solo or with your team.
+
+To get started, go to the [**Notebooks** tab](https://app.posthog.com/notebooks) and click **New notebook**.
 
 ## Accessing the notebook popover
 
@@ -219,6 +221,12 @@ To add a table:
 
 When you click inside a table, a menu appears to add or delete rows and columns.
 
+### Inline AI chat
+
+Type `/ai` in a notebook to start a conversation with [PostHog AI](/docs/posthog-ai). This creates a persistent chat block where the AI can answer questions, generate insights, and insert visualizations directly at that location.
+
+Ask it to analyze a trend, explain an anomaly, or create a funnel based on your description. Any visualizations or insights it generates appear inline, and you can continue to edit and refine them.
+
 ## Canvas
 
 A canvas is like a Notebook whose entire contents is persisted in the URL so that it can be easily shared with members of your organisation. Canvases support all the same content types as Notebooks but do not get persisted to the database or come with any form of history tracking. They are a great way of doing some quick explorations that you may want to share with a colleague but don't necessarily need to save for future use. The shareable link changes as you make edits, so updates to you notebook will require a new link to be shared.
@@ -243,4 +251,8 @@ Sharing externally isn't available yet, but you can request it in the notebook s
 
 ### Do notebooks support real-time multiplayer editing?
 
-No. Although other people can see and edit your notebooks, they can't edit them at the same time. We do conflict detection and warn you of potential conflicts when you are trying to save (overwrite or revert).
+Yes. Your changes autosave, and you see updates from other editors in real time. If two people edit at the same time, PostHog uses a three-way merge to combine changes. When the merge can't resolve cleanly, you choose which version to keep.
+
+### How do I upgrade an older notebook to markdown format?
+
+Notebooks created before the markdown update use a legacy rich-text format. When you open one of these notebooks, an upgrade dialog appears with the option to convert it. The upgrade is optional – your original notebook stays intact until you convert it.
