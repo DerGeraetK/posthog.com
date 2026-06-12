@@ -66,6 +66,28 @@ Click **Add stream** to add a new stream. Each stream has the following fields:
 | **HTTP method**      | `GET` (default) or `POST`.                                                                                |
 | **Records JSONPath** | Path to the array of rows in each API response (e.g. `data`, `items`, `results.data`).                    |
 
+#### Parent-child streams (fan-out)
+
+Some APIs require you to fetch a parent resource first, then make a separate request per parent row to get related child data. For example, you might list all `forms`, then fetch `responses` for each form via `/forms/{form_id}/responses`. This is called a "fan-out" pattern.
+
+To configure a child stream that depends on a parent:
+
+1. Create the parent stream first (e.g. `forms` with path `/forms`)
+2. Create the child stream (e.g. `responses`) and expand **Depends on parent stream**
+3. Select the parent stream from the dropdown
+4. Set **Parent field** to the field from each parent row to inject (e.g. `id`)
+5. Set **Path placeholder** to the placeholder name in your path (e.g. `form_id`)
+6. Set the child's **Path** to include the placeholder (e.g. `/forms/{form_id}/responses`)
+7. Optionally set **Include parent fields** to copy parent fields onto each child row (e.g. `id, name`) — these appear as `_<parent>_<field>` columns
+
+During sync, PostHog fetches the parent stream first, then calls the child endpoint once per parent row, inserting the parent field value into the path placeholder.
+
+**Limitations:**
+- Only one level of nesting is supported (a parent must be a top-level stream)
+- The placeholder must be in the URL path, not query parameters
+- Child streams use a single global cursor, not per-parent incremental state
+- Parent streams are fully scanned on every sync (even if the child uses incremental sync)
+
 #### Pagination
 
 Select a **Paginator** type for each stream. This tells PostHog how to fetch all pages of data from the endpoint.
@@ -118,6 +140,18 @@ Some APIs require POST requests to query data. The builder supports this:
 3. Add a stream named `events` with path `/query/events` and HTTP method **POST**
 4. Set the paginator to **JSON body next-URL** with next-URL JSONPath `next_page_url`
 
+### Parent-child fan-out (e.g. Typeform)
+
+To sync forms and their responses from an API like Typeform:
+
+1. Set **Base URL** to `https://api.typeform.com`
+2. Set **Authentication** to **Bearer token** and enter your token
+3. Add a parent stream named `forms` with path `/forms` and records JSONPath `items`
+4. Add a child stream named `responses` with path `/forms/{form_id}/responses` and records JSONPath `items`
+5. In the `responses` stream, expand **Depends on parent stream** and select `forms`
+6. Set **Parent field** to `id` and **Path placeholder** to `form_id`
+7. Optionally add `id` to **Include parent fields** to copy the form ID onto each response row
+
 ## Limitations
 
 - **Maximum 5 custom sources per team**
@@ -146,6 +180,13 @@ Common issues:
 - **No streams** – You need at least one stream
 - **Duplicate stream names** – Each stream name must be unique
 - **Invalid HTTP method** – Only `GET` and `POST` are supported
+
+Parent-child stream errors:
+
+- **Unknown parent stream** – The parent stream you selected doesn't exist
+- **Placeholder not in path** – The path placeholder must appear in the stream's path (e.g. `{form_id}` in `/forms/{form_id}/responses`)
+- **Nested parent** – A parent stream cannot itself depend on another parent (only one level of nesting is allowed)
+- **Dependency cycle** – Streams cannot form circular dependencies
 
 ### Incremental sync skips rows
 
