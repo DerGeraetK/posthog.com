@@ -176,6 +176,42 @@ posthog.capture_exception(e, distinct_id='user_distinct_id', properties=addition
 
 Contexts automatically capture exceptions thrown inside them, unless disable it by passing `capture_exceptions=False` to `new_context()`.
 
+### Burst protection
+
+The Python SDK has opt-in burst protection that limits autocaptured exceptions per exception type. This prevents an infinite loop or crash from flooding your project with duplicate exceptions.
+
+```python
+posthog = Posthog(
+    "<ph_project_token>",
+    enable_exception_autocapture=True,
+    enable_exception_autocapture_rate_limiting=True,
+)
+```
+
+Each exception type gets its own token bucket. By default, each bucket allows 49 exceptions before rate limiting kicks in, then refills 10 tokens every 10 seconds. Exceptions that exceed the limit are dropped before reaching the ingestion queue.
+
+You can customize the rate limiting behavior:
+
+```python
+posthog = Posthog(
+    "<ph_project_token>",
+    enable_exception_autocapture=True,
+    enable_exception_autocapture_rate_limiting=True,
+    exception_autocapture_bucket_size=50,
+    exception_autocapture_refill_rate=10,
+    exception_autocapture_refill_interval_seconds=10,
+)
+```
+
+| Option | Default | Description |
+|---|---|---|
+| `enable_exception_autocapture_rate_limiting` | `False` | Enable client-side rate limiting for autocaptured exceptions. |
+| `exception_autocapture_bucket_size` | `50` | Maximum burst of exceptions allowed per exception type (clamped to 0–100). |
+| `exception_autocapture_refill_rate` | `10` | Tokens restored per refill interval. |
+| `exception_autocapture_refill_interval_seconds` | `10` | Seconds between token refills. |
+
+Burst protection runs client-side, per process. To cap exception volume across your whole project, set a server-side [rate limit](/docs/error-tracking/rate-limiting).
+
 ### Code variables capture
 
 The Python SDK can automatically capture the state of local variables when an exception occurs. This gives you a debugger-like view of your application state at the time of the error:
