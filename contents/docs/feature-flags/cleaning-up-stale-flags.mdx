@@ -166,8 +166,10 @@ Adapt the flag names, rollout states, and SDK patterns to your codebase.
 
 After your code changes are deployed and you've verified everything works, disable the cleaned-up flags in PostHog.
 
-**Disable vs delete:**
+**Disable vs archive vs delete:**
 - **Disable** (`active: false`) – the flag stops being evaluated but the configuration is preserved. If something was missed in the code cleanup, re-enabling is instant.
+
+- **Archive** – the flag is disabled and hidden from the flag list, but all configuration and linked data (experiments, surveys) are preserved. Ideal for finished flags where you want to keep the history. You can filter by **Archived** status to view and unarchive them later. See [archiving feature flags](/docs/feature-flags/creating-feature-flags#archiving-feature-flags) for details.
 
 - **Delete** – a soft-delete. Keeps the flag list clean, but re-enabling requires recreating the flag. Better for flags you're confident you'll never need again.
 

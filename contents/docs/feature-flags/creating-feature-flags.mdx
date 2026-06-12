@@ -352,6 +352,32 @@ For feature flags linked to an [experiment](/docs/experiments), inline editing i
 
 After creating Feature Flags, you may need to manage or delete them to keep your project organized. PostHog provides tools to help you clean up flags at scale.
 
+### Archiving Feature Flags
+
+Archive a feature flag when it has served its purpose but you want to preserve its configuration and history. This is ideal for flags tied to completed experiments or finished rollouts where historical data matters.
+
+**Archived flags:**
+
+- Are hidden from the flag list by default (filter by **Archived** status to view them)
+- Must be disabled – archiving an enabled flag disables it automatically
+- Can't be re-enabled until unarchived
+- Keep all linked experiment and survey data intact
+- Can be unarchived at any time
+
+To archive a flag, click the three-dot menu on a flag row or open the flag's page and select **Archive feature flag**. If the flag is enabled, PostHog warns you that archiving will disable it and roll back the feature from all users matching the release conditions.
+
+To unarchive, filter the flag list to show archived flags, find the flag, and select **Unarchive feature flag**. The flag returns in a disabled state – re-enabling is a separate step.
+
+<CalloutBox icon="IconLightBulb" title="Archive vs. disable vs. delete" type="fyi">
+
+**Disable** (`active: false`) – the flag stops being served but stays in your flag list. Good for temporary pauses or kill switches you might need later.
+
+**Archive** – the flag is disabled and hidden from your list, but all data is preserved. Good for finished flags where you want the history but not the clutter.
+
+**Delete** – the flag is soft-deleted. It's gone from your list and no longer served, but can be restored if needed. Good for flags you're confident you'll never need again.
+
+</CalloutBox>
+
 ### Deleting Feature Flags in bulk
 
 To delete multiple Feature Flags at once:
