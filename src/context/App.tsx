@@ -1390,6 +1390,24 @@ export interface SiteSettings {
 
 const isLabel = (item: any) => !item?.url && item?.name
 
+// The settings the server renders with. SSR has no access to `window.__theme` or
+// `localStorage`, so it always renders these defaults. The first client render must use the
+// exact same values, otherwise the markup diverges from the server HTML and React bails out of
+// hydration (minified error #423), re-rendering the whole app and causing a visible flash.
+// Persisted preferences are swapped in after mount via `getInitialSiteSettings` (see the
+// hydration effect in `Provider`).
+const getServerDefaultSiteSettings = (): SiteSettings => ({
+    experience: 'posthog',
+    colorMode: 'light',
+    theme: 'light',
+    skinMode: 'modern',
+    cursor: 'default',
+    wallpaper: 'keyboard-garden',
+    clickBehavior: 'double',
+    performanceBoost: false,
+    screensaverDisabled: true,
+})
+
 const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
     const lastReset = typeof window !== 'undefined' ? localStorage.getItem('lastReset') : null
     const siteSettings = {
@@ -1423,7 +1441,10 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const constraintsRef = useRef<HTMLDivElement>(null)
     const taskbarRef = useRef<HTMLDivElement>(null)
     const [isMobile, setIsMobile] = useState(!isSSR && window.innerWidth < 768)
-    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getInitialSiteSettings(isMobile, compact))
+    // Start from the server defaults so the first client render matches the SSR markup. The
+    // persisted theme/skin/wallpaper are applied in a post-mount effect below to avoid a
+    // hydration mismatch (React error #423).
+    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getServerDefaultSiteSettings)
     const websiteMode = siteSettings.experience === 'boring'
     const [taskbarHeight, setTaskbarHeight] = useState(38)
     const [lastClickedElementRect, setLastClickedElementRect] = useState<{ x: number; y: number } | null>(null)
@@ -2334,7 +2355,25 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         confetti,
     ])
 
+    // Once mounted on the client, swap the server defaults for the user's persisted preferences
+    // (read from `window.__theme` and `localStorage`). Doing this in an effect — rather than in
+    // the initial state — keeps the first client render identical to the server HTML, so
+    // hydration succeeds instead of throwing React error #423 and re-rendering the whole app.
     useEffect(() => {
+        setSiteSettings(getInitialSiteSettings(isMobile, compact))
+        // Run once on mount; `isMobile`/`compact` already hold their client values here.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const skipFirstBodySync = useRef(true)
+    useEffect(() => {
+        // `theme-init.js` already applied the persisted skin/wallpaper to <body> before
+        // hydration, so skip the first run (which still holds the server defaults) to avoid
+        // briefly clobbering them. Subsequent runs sync the user's actual settings.
+        if (skipFirstBodySync.current) {
+            skipFirstBodySync.current = false
+            return
+        }
         if (siteSettings.skinMode) {
             document.body.setAttribute('data-skin', siteSettings.skinMode)
         }
