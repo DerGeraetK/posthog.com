@@ -1,5 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
-import Lottie from 'react-lottie'
+import React, { useEffect, useState, useRef, useCallback, lazy, Suspense } from 'react'
+
+// react-lottie bundles lottie-web (~600 KiB); load it on demand instead of on every page.
+const Lottie = typeof window !== 'undefined' ? lazy(() => import('react-lottie')) : () => null
 
 interface ScreensaverProps {
     isActive: boolean
@@ -96,11 +98,13 @@ export const Screensaver: React.FC<ScreensaverProps> = ({ isActive, onDismiss })
                     height: `${logoSizeRef.current.height}px`
                 }}
             >
-                <Lottie
-                    options={defaultOptions}
-                    height={logoSizeRef.current.height}
-                    width={logoSizeRef.current.width}
-                />
+                <Suspense fallback={null}>
+                    <Lottie
+                        options={defaultOptions}
+                        height={logoSizeRef.current.height}
+                        width={logoSizeRef.current.width}
+                    />
+                </Suspense>
             </div>
 
             <div className="absolute bottom-8 w-full @md:w-auto @md:left-1/2 transform @md:-translate-x-1/2 text-white/50 text-sm text-center">
