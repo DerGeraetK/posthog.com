@@ -137,6 +137,10 @@ function printAndEnforce(report) {
         console.info(`${status} ${r.label}`)
         console.info(`   entrypoint: ${r.entrypoint}`)
         console.info(`   eager closure: ${r.files} modules, ${formatMiB(r.bytes)} (budget ${budget})`)
+        console.info('   largest modules in the closure:')
+        for (const { file, bytes } of r.largest.slice(0, 10)) {
+            console.info(`   ${formatMiB(bytes).padStart(10)}  ${file}`)
+        }
         summaryLines.push(`| ${status} \`${r.entrypoint}\` | ${formatMiB(r.bytes)} | ${budget} | ${r.files} |`)
 
         if (r.overBudget) {

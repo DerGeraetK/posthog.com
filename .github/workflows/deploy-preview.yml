@@ -105,6 +105,14 @@ jobs:
                   node scripts/bundle/check-eager-graph.mjs --report-only
                   node scripts/bundle/build-bundle-comment.mjs
 
+            - name: Upload bundle report
+              if: success()
+              uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+              with:
+                  name: bundle-report
+                  path: bundle-report/
+                  retention-days: 7
+
             - name: Find bundle report comment
               if: success()
               uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0

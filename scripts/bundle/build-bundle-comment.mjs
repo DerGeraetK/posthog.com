@@ -61,6 +61,16 @@ function eagerSection(report, baseline) {
     for (const message of report.errors ?? []) {
         lines.push('', `> ⚠️ ${message}`)
     }
+    for (const r of report.roots) {
+        if (!r.largest?.length) {
+            continue
+        }
+        lines.push('', `<details><summary>Largest modules in the <code>${r.entrypoint}</code> closure</summary>`, '', '| Module | Size |', '| --- | --- |')
+        for (const { file, bytes } of r.largest.slice(0, 15)) {
+            lines.push(`| \`${file}\` | ${kib(bytes)} |`)
+        }
+        lines.push('', '</details>')
+    }
     return lines
 }
 
