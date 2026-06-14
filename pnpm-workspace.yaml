@@ -8,6 +8,13 @@ minimumReleaseAgeExclude:
     - '@posthog/icons'
     - '@posthog/hedgehog-mode'
 
+# Guard against an upstream crash in react-remove-scroll@2.7.1 (pulled in transitively
+# by radix-ui). Its getTouchXY helper reads event.changedTouches[0].clientX on touchstart,
+# but some mobile browsers fire touchstart with an empty changedTouches list, so
+# changedTouches[0] is undefined and the read throws. The patch returns [0, 0] in that case.
+patchedDependencies:
+    react-remove-scroll@2.7.1: patches/react-remove-scroll@2.7.1.patch
+
 # Hoist Gatsby's internal dependencies for webpack compatibility
 publicHoistPattern:
     - '*webpack-hot-middleware*'

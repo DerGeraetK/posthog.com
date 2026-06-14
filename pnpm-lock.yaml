@@ -7,6 +7,11 @@ settings:
 overrides:
   undici: 5.26.3
 
+patchedDependencies:
+  react-remove-scroll@2.7.1:
+    hash: 25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f
+    path: patches/react-remove-scroll@2.7.1.patch
+
 importers:
 
   .:
@@ -20145,7 +20150,7 @@ snapshots:
       react-error-boundary: 6.0.0(react@18.3.1)
       react-hook-form: 7.54.2(react@18.3.1)
       react-markdown: 9.0.3(@types/react@16.14.66)(react@18.3.1)
-      react-remove-scroll: 2.7.1(@types/react@16.14.66)(react@18.3.1)
+      react-remove-scroll: 2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1)
       react-svg: 16.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-textarea-autosize: 8.5.7(@types/react@16.14.66)(react@18.3.1)
       rehype-raw: 7.0.0
@@ -21887,7 +21892,7 @@ snapshots:
       aria-hidden: 1.2.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-remove-scroll: 2.7.1(@types/react@16.14.66)(react@18.3.1)
+      react-remove-scroll: 2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1)
     optionalDependencies:
       '@types/react': 16.14.66
       '@types/react-dom': 18.3.7(@types/react@16.14.66)
@@ -22071,7 +22076,7 @@ snapshots:
       aria-hidden: 1.2.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-remove-scroll: 2.7.1(@types/react@16.14.66)(react@18.3.1)
+      react-remove-scroll: 2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1)
     optionalDependencies:
       '@types/react': 16.14.66
       '@types/react-dom': 18.3.7(@types/react@16.14.66)
@@ -22170,7 +22175,7 @@ snapshots:
       aria-hidden: 1.2.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-remove-scroll: 2.7.1(@types/react@16.14.66)(react@18.3.1)
+      react-remove-scroll: 2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1)
     optionalDependencies:
       '@types/react': 16.14.66
       '@types/react-dom': 18.3.7(@types/react@16.14.66)
@@ -22193,7 +22198,7 @@ snapshots:
       aria-hidden: 1.2.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-remove-scroll: 2.7.1(@types/react@16.14.66)(react@18.3.1)
+      react-remove-scroll: 2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1)
     optionalDependencies:
       '@types/react': 16.14.66
       '@types/react-dom': 18.3.7(@types/react@16.14.66)
@@ -22432,7 +22437,7 @@ snapshots:
       aria-hidden: 1.2.6
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-remove-scroll: 2.7.1(@types/react@16.14.66)(react@18.3.1)
+      react-remove-scroll: 2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1)
     optionalDependencies:
       '@types/react': 16.14.66
       '@types/react-dom': 18.3.7(@types/react@16.14.66)
@@ -37244,7 +37249,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 16.14.66
 
-  react-remove-scroll@2.7.1(@types/react@16.14.66)(react@18.3.1):
+  react-remove-scroll@2.7.1(patch_hash=25892714583aef5ce39298faafa8044e3f2cc9c953b625ca2ecb902194a8941f)(@types/react@16.14.66)(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-remove-scroll-bar: 2.3.8(@types/react@16.14.66)(react@18.3.1)
