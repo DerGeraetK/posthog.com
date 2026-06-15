@@ -6,6 +6,7 @@ availability:
   free: full
   selfServe: full
   enterprise: full
+beta: true
 sourceId: GoogleSearchConsole
 ---
 
