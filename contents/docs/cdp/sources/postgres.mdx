@@ -337,8 +337,8 @@ Changes that occur while CDC is disabled are not captured. If you re-enable CDC 
 While CDC is enabled, you can edit the following settings from the Configuration tab without disabling CDC:
 
 - **Automatic slot protection** - Toggle whether PostHog drops the replication slot when WAL lag exceeds the critical threshold.
-- **WAL lag warning threshold** - The lag level (in MB) that triggers a warning. Default is `1024 MB`.
-- **WAL lag critical threshold** - The lag level (in MB) that triggers slot protection. Default is `10240 MB`. Must be greater than the warning threshold.
+- **WAL lag warning threshold** - The lag level (in MB) that triggers a warning. Default is `512 MB`.
+- **WAL lag critical threshold** - The lag level (in MB) that triggers slot protection. Default is `2048 MB`. Must be greater than the warning threshold.
 
 To change the management mode (PostHog-managed vs. self-managed) or slot/publication names, disable CDC and re-enable it with the new settings.
 
@@ -348,8 +348,8 @@ Replication slots retain WAL until the consumer advances the slot. If PostHog st
 
 PostHog stores two lag thresholds on CDC sources:
 
-- Warning threshold: `1024 MB` by default
-- Critical threshold: `10240 MB` by default
+- Warning threshold: `512 MB` by default
+- Critical threshold: `2048 MB` by default
 
 For PostHog-managed sources, **automatic slot protection** is enabled by default. If lag exceeds the critical threshold, PostHog attempts to drop the replication slot and publication, then marks the source as errored. This protects your source database from unbounded WAL growth, but it means you must re-enable CDC or resync after fixing the issue. You can [adjust both thresholds](#updating-cdc-settings) from the Configuration tab.
 
