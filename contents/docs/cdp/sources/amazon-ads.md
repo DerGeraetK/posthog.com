@@ -6,61 +6,52 @@ availability:
   free: full
   selfServe: full
   enterprise: full
-alpha: true
 sourceId: AmazonAds
 ---
 
-You can sync your Amazon advertising data by configuring Amazon Ads as a source in PostHog. This source syncs entity data from the Sponsored Products API. The supported tables are:
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-| Table | Description |
-|-------|-------------|
-| `profiles` | Advertising profiles associated with your account |
-| `sp_campaigns` | Sponsored Products campaigns |
-| `sp_ad_groups` | Sponsored Products ad groups |
+This source is currently in **alpha**. The interface and available tables may change.
 
-Campaign and ad group data sync per profile. Each row includes a `_profile_id` field identifying which profile it belongs to.
+</CalloutBox>
 
-> **Note:** This source syncs entity data only. Performance metrics (impressions, clicks, spend) require Amazon's async reporting API and will be added in a future update.
+The Amazon Ads connector pulls your Amazon advertising entity data – profiles, Sponsored Products campaigns, and ad groups – into the PostHog data warehouse.
 
-## Requirements
+You need a Login with Amazon (LWA) application with Advertising API access. PostHog uses your LWA credentials to authenticate with Amazon's Advertising API and sync entity data from every advertising profile your token can access.
 
-To connect Amazon Ads, you need credentials from a Login with Amazon (LWA) application with access to the Amazon Advertising API:
+## Adding a data source
 
-- **LWA client ID** - The client ID from your Login with Amazon application
-- **LWA client secret** - The client secret from your Login with Amazon application
-- **Refresh token** - An authorized refresh token for the advertiser account you want to sync
+1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+2. Click **+ New source** and then click **Link** next to Amazon Ads.
+3. Select the **Region** that matches your Amazon advertising profiles:
+   - **North America** – US, Canada, Mexico, Brazil
+   - **Europe** – UK, Germany, France, Italy, Spain, and others
+   - **Far East** – Japan, Australia, Singapore
+4. Enter your Login with Amazon credentials:
+   - **LWA client ID** – Your application's client ID (starts with `amzn1.application-oa2-client...`)
+   - **LWA client secret** – Your application's client secret
+   - **Refresh token** – An authorized refresh token from your LWA app (starts with `Atzr|...`)
+5. Click **Next**.
+6. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
 
-### Creating a Login with Amazon application
+To obtain these credentials, create a Login with Amazon application in the [Amazon Developer Console](https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html) and request access to the [Amazon Advertising API](https://advertising.amazon.com/API/docs/en-us/get-started/overview).
 
-If you don't have an LWA application with Advertising API access:
+PostHog validates your credentials at connect time by minting an access token and listing your advertising profiles. If the token doesn't have Advertising API access, the connection fails immediately.
 
-1. Go to the [Login with Amazon developer console](https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html).
-2. Create a new security profile or use an existing one.
-3. Request access to the Amazon Advertising API through the [Amazon Advertising API onboarding process](https://advertising.amazon.com/API/docs/en-us/get-started/overview).
-4. Once approved, generate a refresh token by completing the OAuth authorization flow with your advertiser account.
+Once the syncs are complete, you can start using Amazon Ads data in PostHog.
 
-For detailed instructions, see [Amazon's Advertising API authorization documentation](https://advertising.amazon.com/API/docs/en-us/get-started/overview).
+## Available tables
 
-## Configuring PostHog
+| Table          | Description                                              | Sync method  |
+| -------------- | -------------------------------------------------------- | ------------ |
+| `profiles`     | Amazon Advertising profiles associated with your account | Full refresh |
+| `sp_campaigns` | Sponsored Products campaigns across all profiles         | Full refresh |
+| `sp_ad_groups` | Sponsored Products ad groups across all profiles         | Full refresh |
 
-1. In PostHog, go to the **[Data pipelines](https://app.posthog.com/data-management/sources)** tab.
-2. Open the **+ New** drop-down menu in the top-right and select **Source**.
-3. Find Amazon Ads in the sources list and click **Link**.
-4. Select your **Region**:
-   - **North America** - US, Canada, Mexico, Brazil
-   - **Europe** - UK, Germany, France, Italy, Spain, Netherlands, UAE, and more
-   - **Far East** - Japan, Australia, Singapore
-5. Enter your **LWA client ID**.
-6. Enter your **LWA client secret**.
-7. Enter your **Refresh token**.
-8. (Optional) Add a prefix for the table name.
+All tables use **full refresh** sync because the Amazon Ads API doesn't expose an updated-since filter for entity lists. Each sync reloads all data.
 
-PostHog validates your credentials by minting an access token and listing your advertising profiles. If validation fails, check that your LWA application has Advertising API access and that the refresh token is authorized for the correct advertiser account.
+Sponsored Products rows (`sp_campaigns` and `sp_ad_groups`) include a `_profile_id` field identifying which advertising profile they belong to. Data is synced from every profile your token can access.
 
 ## Configuration
 
 <SourceParameters />
-
-## Sync behavior
-
-All tables use full table refresh. Amazon's entity endpoints don't expose an updated-since filter, so PostHog syncs all data on each run.
