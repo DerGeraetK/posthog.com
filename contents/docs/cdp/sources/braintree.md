@@ -9,52 +9,48 @@ availability:
 sourceId: Braintree
 ---
 
+The Braintree connector syncs your payment data into PostHog, including transactions, refunds, and disputes.
+
 <CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-This source is currently in **alpha**. The interface and available tables may change.
+The Braintree source is currently in alpha. Customer, plan, and subscription data isn't available yet — these live in Braintree's legacy SDK API and are planned as a follow-up.
 
 </CalloutBox>
 
-The Braintree connector syncs transactions, refunds, and disputes from your Braintree account into PostHog.
+## Supported tables
+
+| Table            | Description                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| **transactions** | Payment transactions including amount, status, currency, order ID, merchant account, and payment method type |
+| **refunds**      | Refund records including amount, status, the refunded transaction reference, and order ID                    |
+| **disputes**     | Dispute records including amount disputed, status, type, case number, and received date                      |
+
+All three tables support incremental syncs on the `createdAt` field.
 
 ## Adding a data source
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+1. In PostHog, go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
 
 2. Click **+ New source** and then click **Link** next to Braintree.
 
-3. Select your **Environment**:
-   - **Production** – for live Braintree data
-   - **Sandbox** – for test data
+3. Select your **Environment** — either **Production** or **Sandbox**. Make sure the keys you provide in the next steps match the selected environment.
 
-4. You need API keys from Braintree. In your [Braintree Control Panel](https://www.braintreegateway.com/), go to **Settings** > **API Keys**. If you don't have an existing key, generate a new one. Copy the **Public Key** and **Private Key**.
+4. To find your API keys, go to the [Braintree Control Panel](https://www.braintreegateway.com/) and navigate to **Settings** > **API Keys**. If you don't have a key pair yet, generate one. Copy the **Public key** and **Private key**.
 
-   > Sandbox and production use separate API keys. Make sure the keys match the environment you selected.
+5. Paste your **Public key** and **Private key** into the corresponding fields in PostHog.
 
-5. Back in PostHog, paste the public key and private key into the corresponding fields and click **Next**.
+6. Click **Next**.
 
-6. Select the tables you want to sync and configure the sync method and frequency. Click **Import**.
+7. On the next page, select the tables you want to sync and configure the sync method and frequency. Click **Import**.
 
-Once the syncs are complete, you can start using Braintree data in PostHog.
+Once the sync completes, you can start querying your Braintree data in PostHog.
 
 ## Configuration
 
 <SourceParameters />
 
-## Sync methods
+## Sync details
 
-All three Braintree tables (transactions, refunds, and disputes) support incremental syncing using `createdAt` as the replication key. This means only records created since the last sync are fetched on each run.
-
-Full table refresh is also available if you need to re-import all data.
-
-## Available tables
-
-The Braintree connector syncs the following tables:
-
-| Table | Description |
-|-------|-------------|
-| `transactions` | Payment transactions including amount, status, order ID, merchant account, and payment method type |
-| `refunds` | Refund records linked to their original transactions |
-| `disputes` | Chargebacks and disputes including case number, status, and disputed amount |
-
-> **Note:** Customer, plan, and subscription data aren't currently available through this connector. These resources use Braintree's legacy SDK API rather than the GraphQL API.
+- **Incremental sync** - All tables support incremental syncs using the `createdAt` field. PostHog filters server-side using a `greaterThanOrEqualTo` search filter, so only new records are fetched on each run.
+- **Partitioning** - Data is partitioned by month on the `createdAt` field.
+- **Pagination** - Uses Relay-style cursor pagination. If a sync is interrupted, it resumes from the last successfully synced page.
