@@ -15,33 +15,32 @@ This source is currently in **alpha**. The interface and available tables may ch
 
 </CalloutBox>
 
-Enter your Clari API credentials to pull your revenue forecasting data into the PostHog data warehouse.
+Connect your Clari account to sync revenue forecast and audit event data into the PostHog data warehouse.
 
 ## Adding a data source
 
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
 2. Click **+ New source** and then click **Link** next to Clari.
-3. In Clari, generate an API key under your account's **API settings**.
-4. Back in PostHog, enter the API key in the `API key` field.
-5. Enter your **Forecast ID**. You can find this in the URL when viewing a forecast tab in Clari (e.g. `app.clari.com/forecast/<forecast-id>`).
-6. Click **Next**.
-7. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+3. In Clari, generate an **API key** under your account's API settings.
+4. Find your **Forecast ID** in the URL when viewing a forecast tab in Clari (for example `net_bookings` from `app.clari.com/forecast/net_bookings`).
+5. Back in PostHog, enter your **API key** and **Forecast ID**, then click **Next**.
+6. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
 
 Once the syncs are complete, you can start using Clari data in PostHog.
 
 ## Available tables
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `audit_events` | User activity and system events | Incremental |
-| `forecast` | Revenue forecast data | Full refresh |
+| Table          | Description                                                    | Sync method  |
+| -------------- | -------------------------------------------------------------- | ------------ |
+| `audit_events` | Audit log events from Clari (limited to ~30 days of retention) | Incremental  |
+| `forecast`     | Forecast data exported from Clari's async export pipeline      | Full refresh |
 
 **Incremental** tables sync only new or updated records on each run using the `eventTimestamp` field. **Full refresh** tables reload all data on each sync.
 
 ## Sync limitations
 
-- **Audit events** are only retained in Clari for about 30 days. Historical data older than this cannot be synced.
-- **Forecast exports** are limited to roughly 1,000 per rolling 30 days. Avoid setting very frequent sync intervals for the forecast table.
+- **Audit event retention** – Clari retains audit events for approximately 30 days, so the initial sync can only reach back that far.
+- **Forecast export quota** – Clari caps forecast exports at roughly 1,000 per rolling 30 days with a maximum of three concurrent export jobs. Avoid very frequent syncs of the forecast table to stay within this limit.
 
 ## Configuration
 
