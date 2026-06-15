@@ -11,34 +11,49 @@ sourceId: HiBob
 
 <CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-This source is currently in **alpha**. The interface and available tables may change.
+This source is currently in **alpha**. The interface and available tables may change. If you encounter any issues, please [report them on GitHub](https://github.com/PostHog/posthog/issues/new?labels=bug&template=bug_report.md).
 
 </CalloutBox>
 
-The HiBob connector syncs your HR data – employees and tasks – into PostHog.
+The HiBob connector syncs your Bob HR data into the PostHog data warehouse. Enter your HiBob Service User credentials to automatically pull employee and task data into PostHog.
+
+## Prerequisites
+
+Before linking HiBob, create a Service User in your Bob account:
+
+1. In Bob, go to **Settings** > **Integrations** > **Automation** > **Service Users**
+2. Create a new Service User and note down the **Service User ID** and **token**
+3. Add the Service User to a permission group with read access to the data categories you want to sync (e.g., **People**)
+
+For details, see [HiBob's Service Users documentation](https://apidocs.hibob.com/docs/service-users).
+
+<CalloutBox icon="IconWarning" title="Service Users only" type="caution">
+
+HiBob discontinued legacy API tokens. Only Service User credentials work with this connector. API calls return 403 until your Service User is added to a permission group with the appropriate access.
+
+</CalloutBox>
 
 ## Adding a data source
 
 1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-2. Click **+ New source** and then click **Link** next to HiBob.
-3. You need a **Service User** in Bob. Legacy API tokens are no longer supported – only Service Users work. In Bob, go to **Settings → Integrations → Automation → Service Users** and create a new service user. Add it to a permission group with read access to the data categories you want to sync (for example, **People**). For details, see [HiBob's Service Users documentation](https://apidocs.hibob.com/docs/service-users).
-4. Back in PostHog, enter the **Service User ID** and **Service User token** and click **Next**.
-5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+2. Click **+ New source** and select **HiBob**.
+3. Enter your **Service User ID** and **Service User token**.
+4. _Optional:_ Add a prefix to your table names.
+5. Select the tables you want to import and set a sync frequency.
+6. Click **Import**.
 
-Once the syncs are complete, you can start using HiBob data in PostHog.
+Once the sync completes, you can query your HiBob data in PostHog.
 
 ## Available tables
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `employees` | Employee directory including active and inactive employees | Full refresh |
-| `tasks` | Tasks assigned in Bob | Full refresh |
+| Table       | Description                                                                | Sync method  |
+| ----------- | -------------------------------------------------------------------------- | ------------ |
+| `employees` | Employee profiles and HR data, including inactive and offboarded employees | Full refresh |
+| `tasks`     | Tasks in HiBob                                                             | Full refresh |
 
-**Incremental** tables sync only new or updated records on each run. **Full refresh** tables reload all data on each sync.
+All tables use **full refresh** syncing, which re-imports all records from HiBob on every sync. HiBob doesn't expose updated-at filters on employees, so incremental syncing isn't available.
 
-## Sync limitations
-
-All HiBob tables are full refresh only – the HiBob API does not expose an "updated since" filter that returns complete records, so each sync reloads all data.
+Employee data is returned with human-readable values – list and reference fields are flattened into readable strings rather than raw IDs.
 
 ## Configuration
 
