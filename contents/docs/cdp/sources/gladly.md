@@ -11,6 +11,12 @@ sourceId: Gladly
 
 import { CalloutBox } from "components/Docs/CalloutBox";
 
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+
+This source is currently in **alpha**. The interface and available tables may change.
+
+</CalloutBox>
+
 The Gladly connector syncs your customer service data – customers, conversations, agents, and topics – into the PostHog data warehouse.
 
 ## Available tables
@@ -22,7 +28,7 @@ The Gladly connector syncs your customer service data – customers, conversatio
 | agents | Incremental | Support agents in your Gladly organization |
 | topics | Incremental | Topics used to categorize conversations |
 
-All tables support incremental sync using the `_job_updated_at` field, which tracks when each record was last exported from Gladly.
+All tables support incremental sync. Each row includes injected `_job_id` and `_job_updated_at` fields from the export job that produced it. The `_job_updated_at` field tracks when each record was last exported from Gladly and is used as the incremental cursor.
 
 ## Linking Gladly
 
