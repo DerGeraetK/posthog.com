@@ -48,7 +48,9 @@ Once syncing completes, you can start using Lightspeed Retail data in PostHog.
 | `users` | Staff users | Incremental | – |
 | `taxes` | Tax configurations | Incremental | – |
 
-All tables support **incremental** sync using Lightspeed's version-based cursor, which syncs only new or updated records on each run.
+## Sync mode
+
+All tables support **incremental** sync using the `version` field. Every record in the Lightspeed X-Series API carries a monotonically increasing integer `version`. PostHog uses this as a cursor to fetch only new or updated records since the last sync, so subsequent syncs are fast and efficient.
 
 ## Rate limits
 
