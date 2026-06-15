@@ -48,6 +48,7 @@ Each condition has three parts:
 1. **Field** – what to match on:
    - `event_name` – the name of the event (e.g., `$pageview`, `signup`)
    - `distinct_id` – the [distinct ID](/docs/data/persons) attached to the event
+   - `ip` – the client IP address the event was captured from, useful for dropping traffic from a known-bad source address
 
 2. **Operator** – how to match:
    - `equals` – the field value matches the specified value exactly
@@ -87,6 +88,7 @@ Each test case specifies:
 
 - An **event name**
 - A **distinct ID**
+- An **IP address**
 - The **expected result** – either "Drop" or "Ingest"
 
 Test cases run locally in your browser and show a pass/fail result. The filter can't be enabled until all tests pass – if you try to save in **live** mode with failing tests, it automatically downgrades to **dry run**.
@@ -106,7 +108,7 @@ Use these metrics to validate your filter is matching the right volume and type 
 
 - Maximum **20 conditions** per filter
 - Maximum **five levels** of nesting
-- Only `event_name` and `distinct_id` fields are supported
+- Only `event_name`, `distinct_id`, and `ip` fields are supported
 - Only `equals` and `contains` operators are supported
 - One filter configuration per project
 
