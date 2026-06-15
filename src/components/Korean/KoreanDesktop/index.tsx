@@ -18,12 +18,6 @@ import usePostHog from 'hooks/usePostHog'
 import { translateKo } from '../../../pages/ko/_translations'
 import KoreanCookieBannerToast from '../KoreanCookieBannerToast'
 
-declare global {
-    interface Window {
-        __desktopLoaded?: boolean
-    }
-}
-
 export const useProductLinks = (): AppItem[] => {
     const { posthogInstance, openNewChat, siteSettings, updateSiteSettings } = useApp()
     const { addToast } = useToast()
@@ -341,13 +335,6 @@ export default function Desktop(): JSX.Element {
             window.removeEventListener('resize', handleResize)
         }
     }, [posthogInstance])
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            window.__desktopLoaded = true
-            window.dispatchEvent(new CustomEvent('desktopLoaded'))
-        }
-    }, [])
 
     const handlePositionChange = (appLabel: string, position: IconPosition) => {
         const newPositions = { ...iconPositions, [appLabel]: position }

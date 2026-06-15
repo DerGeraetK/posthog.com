@@ -39,10 +39,6 @@ export const onRenderBody = function ({ setPreBodyComponents }) {
             key: 'dark-mode',
             src: '/scripts/theme-init.js',
         }),
-        React.createElement('script', {
-            key: 'initial-loader',
-            src: '/scripts/initial-loader.js',
-        }),
     ])
 }
 

@@ -1754,8 +1754,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
         const shouldExpand =
             element.props.location.state?.expanded ??
-            (!keyToUse?.startsWith('ask-max') && element.props.location.pathname !== '/' && !settings?.size)
-        const expandedDimensions = shouldExpand ? getExpandedDimensions() : null
+            (!keyToUse?.startsWith('ask-max') && !settings?.size?.fixed && !element.props.minimal && !settings?.modal)
 
         const newWindow: AppWindow = {
             element,
@@ -1771,9 +1770,9 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                 params: element.props.params,
                 path: element.props.location.pathname,
             },
-            size: expandedDimensions?.size || size,
+            size,
             previousSize: size,
-            position: expandedDimensions?.position || position,
+            position,
             previousPosition: position,
             sizeConstraints:
                 settings?.size?.fixed && settings.size
@@ -2016,11 +2015,19 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
         const { size, position } = getSnapDimensions(side)
 
+        let prevSize = focusedWindow.size
+        let prevPos = focusedWindow.position
+        if (focusedWindow.expanded) {
+            const cr = constraintsRef.current.getBoundingClientRect()
+            prevSize = { width: cr.width - 16, height: cr.height - 8 }
+            prevPos = { x: 8, y: 0 }
+        }
+
         updateWindow(focusedWindow, {
             position,
             size,
-            previousSize: focusedWindow.size,
-            previousPosition: focusedWindow.position,
+            previousSize: prevSize,
+            previousPosition: prevPos,
             snapped: side,
             expanded: false,
         })
@@ -2039,10 +2046,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
     const expandWindow = () => {
         if (!focusedWindow) return
-        const { position, size } = getExpandedDimensions()
         updateWindow(focusedWindow, {
-            position,
-            size,
             previousSize: focusedWindow.size,
             previousPosition: focusedWindow.position,
             expanded: true,
@@ -2569,6 +2573,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     useEffect(() => {
         const visibleWindows = windows.filter((window) => {
             if (window.minimized) return false
+            if (window.expanded) return true
 
             const windowsAbove = windows.filter((w) => w !== window && w.zIndex > window.zIndex && !w.minimized)
 

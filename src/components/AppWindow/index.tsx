@@ -200,7 +200,6 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
         menu: appMenu,
         taskbarRef,
         websiteMode,
-        getExpandedDimensions,
     } = useApp()
     const isSSR = typeof window === 'undefined'
     const controls = useDragControls()
@@ -230,6 +229,8 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     const [hasDeveloperMode, setHasDeveloperMode] = useState(false)
     const hasToolbar = item.appSettings?.toolbar
     const inView = useMemo(() => {
+        if (item.expanded) return true
+
         const windowsAbove = windows.filter(
             (window) => window !== item && window.zIndex > item.zIndex && !window.minimized
         )
@@ -281,6 +282,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     }, [windowRef.current])
 
     const isMaximized = () => {
+        if (item.expanded) return true
         const taskbarRect = taskbarRef.current?.getBoundingClientRect()
         const expandedWidth = window.innerWidth - (taskbarRect?.left ?? 0) * 2
         return size.width >= expandedWidth
@@ -303,6 +305,24 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
         info: PanInfo,
         change: { x: boolean } | { y: boolean } | { x: boolean; y: boolean }
     ) => {
+        if (item.expanded && windowRef.current) {
+            const rect = windowRef.current.getBoundingClientRect()
+            const containerRect = constraintsRef.current?.getBoundingClientRect()
+            const measuredPos = {
+                x: rect.left - (containerRect?.left ?? 0),
+                y: rect.top - (containerRect?.top ?? 0),
+            }
+            const measuredSize = { width: rect.width, height: rect.height }
+            updateWindow(item, {
+                position: measuredPos,
+                size: measuredSize,
+                previousSize: measuredSize,
+                previousPosition: measuredPos,
+                expanded: false,
+                snapped: false,
+            })
+            return
+        }
         const update: { size?: { height?: number; width?: number }; position?: { x: number } } = {}
         if ('y' in change) update.size = { height: Math.max(size.height + info.delta.y, sizeConstraints.min.height) }
         if ('x' in change) {
@@ -361,6 +381,25 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     }
 
     const handleDrag = (_event: any, info: any) => {
+        if (item.expanded && windowRef.current) {
+            const rect = windowRef.current.getBoundingClientRect()
+            const containerRect = constraintsRef.current?.getBoundingClientRect()
+            const measuredPos = {
+                x: rect.left - (containerRect?.left ?? 0),
+                y: rect.top - (containerRect?.top ?? 0),
+            }
+            const measuredSize = { width: rect.width, height: rect.height }
+            updateWindow(item, {
+                position: measuredPos,
+                size: measuredSize,
+                previousSize: measuredSize,
+                previousPosition: measuredPos,
+                expanded: false,
+                snapped: false,
+            })
+            if (!dragging) setDragging(true)
+            return
+        }
         updateWindow(item, {
             expanded: false,
             snapped: false,
@@ -473,13 +512,8 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
 
     useEffect(() => {
         const handleResize = () => {
-            if (item.expanded) {
-                const { position: expPos, size: expSize } = getExpandedDimensions()
-                updateWindow(item, {
-                    size: expSize,
-                    position: expPos,
-                })
-            } else if (beyondViewport(size)) {
+            if (item.expanded) return
+            if (beyondViewport(size)) {
                 const newSize = {
                     width: Math.min(size.width, window.innerWidth),
                     height: Math.min(size.height, window.innerHeight - taskbarHeight),
@@ -667,6 +701,10 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                 data-scheme="tertiary"
                                 suppressHydrationWarning
                                 className={`@container absolute !select-auto flex flex-col ${
+                                    item.expanded && siteSettings.experience !== 'boring'
+                                        ? 'top-0 left-2 right-2 bottom-2'
+                                        : ''
+                                } ${
                                     item.appSettings?.size?.fixed
                                         ? 'bg-transparent'
                                         : siteSettings.heaterMode
@@ -699,38 +737,44 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                 } ${chrome ? 'overflow-hidden' : ''}`}
                                 style={{
                                     zIndex: item.zIndex,
+                                    ...(item.expanded || siteSettings.experience === 'boring'
+                                        ? {}
+                                        : {
+                                              width: size.width,
+                                              height: item.appSettings?.size?.autoHeight ? 'auto' : size.height,
+                                          }),
                                 }}
-                                initial={{
-                                    scale: 0.08,
-                                    x: rendered
-                                        ? siteSettings.experience === 'boring' || !windowPosition
-                                            ? 0
-                                            : windowPosition.x
-                                        : item.fromOrigin?.x || windowPosition?.x || Math.round(position.x),
-                                    y: rendered
-                                        ? siteSettings.experience === 'boring' || !windowPosition
-                                            ? 0
-                                            : windowPosition.y
-                                        : item.fromOrigin?.y || windowPosition?.y || Math.round(position.y),
-                                    width: siteSettings.experience === 'boring' ? '100%' : size.width,
-                                    height:
-                                        siteSettings.experience === 'boring'
-                                            ? '100%'
-                                            : item.appSettings?.size?.autoHeight
-                                            ? 'auto'
-                                            : size.height,
-                                }}
+                                initial={
+                                    item.expanded
+                                        ? false
+                                        : {
+                                              scale: 0.08,
+                                              x: rendered
+                                                  ? siteSettings.experience === 'boring' || !windowPosition
+                                                      ? 0
+                                                      : windowPosition.x
+                                                  : item.fromOrigin?.x || windowPosition?.x || Math.round(position.x),
+                                              y: rendered
+                                                  ? siteSettings.experience === 'boring' || !windowPosition
+                                                      ? 0
+                                                      : windowPosition.y
+                                                  : item.fromOrigin?.y || windowPosition?.y || Math.round(position.y),
+                                              ...(siteSettings.experience === 'boring'
+                                                  ? { width: '100%', height: '100%' }
+                                                  : {}),
+                                          }
+                                }
                                 animate={{
                                     scale: 1,
-                                    x: siteSettings.experience === 'boring' ? 0 : Math.round(position.x),
-                                    y: siteSettings.experience === 'boring' ? 0 : Math.round(position.y),
-                                    width: siteSettings.experience === 'boring' ? '100%' : size.width,
-                                    height:
-                                        siteSettings.experience === 'boring'
-                                            ? '100%'
-                                            : item.appSettings?.size?.autoHeight
-                                            ? 'auto'
-                                            : size.height,
+                                    x:
+                                        siteSettings.experience === 'boring' || item.expanded
+                                            ? 0
+                                            : Math.round(position.x),
+                                    y:
+                                        siteSettings.experience === 'boring' || item.expanded
+                                            ? 0
+                                            : Math.round(position.y),
+                                    ...(siteSettings.experience === 'boring' ? { width: '100%', height: '100%' } : {}),
                                     transition: {
                                         duration:
                                             siteSettings.experience === 'boring' ||
@@ -752,12 +796,6 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                                     ? 0
                                                     : 0.2,
                                             ease: [0.2, 0.2, 0.8, 1],
-                                        },
-                                        width: {
-                                            duration: 0,
-                                        },
-                                        height: {
-                                            duration: 0,
                                         },
                                     },
                                 }}
@@ -981,22 +1019,20 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                             : ''
                                     }`}
                                 >
-                                    {(!animating || isSSR || item.appSettings?.size?.autoHeight) && (
-                                        <Router
-                                            minimizing={minimizing}
-                                            onExit={() => {
-                                                if (minimizing) {
-                                                    setMinimizing(false)
-                                                    if (siteSettings.experience === 'posthog') {
-                                                        setAnimating(true)
-                                                    }
+                                    <Router
+                                        minimizing={minimizing}
+                                        onExit={() => {
+                                            if (minimizing) {
+                                                setMinimizing(false)
+                                                if (siteSettings.experience === 'posthog') {
+                                                    setAnimating(true)
                                                 }
-                                            }}
-                                            {...item.props}
-                                        >
-                                            {item.element}
-                                        </Router>
-                                    )}
+                                            }
+                                        }}
+                                        {...item.props}
+                                    >
+                                        {item.element}
+                                    </Router>
                                 </div>
                                 {!item.fixedSize && !item.minimal && (
                                     <>

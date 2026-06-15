@@ -17,12 +17,6 @@ import { useToast } from '../../context/Toast'
 import usePostHog from '../../hooks/usePostHog'
 import { navigate } from 'gatsby'
 
-declare global {
-    interface Window {
-        __desktopLoaded?: boolean
-    }
-}
-
 interface Product {
     name: string
     slug: string
@@ -374,13 +368,6 @@ export default function Desktop() {
             }
         }
     }, [posthogInstance])
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            window.__desktopLoaded = true
-            window.dispatchEvent(new CustomEvent('desktopLoaded'))
-        }
-    }, [])
 
     const runFakeCursorAnimation = useCallback(() => {
         if (!initialHomepage || !rendered) return
