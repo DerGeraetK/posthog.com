@@ -1111,6 +1111,10 @@ export const handbookSidebar = [
                         url: '/handbook/marketing/slack-messaging',
                     },
                     {
+                        name: 'Social media',
+                        url: '/handbook/marketing/social-media',
+                    },
+                    {
                         name: 'Partnerships',
                         url: '/handbook/marketing/partners',
                     },
@@ -1391,6 +1395,10 @@ export const handbookSidebar = [
                     {
                         name: 'PLG lead qualification',
                         url: '/handbook/growth/sales/product-led-lead-qualification',
+                    },
+                    {
+                        name: 'How to pitch self-driving',
+                        url: '/handbook/growth/sales/how-to-pitch-self-driving',
                     },
                     {
                         name: 'Expansion, cross-sell & retention',
