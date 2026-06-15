@@ -6,38 +6,61 @@ availability:
   free: full
   selfServe: full
   enterprise: full
-beta: true
 sourceId: Outbrain
 ---
 
-You can sync data from Outbrain Amplify reports by configuring it as a source in PostHog. The supported data includes marketers, campaigns, budgets, promoted links, and performance metrics.
+<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+
+The Outbrain source is currently in **alpha**. It connects to the Outbrain Amplify API, which requires account-manager approval before API calls are accepted. If your requests are rejected, contact your Outbrain account manager to enable Amplify API access.
+
+</CalloutBox>
+
+The Outbrain connector syncs your Outbrain Amplify advertising data into PostHog, including marketers, campaigns, budgets, promoted links, and performance reports.
 
 ## Requirements
 
-- An Outbrain account with Amplify API access enabled. This is not automatic — you must request API access through your Outbrain account manager.
-- Your Outbrain login credentials (email and password).
+- An Outbrain account with **Amplify API access** enabled. This must be requested through your Outbrain account manager — it isn't available by default.
+- Your Outbrain login credentials (username and password).
 
 ## Available tables
 
-| Table | Description | Sync mode |
-|-------|-------------|-----------|
-| `marketers` | Marketer accounts you have access to | Full refresh |
-| `campaigns` | Campaigns under each marketer | Full refresh |
-| `budgets` | Budgets under each marketer | Full refresh |
-| `promoted_links` | Promoted content items under each campaign | Full refresh |
-| `marketer_performance_daily` | Daily performance metrics per marketer | Incremental |
-| `campaign_performance` | Campaign totals for trailing 30-day window (snapshot) | Full refresh |
+| Table                        | Description                                                   | Sync method  |
+| ---------------------------- | ------------------------------------------------------------- | ------------ |
+| `marketers`                  | All marketers on your account                                 | Full refresh |
+| `campaigns`                  | Campaigns for each marketer                                   | Full refresh |
+| `budgets`                    | Budgets for each marketer                                     | Full refresh |
+| `promoted_links`             | Promoted links for each campaign                              | Full refresh |
+| `marketer_performance_daily` | Daily performance metrics per marketer                        | Incremental  |
+| `campaign_performance`       | Per-campaign performance totals over a trailing 30-day window | Full refresh |
 
-The `marketer_performance_daily` table supports incremental sync using the `_date` field as the cursor. On the first sync, PostHog backfills 365 days of history. Subsequent syncs re-pull a 30-day lookback window because conversion metrics can restate for up to 30 days due to attribution.
+## Adding a data source
 
-## Configuring PostHog
+1. In PostHog, go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
+2. Click **+ New source** and select Outbrain by clicking the **Link** button.
+3. Enter your Outbrain **Username** (typically your email address).
+4. Enter your Outbrain **Password**.
+5. _Optional:_ Add a prefix to your table names.
+6. Select the tables you want to sync.
+7. Click **Import**.
 
-1. In PostHog, go to the **[Data pipelines](https://app.posthog.com/data-management/sources)** tab.
-2. Open the **+ New** drop-down menu in the top-right and select **Source**.
-3. Find Outbrain in the sources list and click **Link**.
-4. Enter your Outbrain **Username** (email) and **Password**.
-5. (Optional) Add a prefix for the table names.
-6. Click **Next** and select the tables you want to sync.
+PostHog validates your credentials by exchanging them for an API token via the Outbrain Amplify login endpoint. If authentication fails, check that your username and password are correct and that your account has Amplify API access enabled.
+
+## Sync modes
+
+### Full refresh
+
+Most Outbrain tables only support full refresh syncing. The Outbrain Amplify API doesn't expose an "updated since" filter for entity endpoints (marketers, campaigns, budgets, promoted links), so PostHog re-downloads all rows on every sync.
+
+The `campaign_performance` table is also full refresh — it returns per-campaign totals over a trailing 30-day window with no date column, so each sync is a point-in-time snapshot.
+
+### Incremental
+
+The `marketer_performance_daily` table supports incremental syncing using the `_date` field as the cursor. On each sync:
+
+- **First sync** – Backfills the last 365 days of daily performance data.
+- **Subsequent syncs** – Re-pulls a 30-day lookback window to account for conversion metrics that can restate for up to 30 days due to attribution, then appends new days.
+
+Rows are keyed by `_marketer_id` and `_date`, so restated data merges correctly on deduplication.
 
 ## Configuration
 
