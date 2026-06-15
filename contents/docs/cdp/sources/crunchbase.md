@@ -9,62 +9,56 @@ availability:
 sourceId: Crunchbase
 ---
 
-import { CalloutBox } from "components/Docs/CalloutBox";
+The Crunchbase connector syncs company, funding, and investment data from Crunchbase into PostHog, including organizations, people, funding rounds, acquisitions, investments, IPOs, and funds.
+
+<CalloutBox icon="IconWarning" title="Crunchbase Enterprise or Applications license required" type="caution">
+
+The Crunchbase Search API requires a **paid Enterprise or Applications license** from Crunchbase. A Basic-plan API key returns a 403 error and is rejected at connection time. Check the [Crunchbase pricing page](https://about.crunchbase.com/products/) for details on eligible plans.
+
+</CalloutBox>
 
 <CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
 
-This source is currently in **alpha**. The interface and available tables may change.
+This source is currently in **alpha**. If you encounter issues, reach out to our support team.
 
 </CalloutBox>
 
-The Crunchbase connector syncs company and funding data from Crunchbase into PostHog, including organizations, people, funding rounds, acquisitions, investments, IPOs, and funds.
+## Requirements
 
-<CalloutBox icon="IconWarning" title="Enterprise or Applications license required" type="caution">
+Before you begin, you need:
 
-The Crunchbase connector requires a paid Crunchbase Enterprise or Applications license. Basic-plan API keys don't have access to the Search API that this connector uses, and are rejected during setup.
+- A Crunchbase account with an **Enterprise** or **Applications** license
+- A Crunchbase API user key (found in your [Crunchbase account integrations](https://www.crunchbase.com/account/integrations/crunchbase-api))
 
-</CalloutBox>
+## Adding a data source
 
-To link Crunchbase:
+1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and the **Sources** tab in PostHog.
+2. Click **+ New source** and select Crunchbase.
+3. Enter your Crunchbase **User key**.
+4. _Optional:_ Add a prefix to your table names.
+5. Click **Next**.
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-
-2. Click **+ New source** and then click **Link** next to Crunchbase.
-
-3. Get your Crunchbase API user key. In your Crunchbase account, go to [Integrations → Crunchbase API](https://www.crunchbase.com/account/integrations/crunchbase-api) to find or generate a user key. This key must be from an Enterprise or Applications license – Basic-plan keys won't work.
-
-4. Back in PostHog, paste the API key in the **User key** field.
-
-5. Click **Next**, select the tables you want to sync, and configure the sync method and frequency for each. Then click **Import**.
-
-Once the syncs complete, you can start using Crunchbase data in PostHog.
+The data warehouse then starts syncing your Crunchbase data. You can see details and progress in the [data pipeline sources tab](https://app.posthog.com/data-management/sources).
 
 ## Available tables
 
-The Crunchbase connector can sync the following tables:
+| Table            | Description                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `organizations`  | Company data including description, website, founding date, categories, location, total funding, employee count, and operating status |
+| `people`         | Individual profiles with first and last names                                                                                         |
+| `funding_rounds` | Funding round details including announcement date, investment type, money raised, funded organization, and investor count             |
+| `acquisitions`   | Acquisition events with announcement date, acquirer, acquiree, and price                                                              |
+| `investments`    | Individual investment records with announcement date, investor, funding round, and amount invested                                    |
+| `ipos`           | IPO events including public date, stock symbol, money raised, and valuation                                                           |
+| `funds`          | Investment fund details with announcement date, money raised, and fund name                                                           |
 
-| Table | Description |
-|-------|-------------|
-| `organizations` | Companies, investors, schools, and other organizations in Crunchbase |
-| `people` | People associated with organizations |
-| `funding_rounds` | Investment rounds for organizations |
-| `acquisitions` | Acquisition transactions |
-| `investments` | Individual investments in funding rounds |
-| `ipos` | Initial public offerings |
-| `funds` | Investment funds |
+All tables use `uuid` as the primary key.
 
-Each table includes core fields like the entity identifier, creation date, and last update date. Organizations include additional fields like description, website, founding date, location, total funding, employee count, and operating status.
+## Sync behavior
 
-## Sync modes
+All Crunchbase tables support **incremental syncing** on the `updated_at` field. During incremental syncs, PostHog queries Crunchbase for records where `updated_at` is greater than or equal to the last synced value, so only new and modified records are fetched.
 
-All Crunchbase tables support incremental syncing using the `updated_at` field. Subsequent syncs only fetch records that changed since the last sync, reducing API usage and sync time.
-
-When you enable incremental sync:
-
-1. The first sync imports all records to establish a baseline.
-2. Subsequent syncs only fetch records modified since the last sync.
-
-If a sync is interrupted, it resumes from where it left off.
+Data is partitioned by the `created_at` field using monthly partitions.
 
 ## Configuration
 
@@ -74,3 +68,13 @@ If a sync is interrupted, it resumes from where it left off.
 
 - **Deletions not synced** – If a record is removed from Crunchbase's dataset, that deletion isn't reflected in PostHog. The record remains in your synced tables.
 - **Fixed field set** – Each table syncs a predefined set of fields. You can't customize which fields are included.
+
+## Troubleshooting
+
+### 403 Forbidden error at connection time
+
+The Crunchbase Search API requires an Enterprise or Applications license. If you're using a Basic-plan API key, Crunchbase returns a 403 error and PostHog rejects the key at connection time. Upgrade your Crunchbase plan to a tier that includes Search API access.
+
+### 401 Unauthorized error
+
+Your API user key is invalid or has been revoked. Generate a new key from your [Crunchbase account integrations](https://www.crunchbase.com/account/integrations/crunchbase-api) and update the source configuration in PostHog.
