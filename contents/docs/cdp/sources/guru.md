@@ -42,7 +42,7 @@ Use a **user API token** for this integration. Collection tokens are read-only a
 | `groups` | User groups in your workspace | Full refresh |
 | `members` | Team members in your workspace | Full refresh |
 
-**Incremental** tables sync only new or updated records on each run. **Full refresh** tables reload all data on each sync.
+**Incremental** tables sync only new or updated records on each run. The `cards` table uses the `lastModified` field, so only cards changed since the last sync are fetched. **Full refresh** tables reload all data on each sync.
 
 ## Configuration
 
