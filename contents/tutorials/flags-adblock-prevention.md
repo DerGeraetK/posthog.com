@@ -12,6 +12,16 @@ tags:
 
 Ad blockers can occasionally interfere with feature flag functionality by blocking requests to PostHog. This guide explains what steps you can take to ensure your feature flags are not affected.
 
+## Keep your SDK up to date
+
+Recent versions of the PostHog JavaScript Web SDK automatically work around the most common ad blocker filter that targets feature flags. This filter blocks any request whose URL contains both the `/flags` path and an `ip=` query parameter, which used to match every flag evaluation request the SDK sent.
+
+The SDK no longer sends the `ip` query parameter on feature flag requests. The flags endpoint ignores it anyway – the server derives the client's IP from the connection and honors the `$geoip_disable` property in the request body – so dropping it doesn't affect flag evaluation. This breaks the filter match with no functional change.
+
+The fix is automatic and needs no configuration. It works everywhere, including PostHog Cloud, with no reverse proxy or server-side changes. If ad blockers are interfering with your feature flags, update to the latest version of `posthog-js` first.
+
+If you need an extra layer of protection – for example, if an ad blocker blocks the `/flags` path regardless of query parameters – the reverse proxy options below help further.
+
 ## How you can prevent blocking
 
 The most effective approach is to [set up a reverse proxy](/docs/advanced/proxy) that routes all PostHog requests (both analytics and feature flags) through your own domain. This significantly reduces the risk of ad blockers interfering with your feature flags, since requests appear to come from your own domain rather than a third-party analytics service.
