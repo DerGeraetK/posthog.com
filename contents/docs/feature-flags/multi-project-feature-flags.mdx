@@ -42,3 +42,15 @@ When copying schedules, only unexecuted (pending) scheduled changes are copied. 
     alt="Multi-project feature flags" 
     classes="rounded"
 />
+
+## View feature flags across projects
+
+If you manage feature flags across more than one [project](/docs/settings/projects), the **Projects** tab on the feature flags list page shows every flag in your organization in a single view. Each row is a flag and each column is a project, so you can compare a flag's status, rollout, and recent usage side by side without switching projects.
+
+For each flag in a project, the grid shows whether it's **Enabled** or **Disabled**, its rollout, and the number of evaluations over the last 7 days. Flags that don't exist in a project are marked **Not in this project**, and projects you can't access are marked **No access**. Select a cell to open that flag in its project.
+
+To use it:
+
+1. Go to **Feature flags** and select the **Projects** tab.
+2. Use the **Projects** picker to choose which projects to show as columns.
+3. Search by flag name or key to narrow the list.
