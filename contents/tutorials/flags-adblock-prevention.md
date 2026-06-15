@@ -62,6 +62,23 @@ After configuration, check your browser's network tab to confirm requests are ro
 
 If flags aren't being routed to the correct endpoint, double check your client initialization to make sure `flags_api_host` is being set properly.
 
+### Moving feature flags off the `/flags` path
+
+Some ad blockers go further and block any request whose path contains `/flags`, regardless of the domain. In this case, routing feature flag requests to a separate reverse proxy host isn't enough on its own, since the request path still ends in `/flags`.
+
+To handle this, the PostHog browser client supports a `flags_request_path` configuration option. Point it at a path that your reverse proxy maps to PostHog's flags endpoint, and the SDK requests flags from that path instead of `/flags`.
+
+```js
+posthog.init('<ph_project_token>', {
+    api_host: 'https://posthog.yourdomain.com',
+    flags_request_path: '/api/eaH8aiyu/', // your proxy routes this to PostHog's /flags endpoint
+})
+```
+
+The custom path must not contain the literal `flags` substring, since the ad blocker matches it anywhere in the URL. For example, `/api/eaH8aiyu/` works, but `/api/flags/` is still blocked.
+
+**Important**: This option only helps if you run your own reverse proxy and add a rewrite rule that maps the custom path to PostHog's `/flags` endpoint. PostHog Cloud and the managed reverse proxy don't yet support custom flag request paths.
+
 ## Related resources
 
 - [Deploying a reverse proxy](/docs/advanced/proxy)
