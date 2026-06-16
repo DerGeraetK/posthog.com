@@ -87,6 +87,7 @@ You can configure the following options:
 | `dom_event_allowlist`<br/>**Type:** `DomAutocaptureEvents[]`       | List of DOM events to enable autocapture on (e.g., `['click', 'change', 'submit']`).                                                                                                                                                                                                                                                  |
 | `element_allowlist`<br/>**Type:** `AutocaptureCompatibleElement[]` | List of DOM elements to enable autocapture on (e.g., `['a', 'button', 'form', 'input', 'select', 'textarea', 'label']`). We consider the element tree from root to target, so if `button` is in the allowlist, clicks on `button` or its children (like `svg`) are captured, but not clicks on parent `div` elements.                 |
 | `css_selector_allowlist`<br/>**Type:** `string[]`                  | List of CSS selectors to enable autocapture on (e.g., `['[ph-capture]']`). We consider the element tree from root to target, so if `['[id]']` is in the allowlist, clicks on elements with IDs or their parents with IDs are captured. Everything is enabled when there's no allowlist.                                               |
+| `css_selector_ignorelist`<br/>**Type:** `string[]`                 | List of CSS selectors to disable autocapture on (e.g., `['[data-ph-no-autocapture]']`). We consider the element tree from root to target, so a click is ignored if the target or any of its parents matches. Defaults to `['.ph-no-autocapture', '[data-ph-no-autocapture]']`. Providing a custom list replaces the defaults, and an empty list (`[]`) disables the default opt-out selectors. See [opting elements out of autocapture](#opting-elements-out-of-autocapture). |
 | `element_attribute_ignorelist`<br/>**Type:** `string[]`            | Exclude certain element attributes from autocapture (e.g., `['aria-label']` or `['data-attr-pii']`).                                                                                                                                                                                                                                  |
 | `capture_copied_text`<br/>**Type:** `boolean`                      | When set to `true`, autocapture will capture the text of any element that is cut or copied.                                                                                                                                                                                                                                           |
 
@@ -107,6 +108,7 @@ posthog.init('<ph_project_token>', {
         // Element filtering
         element_allowlist: ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'],
         css_selector_allowlist: ['[ph-capture]', '[data-track]'],
+        css_selector_ignorelist: ['.ph-no-autocapture', '[data-ph-no-autocapture]'],
 
         // Attribute filtering
         element_attribute_ignorelist: ['aria-label', 'data-attr-pii', 'data-sensitive'],
@@ -137,6 +139,19 @@ posthog.set_config({ autocapture: false })
 ```
 
 > **Note:** Disabling **interaction** autocapture does not disable **navigation** autocapture (pageviews and pageleaves). See [navigation autocapture](#navigation-and-lifecycle-event-autocapture) for how to disable those separately.
+
+#### Opting elements out of autocapture
+
+To stop interaction autocapture on a specific element, add the `ph-no-autocapture` class or the `data-ph-no-autocapture` attribute. PostHog checks the clicked element and its parents, so any interaction on a matching element or its children is ignored.
+
+```html
+<button class="ph-no-autocapture">This click won't be autocaptured</button>
+<div data-ph-no-autocapture>Clicks inside here won't be autocaptured</div>
+```
+
+Unlike the `ph-no-capture` class, these selectors only affect interaction autocapture. They don't hide the element in [session replay](/docs/session-replay), so use them when you want to opt out of autocapture but still see the element in recordings. To exclude an element from both autocapture and session replay, use `ph-no-capture` instead.
+
+To customize which selectors are ignored, use the `css_selector_ignorelist` option. A custom list replaces the defaults, so include `.ph-no-autocapture` and `[data-ph-no-autocapture]` if you still want them respected. An empty list (`[]`) disables the default opt-out selectors entirely.
 
 #### Capturing additional properties in autocapture events
 
