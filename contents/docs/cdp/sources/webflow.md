@@ -42,16 +42,16 @@ To link Webflow:
 
 ## Synced data
 
-| Table | Description | Sync method |
-|-------|-------------|-------------|
-| `sites` | Site metadata including name, timezone, and creation date | Full refresh |
-| `collections` | CMS collection definitions | Full refresh |
-| `collection_<slug>` | Items for each CMS collection (one table per collection) | Full refresh |
-| `pages` | Static pages and their metadata | Full refresh |
-| `products` | E-commerce products | Full refresh |
-| `orders` | E-commerce orders | Full refresh |
-| `users` | Site members | Full refresh |
-| `forms` | Form definitions | Full refresh |
+| Table               | Description                                               | Sync method  |
+| ------------------- | --------------------------------------------------------- | ------------ |
+| `sites`             | Site metadata including name, timezone, and creation date | Full refresh |
+| `collections`       | CMS collection definitions                                | Full refresh |
+| `collection_<slug>` | Items for each CMS collection (one table per collection)  | Full refresh |
+| `pages`             | Static pages and their metadata                           | Full refresh |
+| `products`          | E-commerce products                                       | Full refresh |
+| `orders`            | E-commerce orders                                         | Full refresh |
+| `users`             | Site members                                              | Full refresh |
+| `forms`             | Form definitions                                          | Full refresh |
 
 ### Dynamic CMS collections
 
@@ -64,3 +64,14 @@ Webflow sources use full refresh syncs. Incremental syncs aren't supported becau
 ## Configuration
 
 <SourceParameters />
+
+## Troubleshooting
+
+### 409 Conflict error
+
+Webflow returns a `409 Conflict` error in two scenarios:
+
+- **Products and Orders tables** – The connected site doesn't have ecommerce enabled. Enable ecommerce in Webflow or remove the `products` and `orders` tables from the sync.
+- **Other resources** – The site has unpublished changes. Publish your Webflow site, then try the sync again.
+
+This error stops the sync automatically because retrying can't resolve it. Fix the underlying issue in Webflow and re-run the sync.
