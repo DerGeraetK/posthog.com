@@ -973,6 +973,10 @@ export const handbookSidebar = [
                 url: '/handbook/engineering/developer-experience',
             },
             {
+                name: 'Building user experiences',
+                url: '/handbook/engineering/building-user-experiences',
+            },
+            {
                 name: 'Bug prioritization',
                 url: '/handbook/engineering/bug-prioritization',
             },
@@ -4143,7 +4147,8 @@ export const docsMenu = {
             url: '/docs/replay-vision',
             color: 'yellow',
             icon: 'IconEye',
-            description: 'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
+            description:
+                'Use AI to automatically watch your session recordings and turn what it sees into queryable data',
             children: [
                 {
                     name: 'Replay Vision',
