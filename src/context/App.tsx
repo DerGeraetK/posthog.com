@@ -1390,19 +1390,23 @@ export interface SiteSettings {
 
 const isLabel = (item: any) => !item?.url && item?.name
 
-const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
-    const lastReset = typeof window !== 'undefined' ? localStorage.getItem('lastReset') : null
+// Pass `ssr: true` to force the server-stable defaults even on the client. This is used for the
+// first client render so that hydration matches the server (which has no window/localStorage/__theme),
+// avoiding the React #418 hydration mismatch. The real client values are applied after mount.
+const getInitialSiteSettings = (isMobile: boolean, compact: boolean, ssr = false) => {
+    const hasWindow = !ssr && typeof window !== 'undefined'
+    const lastReset = hasWindow ? localStorage.getItem('lastReset') : null
     const siteSettings = {
         experience: 'posthog',
-        colorMode: (typeof window !== 'undefined' && (window as any).__theme) || 'light',
-        theme: (typeof window !== 'undefined' && (window as any).__theme) || 'light',
+        colorMode: (hasWindow && (window as any).__theme) || 'light',
+        theme: (hasWindow && (window as any).__theme) || 'light',
         skinMode: 'modern',
         cursor: 'default',
         wallpaper: 'keyboard-garden',
         clickBehavior: 'double',
         performanceBoost: false,
         screensaverDisabled: true,
-        ...(typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('siteSettings') || '{}') : {}),
+        ...(hasWindow ? JSON.parse(localStorage.getItem('siteSettings') || '{}') : {}),
         ...(!lastReset ? { experience: 'posthog' } : {}),
     }
 
@@ -1422,8 +1426,11 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const compact = typeof window !== 'undefined' && window !== window.parent
     const constraintsRef = useRef<HTMLDivElement>(null)
     const taskbarRef = useRef<HTMLDivElement>(null)
-    const [isMobile, setIsMobile] = useState(!isSSR && window.innerWidth < 768)
-    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getInitialSiteSettings(isMobile, compact))
+    // Initialize with server-stable values so the first client render matches the SSR markup, then
+    // apply the real window/localStorage/__theme values after mount (see the mount effect below).
+    // This avoids the React #418 hydration mismatch caused by mobile/theme/experience divergence.
+    const [isMobile, setIsMobile] = useState(false)
+    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getInitialSiteSettings(false, false, true))
     const websiteMode = siteSettings.experience === 'boring'
     const [taskbarHeight, setTaskbarHeight] = useState(38)
     const [lastClickedElementRect, setLastClickedElementRect] = useState<{ x: number; y: number } | null>(null)
@@ -1436,11 +1443,10 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const stateWindows = element.props?.location?.state?.savedWindows
     const posthog = usePostHog()
 
-    const [windows, setWindows] = useState<AppWindow[]>(
-        (location.key === 'initial' && location.pathname === '/' && isMobile) || !!paramsWindows
-            ? []
-            : getInitialWindows(element)
-    )
+    // Render the server-stable windows on the first client render to match SSR markup. The cases that
+    // diverge from the server (mobile homepage, or a `?windows=` shared-desktop link) are handled in the
+    // mount effect, which clears these windows after hydration.
+    const [windows, setWindows] = useState<AppWindow[]>(getInitialWindows(element))
     const windowsRef = useRef(windows)
     useEffect(() => {
         windowsRef.current = windows
@@ -2345,6 +2351,19 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             document.body.setAttribute('data-wallpaper', siteSettings.wallpaper)
         }
     }, [siteSettings])
+
+    // After the first render (which intentionally used server-stable defaults to avoid a hydration
+    // mismatch), apply the real client values: viewport-derived isMobile and the window/localStorage/
+    // __theme-derived site settings. On the initial mobile homepage load, windows shouldn't auto-open.
+    useEffect(() => {
+        const mobile = typeof window !== 'undefined' && window.innerWidth < 768
+        setIsMobile(mobile)
+        setSiteSettings(getInitialSiteSettings(mobile, compact))
+        if ((location.key === 'initial' && location.pathname === '/' && mobile) || paramsWindows) {
+            setWindows([])
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     useEffect(() => {
         const handleResize = () => {
