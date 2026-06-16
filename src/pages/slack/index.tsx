@@ -578,7 +578,7 @@ const faqItems = [
                 <code>Generated-By: PostHog Code</code> line plus a <code>Task-Id</code> so you can trace it back. PRs
                 are authored under your name via your{' '}
                 <Link
-                    to="https://app.posthog.com/integrations/github"
+                    to="https://app.posthog.com/settings/user-personal-integrations"
                     external
                     className="text-red dark:text-yellow font-semibold hover:underline"
                 >
