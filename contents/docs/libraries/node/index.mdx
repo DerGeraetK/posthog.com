@@ -69,6 +69,32 @@ client.capture({
 
 For more details on the difference between `$set` and `$set_once`, see our [person properties docs](/docs/data/user-properties#what-is-the-difference-between-set-and-set_once).
 
+You can also set person properties directly, without capturing a separate event, using `setPersonProperties`. This captures a `$set` event with the properties you pass. Properties in the `properties` object behave like `$set`, while those in `propertiesOnce` behave like `$set_once`.
+
+```node
+client.setPersonProperties({
+  distinctId: 'distinct_id_of_the_user',
+  properties: { name: 'Max Hedgehog' },
+  propertiesOnce: { initial_url: '/blog' },
+})
+```
+
+To remove person properties, pass the property name (or an array of names) to `unsetPersonProperties`. This captures a `$set` event with a `$unset` array, which removes those properties from the person's profile.
+
+```node
+// Remove a single property
+client.unsetPersonProperties({
+  distinctId: 'distinct_id_of_the_user',
+  properties: 'name',
+})
+
+// Remove multiple properties
+client.unsetPersonProperties({
+  distinctId: 'distinct_id_of_the_user',
+  properties: ['name', 'initial_url'],
+})
+```
+
 To capture [anonymous events](/docs/data/anonymous-vs-identified-events) without person profiles, set the event's `$process_person_profile` property to `false`:
 
 ```node
