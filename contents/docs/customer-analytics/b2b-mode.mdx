@@ -29,7 +29,7 @@ With the add-on enabled, you can see all insights in the dashboard with data fro
 
 ## Accounts table
 
-The Accounts table provides a CRM-style view of your accounts with fields like name, CSM, account executive, and account owner. You can customize which columns appear and add custom data columns.
+The Accounts table gives you a CRM-style view of your accounts, with fields like name, CSM, account executive, and account owner. You can choose which columns appear, add custom data columns, and save your setup as a reusable view.
 
 ### Configuring columns
 
@@ -38,9 +38,9 @@ To customize which columns appear in the Accounts table:
 1. Click **Configure columns** above the table
 2. Drag and drop columns to reorder them in the **Visible columns** section
 3. Click columns in the **Available columns** section to add them
-4. Click **Save** to apply your changes
+4. Click **Done** to close the configurator
 
-Your column configuration is saved per team, so you'll see your customized view when you return.
+Column choices are saved as part of a [saved view](#saved-views), so the configurator only sets up the table. Use the view selector to save your changes.
 
 ### Available column categories
 
@@ -82,3 +82,20 @@ Use the filter bar above the Accounts table to narrow the list to the accounts y
 **Assigned to**, **My accounts**, the **CSM** and **Account executive** pickers, and **Unassigned only** are mutually exclusive, so selecting one clears the others. The **Account owner** filter is independent and can be combined with any of them.
 
 Your filter selection is stored in the URL, so it's restored when you reload the page and resolves to the same accounts for anyone you share the link with.
+
+### Saved views
+
+A saved view captures the full state of the Accounts table – visible columns, sort order, filters, and overview tiles – under a name you choose. Use views to switch between different ways of looking at your accounts without reconfiguring the table each time, such as a "Renewals this quarter" view or an "Unassigned enterprise accounts" view.
+
+To save a view, set up the table the way you want, then use the view selector above the table:
+
+1. Click **Save current view** (or **Save as new view...** from the dropdown if you already have views)
+2. Enter a name for the view
+3. Choose its visibility. **Private (only visible to me)** keeps the view to yourself, while **Shared with team** makes it available to everyone in the project
+4. Click **Save**
+
+Select any view from the view selector dropdown to apply its columns, filters, sort order, and overview tiles to the table. When you change the table while a view is active, an **Update** button appears next to the view's name. Click it to save those changes back to the view.
+
+To rename or delete a view, open the view selector dropdown, click the manage icon next to the view, and choose **Rename** or **Delete**. Only the person who created a view can edit or delete it.
+
+PostHog remembers the last view you used and restores it the next time you open the Accounts table. Opening a shared link always applies the view encoded in that link instead.
