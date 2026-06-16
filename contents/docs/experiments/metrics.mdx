@@ -46,6 +46,18 @@ For example:
 - If you choose **sum of revenue**, we calculate total revenue per user, then take the mean across users.
 - If you select **average revenue**, we first compute each user's average (total revenue / number of events), then average those values across users.
 
+#### Measuring a threshold
+
+By default, a mean metric reports the average value per user. Sometimes you instead want to know what percentage of users reached a milestone – like 100 words dictated, 2,000 events fired, or a cumulative amount of spend. Set a **threshold** to measure this.
+
+When you set a threshold, each user's summed or counted value collapses to a binary outcome: they either reached the threshold or they didn't. PostHog then reports the percentage of exposed users who crossed it, analyzing the metric as a proportion in the same way it analyzes funnel conversion rates.
+
+Thresholds are only available for **sum** and **total count** math, where the value per user is an accumulation. A few things to keep in mind:
+
+- A threshold must be a positive number. Clearing it (or setting it to 0) removes the threshold and reverts the metric to a standard mean.
+- You can't combine a threshold with outlier handling. Winsorization caps continuous outliers, which has no meaning once the value is binary.
+- CUPED variance reduction is disabled for threshold metrics, since it doesn't apply to a binary outcome.
+
 ### Ratio
 
 Use ratio metrics to calculate the relationship between two different metrics. This is useful when you want to measure metrics like revenue per user, items per order, or conversion rate with a custom denominator (different from the users exposed to the experiment).
