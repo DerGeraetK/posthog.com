@@ -24,14 +24,52 @@ import { useExplorerLayout } from '../../hooks/useExplorerLayout'
 import CloudinaryImage from 'components/CloudinaryImage'
 import { useMenuSelectOptions } from 'components/TaskBarMenu/menuData'
 
+// Persist the post-submit confirmation across reloads so a refresh doesn't reset
+// the form and let users re-submit (which fires duplicate capture events).
+const submittedStorageKey = (handle: string): string => `waitlist_submitted_${handle}`
+
+const hasSubmittedWaitlist = (handle: string): boolean => {
+    if (typeof window === 'undefined') return false
+    try {
+        return window.localStorage.getItem(submittedStorageKey(handle)) === 'true'
+    } catch {
+        return false
+    }
+}
+
+const markSubmittedWaitlist = (handle: string): void => {
+    if (typeof window === 'undefined') return
+    try {
+        window.localStorage.setItem(submittedStorageKey(handle), 'true')
+    } catch {
+        // Ignore storage failures (e.g. private mode, disabled storage)
+    }
+}
+
 const Subscribe = ({ selectedProduct }: { selectedProduct: any }) => {
     const posthog = usePostHog()
     const [email, setEmail] = useState('')
     const [submitted, setSubmitted] = useState(false)
+    const productKey = selectedProduct?.handle || selectedProduct?.slug || ''
+
+    // Initialize from localStorage after mount to keep the confirmation visible
+    // across reloads. Done in an effect (not lazy state) to avoid SSR/hydration
+    // mismatches between the server-rendered empty form and the client.
+    useEffect(() => {
+        if (hasSubmittedWaitlist(productKey)) {
+            setSubmitted(true)
+        }
+    }, [productKey])
 
     const handleSubmit = () => {
         if (!email) return
+        // Don't re-capture if this product's waitlist was already submitted.
+        if (submitted || hasSubmittedWaitlist(productKey)) {
+            setSubmitted(true)
+            return
+        }
         posthog?.capture('subscribe_to_product_updates', { email, selectedProduct })
+        markSubmittedWaitlist(productKey)
         setSubmitted(true)
     }
 
@@ -423,14 +461,17 @@ export default function ProductsControl(): JSX.Element {
                 {(() => {
                     // Filter out products without a category, then group by category
                     const productsWithCategory = filteredProducts.filter((product: any) => product.category)
-                    const groupedProducts = productsWithCategory.reduce((acc: Record<string, any[]>, product: any) => {
-                        const category = product.category
-                        if (!acc[category]) {
-                            acc[category] = []
-                        }
-                        acc[category].push(product)
-                        return acc
-                    }, {} as Record<string, any[]>)
+                    const groupedProducts = productsWithCategory.reduce(
+                        (acc: Record<string, any[]>, product: any) => {
+                            const category = product.category
+                            if (!acc[category]) {
+                                acc[category] = []
+                            }
+                            acc[category].push(product)
+                            return acc
+                        },
+                        {} as Record<string, any[]>
+                    )
 
                     // Sort products using the shared helper function
                     Object.keys(groupedProducts).forEach((category) => {

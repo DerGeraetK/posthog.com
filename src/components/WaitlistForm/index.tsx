@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Input from 'components/OSForm/input'
 import OSButton from 'components/OSButton'
 import usePostHog from '../../hooks/usePostHog'
@@ -6,6 +6,28 @@ import useProduct from '../../hooks/useProduct'
 import { useApp } from '../../context/App'
 import Link from 'components/Link'
 import { IconDiscord } from 'components/OSIcons/Icons'
+
+// Persist the post-submit confirmation across reloads so a refresh doesn't reset
+// the form and let users re-submit (which fires duplicate capture events).
+const submittedStorageKey = (handle: string): string => `waitlist_submitted_${handle}`
+
+const hasSubmittedWaitlist = (handle: string): boolean => {
+    if (typeof window === 'undefined') return false
+    try {
+        return window.localStorage.getItem(submittedStorageKey(handle)) === 'true'
+    } catch {
+        return false
+    }
+}
+
+const markSubmittedWaitlist = (handle: string): void => {
+    if (typeof window === 'undefined') return
+    try {
+        window.localStorage.setItem(submittedStorageKey(handle), 'true')
+    } catch {
+        // Ignore storage failures (e.g. private mode, disabled storage)
+    }
+}
 
 interface WaitlistFormProps {
     autoFocus?: boolean
@@ -35,9 +57,23 @@ export function WaitlistForm({
     const [submitted, setSubmitted] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
 
+    // Initialize from localStorage after mount to keep the confirmation visible
+    // across reloads. Done in an effect (not lazy state) to avoid SSR/hydration
+    // mismatches between the server-rendered empty form and the client.
+    useEffect(() => {
+        if (hasSubmittedWaitlist(productHandle)) {
+            setSubmitted(true)
+        }
+    }, [productHandle])
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (!email) return
+        // Don't re-capture if this product's waitlist was already submitted.
+        if (submitted || hasSubmittedWaitlist(productHandle)) {
+            setSubmitted(true)
+            return
+        }
         if (surveyId) {
             posthog?.capture('survey sent', {
                 $survey_id: surveyId,
@@ -48,6 +84,7 @@ export function WaitlistForm({
         if (confetti) {
             setConfetti(true)
         }
+        markSubmittedWaitlist(productHandle)
         setSubmitted(true)
     }
 
