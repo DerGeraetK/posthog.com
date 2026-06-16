@@ -9,14 +9,14 @@ availability:
 sourceId: Supabase
 ---
 
-The Supabase connector can link your Supabase database tables to PostHog. Supabase is built on top of Postgres, so this connector uses the same underlying integration as the [Postgres source](/docs/cdp/sources/postgres).
+The Supabase connector can link your Supabase database tables to PostHog. Supabase is built on top of Postgres, so this connector uses the same underlying integration as the [Postgres source](/docs/cdp/sources/postgres). You can use it for regular scheduled syncs, or enable change data capture (CDC) for near real-time syncs that capture inserts, updates, and deletes.
 
 To link Supabase:
 
 1. Go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and the sources tab in PostHog
 2. Click **New source** and select Supabase
 3. Enter your Supabase connection details. You can find the pooler host and credentials in your Supabase project under **Project Settings** → **Database** → **Connection pooling** (Session mode):
-   - **Host:** The Session pooler hostname from Supabase, e.g. `aws-0-us-east-1.pooler.supabase.com`. Don't use the direct database host (`db.<ref>.supabase.co`) — it's IPv6-only and not reachable from PostHog.
+   - **Host:** For standard syncs, use the Session pooler hostname from Supabase, e.g. `aws-0-us-east-1.pooler.supabase.com`. The direct database host (`db.<ref>.supabase.co`) is IPv6-only and not reachable from PostHog unless you enable Supabase's IPv4 add-on. If you want to use [change data capture (CDC)](#change-data-capture-cdc), you must use the direct host with the IPv4 add-on enabled, since logical replication doesn't work through the pooler.
    - **Port:** The port your database is listening on. The default is `5432`.
    - **Database:** The name of the database. Supabase defaults this to `postgres`.
    - **User:** The pooler username in the format `postgres.<project-ref>` (e.g. `postgres.abcdefghijklmno`), or another database user with read access to the schemas and tables you want to sync.
@@ -53,6 +53,14 @@ You can also change column selection after setup:
 
 See the [Postgres source documentation](/docs/cdp/sources/postgres#selecting-columns) for details on resync behavior when adding columns.
 
+## Change data capture (CDC)
+
+Because Supabase runs Postgres on the wire, it supports change data capture (CDC) through the same logical replication path as the [Postgres source](/docs/cdp/sources/postgres#sync-methods). CDC keeps PostHog close to your database, capturing inserts, updates, and deletes in near real time.
+
+Supabase CDC has one extra connection requirement: logical replication only works over the direct host (`db.<ref>.supabase.co`), not the Session pooler. That host is IPv6-only by default, so you must enable Supabase's IPv4 add-on (under **Project Settings** → **Add-ons**) for PostHog to reach it. The pooler host works for standard syncs, but not for CDC.
+
+Once you're connected over the direct host, enabling and managing CDC works exactly as it does for Postgres. See the Postgres source docs for [sync methods](/docs/cdp/sources/postgres#sync-methods), [CDC requirements](/docs/cdp/sources/postgres#cdc-requirements), [output table modes](/docs/cdp/sources/postgres#output-table-modes), and [managing CDC after source creation](/docs/cdp/sources/postgres#managing-cdc-after-source-creation).
+
 <CalloutBox icon="IconWarning" title="SSL/TLS required for new sources" type="caution">
 
 Supabase sources created after February 18, 2026 require SSL/TLS encryption for database connections. Supabase enforces SSL/TLS by default, so this is typically already in place. If you're connecting through an SSH tunnel, you can optionally disable TLS using the **Require TLS through tunnel?** toggle since the tunnel already encrypts the connection.
@@ -65,4 +73,4 @@ import InboundIpAddresses from "../_snippets/inbound-ip-addresses.mdx";
 
 <InboundIpAddresses />
 
-> **Note:** PostHog connects over IPv4. Supabase's direct database host (`db.<ref>.supabase.co`) is IPv6-only, so you must use the **Session pooler** host instead. Find it in your Supabase project under **Project Settings** → **Database** → **Connection pooling**.
+> **Note:** PostHog connects over IPv4. Supabase's direct database host (`db.<ref>.supabase.co`) is IPv6-only, so for standard syncs you must use the **Session pooler** host instead. Find it in your Supabase project under **Project Settings** → **Database** → **Connection pooling**. To use [CDC](#change-data-capture-cdc), use the direct host and enable Supabase's IPv4 add-on under **Project Settings** → **Add-ons**.
