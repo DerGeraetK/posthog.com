@@ -1798,7 +1798,11 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
         const shouldExpand =
             element.props.location.state?.expanded ??
-            (!keyToUse?.startsWith('ask-max') && !settings?.size?.fixed && !element.props.minimal && !settings?.modal)
+            (!keyToUse?.startsWith('ask-max') &&
+                !settings?.size?.fixed &&
+                !element.props.minimal &&
+                !settings?.modal &&
+                element.props.location.pathname !== '/')
 
         const newWindow: AppWindow = {
             element,
