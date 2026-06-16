@@ -240,7 +240,7 @@ export function Editor({
     const getProductName = (type: string) => products.find((p) => p.type === type)?.name || type
     // if we're filtering to a product, show the filter button in an active/open state
     const searchContentRef = useRef(null)
-    const { addWindow, focusedWindow, websiteMode } = useApp()
+    const { addWindow, focusedWindow } = useApp()
     const hasShareButton = !cta?.url || !cta?.label
     const { appWindow } = useWindow()
     const [maxWidth, setMaxWidth] = useState(initialMaxWidth ?? 768)
@@ -547,7 +547,7 @@ export function Editor({
                                 <article
                                     data-scheme="primary"
                                     className={`${getProseClasses(proseSize)} h-full mx-auto transition-all ${
-                                        fullWidthContent || websiteMode ? 'max-w-full' : 'max-w-4xl'
+                                        fullWidthContent ? 'max-w-full' : 'website:max-w-full max-w-4xl'
                                     }`}
                                 >
                                     {title && (
@@ -584,7 +584,7 @@ export function Editor({
                                     className={`${getProseClasses(proseSize)} ${
                                         hasPadding ? 'py-4 px-4 @xl:px-8' : ''
                                     } mx-auto transition-all ${
-                                        fullWidthContent || websiteMode ? 'max-w-full' : 'max-w-4xl'
+                                        fullWidthContent ? 'max-w-full' : 'website:max-w-full max-w-4xl'
                                     }`}
                                 >
                                     {title && (

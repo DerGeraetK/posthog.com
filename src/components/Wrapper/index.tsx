@@ -16,8 +16,6 @@ export default function Wrapper() {
         closingAllWindowsAnimation,
         setClosingAllWindowsAnimation,
         closeAllWindows,
-        websiteMode,
-        searchOpen,
     } = useApp()
     const [shakeReady, setShakeReady] = useState(false)
     const [mounted, setMounted] = useState(false)
@@ -34,11 +32,7 @@ export default function Wrapper() {
     return (
         <div
             data-scheme="primary"
-            className={`${
-                websiteMode
-                    ? 'max-w-7xl mx-auto border-x border-primary bg-primary shadow-xl min-h-screen'
-                    : 'fixed inset-0 size-full'
-            } flex flex-col`}
+            className="os:fixed os:inset-0 os:size-full website:max-w-7xl website:mx-auto website:border-x website:border-primary website:bg-primary website:shadow-xl website:min-h-screen flex flex-col"
             id="app-container"
         >
             {!compact && <TaskBarMenu />}

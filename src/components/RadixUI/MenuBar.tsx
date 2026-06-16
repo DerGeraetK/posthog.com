@@ -28,7 +28,7 @@ export type MenuType = {
     bold?: boolean
     items: MenuItemType[]
     mobileLink?: string // Direct link for the menu trigger on mobile
-    hideChevron?: boolean // Hide the chevron down icon for this menu (when showChevronDown is enabled)
+    hideChevron?: boolean // Hide the chevron down icon for this menu in website mode
 }
 
 // const { websiteMode } = useApp()
@@ -311,16 +311,9 @@ export interface MenuBarProps {
     className?: string
     customTriggerClasses?: string
     triggerAsChild?: boolean
-    showChevronDown?: boolean
 }
 
-const MenuBar: React.FC<MenuBarProps> = ({
-    menus,
-    className,
-    triggerAsChild,
-    customTriggerClasses,
-    showChevronDown,
-}) => {
+const MenuBar: React.FC<MenuBarProps> = ({ menus, className, triggerAsChild, customTriggerClasses }) => {
     const { isMobile, websiteMode } = useApp()
 
     const [openMenuIndex, setOpenMenuIndex] = React.useState<number | null>(null)
@@ -385,9 +378,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                             }`}
                         >
                             {menu.trigger}
-                            {showChevronDown && !menu.hideChevron && (
-                                <IconChevronDown className="size-5 opacity-60 -mr-2" />
-                            )}
+                            {!menu.hideChevron && <IconChevronDown className="size-5 opacity-60 -mr-2 os:hidden" />}
                         </Link>
                     )
                 }
@@ -409,7 +400,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                                     : undefined
                             }
                             onClick={
-                                websiteMode && showChevronDown && !menu.hideChevron
+                                websiteMode && !menu.hideChevron
                                     ? () => {
                                           const url = menu.mobileLink || menu.items.find((item) => item.link)?.link
                                           if (url) {
@@ -420,9 +411,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                             }
                         >
                             {menu.trigger}
-                            {showChevronDown && !menu.hideChevron && (
-                                <IconChevronDown className="size-5 opacity-60 -mr-2" />
-                            )}
+                            {!menu.hideChevron && <IconChevronDown className="size-5 opacity-60 -mr-2 os:hidden" />}
                         </RadixMenubar.Trigger>
                         <RadixMenubar.Portal container={portalContainer || undefined}>
                             <RadixMenubar.Content

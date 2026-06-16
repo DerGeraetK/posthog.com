@@ -976,12 +976,12 @@ export function useMenuData(): MenuType[] {
                             wordmark={false}
                             variant="mono"
                             color="primary"
-                            className={`2xs:hidden md:block ${websiteMode ? 'size-10' : 'size-8 md:size-6'}`}
+                            className="2xs:hidden md:block os:size-8 os:md:size-6 website:size-10"
                         />
                         <Logo
                             variant="mono"
                             color="primary"
-                            className={`hidden 2xs:flex md:hidden w-auto ${websiteMode ? 'h-7' : ' h-5'} `}
+                            className="hidden 2xs:flex md:hidden w-auto os:h-5 website:h-7"
                         />
                         <IconChevronDown className="size-6 inline-block md:hidden text-muted" />
                     </div>

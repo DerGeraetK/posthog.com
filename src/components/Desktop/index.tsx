@@ -237,7 +237,6 @@ export default function Desktop() {
         setConfetti,
         confetti,
         compact,
-        windows,
         websiteMode,
         posthogInstance,
         updateSiteSettings,
@@ -576,7 +575,7 @@ export default function Desktop() {
                 <div
                     data-scheme="primary"
                     data-app="Desktop"
-                    className={`fixed size-full ${websiteMode ? '-z-10 inset-0' : 'top-0 pt-12'}`}
+                    className="fixed size-full website:-z-10 website:inset-0 os:top-0 os:pt-12"
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 >
@@ -649,13 +648,7 @@ export default function Desktop() {
                                 backgroundPosition: 'right bottom',
                             }}
                         />
-                        <div
-                            className={`absolute ${
-                                websiteMode
-                                    ? 'bottom-4 -right-4 @[2600px]:right-4'
-                                    : 'bottom-4 md:bottom-0 -right-4 xs:right-8 md:right-0'
-                            }`}
-                        >
+                        <div className="absolute website:bottom-4 website:-right-4 website:@[2600px]:right-4 os:bottom-4 os:md:bottom-0 os:-right-4 os:xs:right-8 os:md:right-0">
                             {/* <CloudinaryImage
                                 loading="lazy"
                                 src="https://res.cloudinary.com/dmukukwp6/image/upload/hedges_ec3edc2a40.png"
@@ -677,15 +670,19 @@ export default function Desktop() {
                                 src="https://res.cloudinary.com/dmukukwp6/image/upload/keyboard_garden_dark_opt_15e213413c.png"
                                 width={1401}
                                 height={1400}
-                                className={`${websiteMode ? '' : 'size-[300px] md:size-[700px]'} hidden dark:block`}
-                                style={
-                                    websiteMode
-                                        ? {
-                                              width: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
-                                              height: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
-                                          }
-                                        : undefined
-                                }
+                                className="hidden dark:os:block size-[300px] md:size-[700px]"
+                                draggable={false}
+                            />
+                            <CloudinaryImage
+                                loading="lazy"
+                                src="https://res.cloudinary.com/dmukukwp6/image/upload/keyboard_garden_dark_opt_15e213413c.png"
+                                width={1401}
+                                height={1400}
+                                className="hidden dark:website:block"
+                                style={{
+                                    width: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
+                                    height: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
+                                }}
                                 draggable={false}
                             />
                         </div>
@@ -743,30 +740,26 @@ export default function Desktop() {
                         />
                     </div>
 
-                    {!websiteMode && (
-                        <nav>
-                            <motion.ul
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: rendered ? 1 : 0 }}
-                                className="list-none m-0 -mt-2 md:mt-0 p-0 grid sm:grid-cols-4 grid-cols-3 gap-2"
-                            >
-                                {allApps.map((app) => {
-                                    const position = iconPositions[app.label] || { x: 0, y: 0 }
+                    <nav className="website:hidden">
+                        <motion.ul
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: rendered ? 1 : 0 }}
+                            className="list-none m-0 -mt-2 md:mt-0 p-0 grid sm:grid-cols-4 grid-cols-3 gap-2"
+                        >
+                            {allApps.map((app) => {
+                                const position = iconPositions[app.label] || { x: 0, y: 0 }
 
-                                    return (
-                                        <DraggableDesktopIcon
-                                            key={app.label}
-                                            app={app}
-                                            initialPosition={position}
-                                            onPositionChange={(newPosition) =>
-                                                handlePositionChange(app.label, newPosition)
-                                            }
-                                        />
-                                    )
-                                })}
-                            </motion.ul>
-                        </nav>
-                    )}
+                                return (
+                                    <DraggableDesktopIcon
+                                        key={app.label}
+                                        app={app}
+                                        initialPosition={position}
+                                        onPositionChange={(newPosition) => handlePositionChange(app.label, newPosition)}
+                                    />
+                                )
+                            })}
+                        </motion.ul>
+                    </nav>
                 </div>
                 {!compact && !websiteMode && (
                     <Screensaver

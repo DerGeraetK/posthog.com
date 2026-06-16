@@ -1456,8 +1456,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         setCompact(compactValue)
         setIsMobile(isMobileValue)
         setSiteSettings(getInitialSiteSettings(isMobileValue, compactValue))
-        // Remove the critical CSS hook now that React owns the layout
-        delete document.documentElement.dataset.mobile
     }, [])
 
     const destinationNav = useDataPipelinesNav({ type: 'destination' })
@@ -2423,6 +2421,15 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             document.body.setAttribute('data-wallpaper', siteSettings.wallpaper)
         }
     }, [siteSettings])
+
+    // Sync websiteMode to HTML attribute for CSS variants
+    useEffect(() => {
+        if (websiteMode) {
+            document.documentElement.dataset.websiteMode = ''
+        } else {
+            delete document.documentElement.dataset.websiteMode
+        }
+    }, [websiteMode])
 
     useEffect(() => {
         const handleResize = () => {

@@ -280,24 +280,16 @@ export default function TaskBarMenu() {
 
     return (
         <>
-            <div className={websiteMode ? 'z-40 border-b border-primary' : 'z-50 p-2 pb-0'}>
+            <div className="website:z-40 website:border-b website:border-primary os:z-50 os:p-2 os:pb-0">
                 <motion.div
                     onAnimationComplete={updateTaskbarHeight}
                     ref={taskbarRef}
                     id="taskbar"
                     data-scheme="primary"
                     data-menu-container
-                    initial={websiteMode ? false : { rotateX: 90, opacity: 0 }}
-                    animate={
-                        websiteMode
-                            ? { rotateX: 0, opacity: 1 }
-                            : rendered
-                            ? { rotateX: 0, opacity: 1 }
-                            : { rotateX: 90, opacity: 0 }
-                    }
-                    transition={
-                        websiteMode ? { duration: 0 } : { duration: 0.8, ease: [0.34, 1.56, 0.64, 1], delay: 0.6 }
-                    }
+                    initial={{ rotateX: 90, opacity: 0 }}
+                    animate={rendered ? { rotateX: 0, opacity: 1 } : { rotateX: 90, opacity: 0 }}
+                    transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1], delay: 0.6 }}
                     style={{
                         transformOrigin: '50% 50%',
                         transformPerspective: 1200,
@@ -305,9 +297,7 @@ export default function TaskBarMenu() {
                         width: '100%',
                         boxSizing: 'border-box',
                     }}
-                    className={`bg-primary/50 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu skin-classic:bg-accent wallpaper-keyboard-garden:dark:bg-black/15 border-secondary rounded pl-0.5 pr-2 ${
-                        websiteMode ? '' : 'shadow-2xl'
-                    } ${
+                    className={`bg-primary/50 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu skin-classic:bg-accent wallpaper-keyboard-garden:dark:bg-black/15 border-secondary rounded pl-0.5 pr-2 os:shadow-2xl website:!rounded-none ${
                         windows.some((w) => w.expanded && !w.minimized)
                             ? 'rounded-br-none rounded-bl-none'
                             : `${windows.some((w) => w.snapped === 'left' && !w.minimized) ? 'rounded-bl-none' : ''} ${
@@ -334,13 +324,8 @@ export default function TaskBarMenu() {
                             transformOrigin: '50% 100%',
                         }}
                     />
-                    <div
-                        className={`mx-auto transition-all duration-300 flex justify-between items-center w-full ${
-                            websiteMode ? 'max-w-7xl' : 'max-w-full'
-                        }`}
-                    >
+                    <div className="mx-auto transition-all duration-300 flex justify-between items-center w-full os:max-w-full website:max-w-7xl">
                         <MenuBar
-                            showChevronDown={websiteMode}
                             menus={menuData}
                             className="[&_button]:px-2 [&_button:not(:first-child)]:hidden md:[&_button:not(:first-child)]:flex"
                         />

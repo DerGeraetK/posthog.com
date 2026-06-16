@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Website mode: force taskbar visibility over framer-motion inline styles */
+html[data-website-mode] #taskbar {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
 @layer components {
     .markdown.prose {
         img {
