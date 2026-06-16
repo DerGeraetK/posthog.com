@@ -1390,6 +1390,22 @@ export interface SiteSettings {
 
 const isLabel = (item: any) => !item?.url && item?.name
 
+// SSR-equivalent defaults. The server has no access to `window`/`localStorage`, so it
+// always renders with these values. The client must use the exact same values on its
+// first render (before mount) to avoid a hydration mismatch (React error #418); the real
+// browser-derived settings are read in an effect after mount.
+const DEFAULT_SITE_SETTINGS: SiteSettings = {
+    experience: 'posthog',
+    colorMode: 'light',
+    theme: 'light',
+    skinMode: 'modern',
+    cursor: 'default',
+    wallpaper: 'keyboard-garden',
+    clickBehavior: 'double',
+    performanceBoost: false,
+    screensaverDisabled: true,
+}
+
 const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
     const lastReset = typeof window !== 'undefined' ? localStorage.getItem('lastReset') : null
     const siteSettings = {
@@ -1419,11 +1435,16 @@ const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
 
 export const Provider = ({ children, element, location }: AppProviderProps) => {
     const isSSR = typeof window === 'undefined'
-    const compact = typeof window !== 'undefined' && window !== window.parent
+    // `mounted` is false during SSR and the first client render, then flips to true in an
+    // effect after mount. We gate browser-only reads (window size, iframe detection,
+    // localStorage, feature flags) on it so the first client render matches the
+    // server-rendered HTML, avoiding hydration mismatches (React error #418).
+    const [mounted, setMounted] = useState(false)
+    const compact = mounted && typeof window !== 'undefined' && window !== window.parent
     const constraintsRef = useRef<HTMLDivElement>(null)
     const taskbarRef = useRef<HTMLDivElement>(null)
-    const [isMobile, setIsMobile] = useState(!isSSR && window.innerWidth < 768)
-    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getInitialSiteSettings(isMobile, compact))
+    const [isMobile, setIsMobile] = useState(false)
+    const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS)
     const websiteMode = siteSettings.experience === 'boring'
     const [taskbarHeight, setTaskbarHeight] = useState(38)
     const [lastClickedElementRect, setLastClickedElementRect] = useState<{ x: number; y: number } | null>(null)
@@ -1436,11 +1457,11 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const stateWindows = element.props?.location?.state?.savedWindows
     const posthog = usePostHog()
 
-    const [windows, setWindows] = useState<AppWindow[]>(
-        (location.key === 'initial' && location.pathname === '/' && isMobile) || !!paramsWindows
-            ? []
-            : getInitialWindows(element)
-    )
+    // Always start with the SSR-equivalent single window so the first client render
+    // matches the server. Browser-only initial layouts (shared `?windows=` links, the
+    // `?contact=` two-window layout, and the empty mobile homepage) are applied after
+    // mount in effects below to avoid a hydration mismatch (React error #418).
+    const [windows, setWindows] = useState<AppWindow[]>(getInitialWindows(element))
     const windowsRef = useRef(windows)
     useEffect(() => {
         windowsRef.current = windows
@@ -1720,47 +1741,53 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         return lastClickedElementRect || undefined
     }
 
+    // Returns the SSR-equivalent single window. This must not read any browser-only state
+    // (window size, query string) so the first client render matches the server. The
+    // `?contact=` two-window layout is applied after mount in the post-mount effect below.
     function getInitialWindows(element: any) {
-        if (isSSR) return [createNewWindow(element, [], location, isSSR, taskbarHeight)]
-        const urlObj = new URL(location.href)
-        const contact = urlObj.searchParams.get('contact')
-        if (contact) {
-            const initialWindowSize = { width: window.innerWidth * 0.58, height: window.innerHeight * 0.8 }
-            const formWindowWidth = window.innerWidth * 0.4
-            const formWindowSize = {
-                width: formWindowWidth,
-                height: formWindowWidth <= 545 ? 732 : 568,
-            }
-            const padding = [65, 20]
-
-            const initialWindow = createNewWindow(element, [], location, isSSR, taskbarHeight, {
-                size: initialWindowSize,
-                position: { x: padding[0], y: padding[1] },
-                zIndex: 2,
-            })
-            const formWindow = createNewWindow(
-                <ContactSales location={{ pathname: `/talk-to-a-human` }} key="/talk-to-a-human" />,
-                [],
-                { pathname: `talk-to-a-human` },
-                isSSR,
-                taskbarHeight,
-                {
-                    size: formWindowSize,
-                    position: {
-                        x: window.innerWidth - formWindowSize.width - padding[0],
-                        y: window.innerHeight - formWindowSize.height - padding[1] - taskbarHeight,
-                    },
-                    zIndex: 0,
-                }
-            )
-            return [initialWindow, formWindow]
-        }
         return [createNewWindow(element, [], location, isSSR, taskbarHeight)]
+    }
+
+    // Builds the two-window `?contact=` layout (page + contact form). Runs only on the
+    // client, after mount.
+    function getContactWindows(element: any) {
+        const initialWindowSize = { width: window.innerWidth * 0.58, height: window.innerHeight * 0.8 }
+        const formWindowWidth = window.innerWidth * 0.4
+        const formWindowSize = {
+            width: formWindowWidth,
+            height: formWindowWidth <= 545 ? 732 : 568,
+        }
+        const padding = [65, 20]
+
+        const initialWindow = createNewWindow(element, [], location, isSSR, taskbarHeight, {
+            size: initialWindowSize,
+            position: { x: padding[0], y: padding[1] },
+            zIndex: 2,
+        })
+        const formWindow = createNewWindow(
+            <ContactSales location={{ pathname: `/talk-to-a-human` }} key="/talk-to-a-human" />,
+            [],
+            { pathname: `talk-to-a-human` },
+            isSSR,
+            taskbarHeight,
+            {
+                size: formWindowSize,
+                position: {
+                    x: window.innerWidth - formWindowSize.width - padding[0],
+                    y: window.innerHeight - formWindowSize.height - padding[1] - taskbarHeight,
+                },
+                zIndex: 0,
+            }
+        )
+        return [initialWindow, formWindow]
     }
 
     function getKey(key: string) {
         const experiment = appSettings[key]?.experiment
         if (!experiment?.flag) return key
+        // Don't branch on feature flags until after mount — flags may be bootstrapped
+        // synchronously on the client and would otherwise diverge from SSR (error #418).
+        if (!mounted) return key
         const assignedVariant = posthog?.getFeatureFlag?.(experiment?.flag)
         if (!assignedVariant) return key
         const keyToUse = Object.keys(appSettings).find(
@@ -2064,6 +2091,32 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         }
     }
 
+    // After mount, switch from SSR-equivalent defaults to the real browser-derived state.
+    // Reading these here (rather than in the useState initializers) keeps the first client
+    // render identical to the server and avoids hydration mismatches (React error #418).
+    useEffect(() => {
+        setMounted(true)
+
+        const clientCompact = typeof window !== 'undefined' && window !== window.parent
+        const clientIsMobile = window.innerWidth < 768
+        setSiteSettings(getInitialSiteSettings(clientIsMobile, clientCompact))
+
+        // Apply the browser-only initial window layout that was deferred from the
+        // `windows` useState initializer.
+        if (paramsWindows) {
+            // Shared `?windows=` links are reconstructed by the dedicated effect below.
+            return
+        }
+        if (location.key === 'initial' && location.pathname === '/' && clientIsMobile) {
+            setWindows([])
+            return
+        }
+        const contact = new URL(location.href).searchParams.get('contact')
+        if (contact) {
+            setWindows(getContactWindows(element))
+        }
+    }, [])
+
     useEffect(() => {
         if (
             (location.key === 'initial' && location.pathname === '/' && isMobile) ||
@@ -2351,6 +2404,8 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768)
         }
 
+        // Set the real value on mount (initial state is `false` to match SSR).
+        handleResize()
         window.addEventListener('resize', handleResize)
 
         return () => window.removeEventListener('resize', handleResize)
@@ -2387,6 +2442,9 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     }, [websiteMode, taskbarHeight, isSSR])
 
     useEffect(() => {
+        // Read iframe state directly here rather than the render-gated `compact` value,
+        // which is intentionally `false` on the first render (pre-mount) for hydration.
+        const compact = typeof window !== 'undefined' && window !== window.parent
         if (compact) {
             // nosemgrep: javascript.browser.security.wildcard-postmessage-configuration.wildcard-postmessage-configuration - intentional for docs embedding, parent origin unknown, non-sensitive ready signal
             window.parent.postMessage(
@@ -2425,6 +2483,8 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     }, [])
 
     useEffect(() => {
+        // Read iframe state directly (see note on the docs-ready effect above).
+        const compact = typeof window !== 'undefined' && window !== window.parent
         if (compact) {
             // nosemgrep: javascript.browser.security.wildcard-postmessage-configuration.wildcard-postmessage-configuration - intentional for docs embedding, parent origin unknown, non-sensitive navigation data
             window.parent.postMessage(

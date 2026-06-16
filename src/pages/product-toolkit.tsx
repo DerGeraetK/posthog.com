@@ -354,6 +354,13 @@ export default function ProductToolkit() {
     const { appWindow } = useWindow()
     const { setWindowTitle } = useApp()
     const posthog = usePostHog()
+    // Don't branch the CTA URL on a feature flag until after mount — flags can be
+    // bootstrapped synchronously and would otherwise diverge from SSR (React error #418).
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     useEffect(() => {
         if (appWindow) {
@@ -370,7 +377,9 @@ export default function ProductToolkit() {
                 mdxBody={mdxBody}
                 cta={{
                     url: `https://${
-                        posthog?.isFeatureEnabled && posthog.isFeatureEnabled('direct-to-eu-cloud') ? 'eu' : 'app'
+                        mounted && posthog?.isFeatureEnabled && posthog.isFeatureEnabled('direct-to-eu-cloud')
+                            ? 'eu'
+                            : 'app'
                     }.posthog.com/signup`,
                     label: 'Get started - free',
                 }}

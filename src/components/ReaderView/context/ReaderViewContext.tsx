@@ -43,23 +43,28 @@ export function ReaderViewProvider({ children }: { children: React.ReactNode }) 
     const { appWindow } = useWindow()
     // @2xl breakpoint for sidebar visibility (equivalent to @2xl/app-reader used in CSS)
     const isWideEnoughForSidebar = appWindow?.size?.width && appWindow?.size?.width >= 672 // 42rem = 672px
-    const [isNavVisible, setIsNavVisible] = useState(isWideEnoughForSidebar)
+    // Nav/ToC visibility and the saved background depend on the window size and
+    // localStorage, neither of which is available during SSR. Initialize to the
+    // SSR-equivalent values (hidden / no background) and reconcile after mount via the
+    // effects below, so the first client render matches the server (avoids React #418).
+    const [isNavVisible, setIsNavVisible] = useState(false)
     const [navUserToggled, setNavUserToggled] = useState(false)
     // @6xl breakpoint is 72rem = 1152px
     const isLarge = appWindow?.size?.width && appWindow?.size?.width >= 1152
-    const [isTocVisible, setIsTocVisible] = useState(isLarge)
+    const [isTocVisible, setIsTocVisible] = useState(false)
     const [tocUserToggled, setTocUserToggled] = useState(false)
     const [fullWidthContent, setFullWidthContent] = useState(false)
     const [lineHeightMultiplier, setLineHeightMultiplier] = useState<number>(1)
     const [lineHeightP, setLineHeightP] = useState<number | null>(null)
     const [lineHeightLi, setLineHeightLi] = useState<number | null>(null)
-    const [backgroundImage, setBackgroundImage] = useState<string | null>(() => {
-        if (typeof window !== 'undefined') {
-            const savedBackground = localStorage.getItem('background-image')
-            return savedBackground
+    const [backgroundImage, setBackgroundImage] = useState<string | null>(null)
+
+    useEffect(() => {
+        const savedBackground = localStorage.getItem('background-image')
+        if (savedBackground) {
+            setBackgroundImage(savedBackground)
         }
-        return null
-    })
+    }, [])
 
     const toggleNav = useCallback(() => {
         setNavUserToggled(true)

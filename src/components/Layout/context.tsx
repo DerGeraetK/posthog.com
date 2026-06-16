@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 import menu, { docsMenu } from '../../navs'
 import { IMenu } from 'components/PostLayout/types'
 import { useLocation } from '@reach/router'
@@ -36,25 +36,15 @@ export interface IProps {
 export const LayoutProvider = ({ children, ...other }: IProps) => {
     const { pathname, search } = useLocation()
     const { setWebsiteTheme } = useActions(layoutLogic)
-    const compact = typeof window !== 'undefined' && window !== window.parent
-    const [fullWidthContent, setFullWidthContent] = useState<boolean>(
-        compact || (typeof window !== 'undefined' && localStorage.getItem('full-width-content') === 'true')
-    )
-
-    const hedgehogModeLocalStorage = useMemo(() => {
-        // Only default it to be on if it's April 1st but still respect if they turned it off
-        const today = new Date()
-        const isAprilFirst = today.getMonth() === 3 && today.getDate() === 1
-        let hedgehogModeLocalStorage = typeof window !== 'undefined' && localStorage.getItem('hedgehog-mode-enabled')
-
-        if (isAprilFirst && typeof hedgehogModeLocalStorage !== 'string') {
-            hedgehogModeLocalStorage = 'true'
-        }
-
-        return hedgehogModeLocalStorage
-    }, [])
-
-    const [hedgehogModeEnabled, _setHedgehogModeEnabled] = useState<boolean>(hedgehogModeLocalStorage === 'true')
+    // `mounted` is false during SSR and the first client render. We gate browser-only reads
+    // (iframe detection, localStorage) on it so the first client render matches the
+    // server-rendered HTML and we don't trigger hydration mismatches (React error #418).
+    const [mounted, setMounted] = useState(false)
+    const isInIframe = typeof window !== 'undefined' && window !== window.parent
+    const compact = mounted && isInIframe
+    const [fullWidthContent, setFullWidthContent] = useState<boolean>(false)
+    const [hedgehogModeEnabled, _setHedgehogModeEnabled] = useState<boolean>(false)
+    const fullWidthContentInitialized = useRef(false)
     const [enterpriseMode, setEnterpriseMode] = useState(false)
     const [theoMode, setTheoMode] = useState(false)
     const [post, setPost] = useState<boolean>(false)
@@ -74,7 +64,29 @@ export const LayoutProvider = ({ children, ...other }: IProps) => {
             return currentURL === menuItem.url?.split('?')[0] || recursiveSearch(menuItem.children, currentURL)
         })
 
+    // Read the real (browser-only) initial values after mount. Kept out of the useState
+    // initializers above so the first client render matches SSR (avoids React #418).
     useEffect(() => {
+        setMounted(true)
+
+        setFullWidthContent(isInIframe || localStorage.getItem('full-width-content') === 'true')
+
+        // Only default hedgehog mode on if it's April 1st, but still respect an explicit opt-out
+        const today = new Date()
+        const isAprilFirst = today.getMonth() === 3 && today.getDate() === 1
+        const storedHedgehogMode = localStorage.getItem('hedgehog-mode-enabled')
+        _setHedgehogModeEnabled(
+            storedHedgehogMode === 'true' || (isAprilFirst && typeof storedHedgehogMode !== 'string')
+        )
+    }, [])
+
+    useEffect(() => {
+        // Skip the first run so we don't overwrite the stored value before the mount effect
+        // above has loaded it.
+        if (!fullWidthContentInitialized.current) {
+            fullWidthContentInitialized.current = true
+            return
+        }
         localStorage.setItem('full-width-content', fullWidthContent + '')
     }, [fullWidthContent])
 
@@ -84,7 +96,9 @@ export const LayoutProvider = ({ children, ...other }: IProps) => {
     }
 
     useEffect(() => {
-        if (compact) {
+        // Read iframe state directly rather than the render-gated `compact`, which is
+        // intentionally `false` on the first render (pre-mount) for hydration.
+        if (isInIframe) {
             // nosemgrep: javascript.browser.security.wildcard-postmessage-configuration.wildcard-postmessage-configuration - intentional for docs embedding, parent origin unknown, non-sensitive navigation data
             window.parent.postMessage(
                 {
@@ -97,7 +111,7 @@ export const LayoutProvider = ({ children, ...other }: IProps) => {
     }, [pathname])
 
     useEffect(() => {
-        if (compact) {
+        if (isInIframe) {
             // nosemgrep: javascript.browser.security.wildcard-postmessage-configuration.wildcard-postmessage-configuration - intentional for docs embedding, parent origin unknown, non-sensitive menu data
             window.parent.postMessage(
                 {
@@ -116,7 +130,7 @@ export const LayoutProvider = ({ children, ...other }: IProps) => {
                 setWebsiteTheme(window.__theme)
             }
         }
-        if (compact) {
+        if (isInIframe) {
             // nosemgrep: javascript.browser.security.wildcard-postmessage-configuration.wildcard-postmessage-configuration - intentional for docs embedding, parent origin unknown, non-sensitive ready signal
             window.parent.postMessage(
                 {
