@@ -39,7 +39,7 @@ If your Temporal.io client certificate is expired, revoked, or no longer trusted
 
 - **BadCertificate** / **CertificateUnknown** - Temporal rejected your client certificate. Update the source with a valid client certificate and key.
 
-- **CertificateParseError** - One of your TLS credentials couldn't be decoded as valid PEM. Check that the client certificate, client private key, and server root CA are all valid PEM, and re-enter them on the source.
+- **CertificateParseError** - PostHog couldn't read one of your TLS credentials as valid PEM. Check that the client certificate, client private key, and server client root CA are each valid PEM and were pasted in full, including the BEGIN and END lines, then re-enter them on the source.
 
 - **Invalid peer certificate** - The Temporal server's certificate could not be verified. Check that the host and port point at your Temporal namespace's gRPC endpoint.
 
