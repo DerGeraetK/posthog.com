@@ -84,6 +84,7 @@ interface WindowProviderProps {
     setView: (view: 'marketing' | 'developer') => void
     hasDeveloperMode: boolean
     setHasDeveloperMode: (hasDeveloperMode: boolean) => void
+    animating?: boolean
 }
 
 interface WindowContextType {
@@ -105,6 +106,7 @@ interface WindowContextType {
     setView: (view: 'marketing' | 'developer') => void
     hasDeveloperMode: boolean
     setHasDeveloperMode: (hasDeveloperMode: boolean) => void
+    animating?: boolean
 }
 
 export const Context = createContext<WindowContextType>({
@@ -141,6 +143,7 @@ export const Context = createContext<WindowContextType>({
     setHasDeveloperMode: () => {
         // No-op default implementation
     },
+    animating: false,
 })
 
 export const Provider = ({
@@ -163,6 +166,7 @@ export const Provider = ({
     setView,
     hasDeveloperMode,
     setHasDeveloperMode,
+    animating,
 }: WindowProviderProps) => {
     return (
         <Context.Provider
@@ -185,6 +189,7 @@ export const Provider = ({
                 setView,
                 hasDeveloperMode,
                 setHasDeveloperMode,
+                animating,
             }}
         >
             {children}

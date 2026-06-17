@@ -686,6 +686,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
             setView={setView}
             hasDeveloperMode={hasDeveloperMode}
             setHasDeveloperMode={setHasDeveloperMode}
+            animating={animating}
         >
             {websiteMode ? (
                 <div className="relative">

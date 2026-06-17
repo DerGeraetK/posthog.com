@@ -3,6 +3,7 @@ import { Tabs } from 'radix-ui'
 import ScrollArea from 'components/RadixUI/ScrollArea'
 import { useLocation } from '@reach/router'
 import { useApp } from '../../context/App'
+import { useWindow } from '../../context/Window'
 
 interface TabItem {
     value: string
@@ -69,6 +70,7 @@ export default function OSTabs({
     )
     const ref = useRef<HTMLDivElement>(null)
     const { websiteMode } = useApp()
+    const { animating } = useWindow()
 
     const calculateTabRows = useCallback(
         (activeTabValue?: string) => {
@@ -145,17 +147,14 @@ export default function OSTabs({
     )
 
     useEffect(() => {
-        // Only run tab row calculation for horizontal orientation (when tabs might wrap)
-        if (orientation === 'vertical' || !ref.current) return
+        if (orientation === 'vertical' || !ref.current || animating) return
 
-        setTimeout(() => {
-            calculateTabRows()
-        }, 300)
+        calculateTabRows()
 
         const resizeObserver = new ResizeObserver(() => calculateTabRows())
         resizeObserver.observe(ref.current)
         return () => resizeObserver.disconnect()
-    }, [calculateTabRows, orientation])
+    }, [calculateTabRows, orientation, animating])
 
     const TabContentContainer = useMemo(() => (scrollable ? ScrollArea : 'div'), [scrollable])
 
