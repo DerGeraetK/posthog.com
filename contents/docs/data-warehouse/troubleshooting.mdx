@@ -78,6 +78,15 @@ To fix this:
 1. In the [Google Cloud Console](https://console.cloud.google.com/), grant the `bigquery.readsessions.create` permission to your service account. For example, assign the **BigQuery Read Session User** role on the project you're syncing.
 2. Re-enable the source in PostHog.
 
+## Why is my BigQuery sync failing with a billing error?
+
+If your BigQuery sync fails with a message like "BigQuery billing is not enabled for your Google Cloud project," it means the Google Cloud project behind your connection has billing disabled (BigQuery sandbox mode), so BigQuery rejects every query job before it runs. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since you'll need to enable billing.
+
+To fix this:
+
+1. Enable billing for your project in the [Google Cloud billing console](https://console.cloud.google.com/billing).
+2. Re-enable the source in PostHog.
+
 ## Why is my Snowflake sync failing with a "does not exist or not authorized" error?
 
 If your Snowflake sync fails with a message like "A table or schema this source syncs no longer exists in Snowflake, or your role is no longer authorized to access it," it means a table or schema the source was syncing was dropped or renamed after it was discovered, or your role's access to it was revoked. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since you'll need to restore the object or its access.
@@ -88,6 +97,16 @@ To fix this:
 2. If it was renamed or removed, restore it or update your source to sync the current object.
 3. If the object still exists, re-grant your Snowflake role access to it.
 4. Re-enable the source in PostHog.
+
+## Why is my sync failing with "SSH tunnel credentials are not valid"?
+
+If a source that connects through an SSH tunnel (Postgres, Redshift, MySQL, MSSQL, or ClickHouse) fails with a message like "Your SSH tunnel credentials are not valid," it means PostHog couldn't validate the SSH authentication details for your source – usually a private key that can't be parsed, or password authentication missing a username or password. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying would replay the same invalid credentials.
+
+To fix this:
+
+1. Open your source's settings and check the SSH tunnel authentication details – the private key and passphrase, or the username and password.
+2. Correct any invalid or missing values.
+3. Re-enable the source in PostHog.
 
 ## How do I speed up my SQL queries?
 
