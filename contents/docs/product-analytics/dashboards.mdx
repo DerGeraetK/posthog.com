@@ -249,6 +249,37 @@ To add it, click the **Add...** dropdown and select **Recent recordings** under 
 
 Clicking a row opens the session replay player. Clicking the tile title navigates to **Session Replay**.
 
+#### Experiments list widget
+
+The Experiments list widget displays a filterable list of your [experiments](/docs/experiments). Each row shows the experiment name, when it was created and by whom, and its current status. Once an experiment has a conclusion, the row also shows a conclusion label (Won, Lost, Inconclusive, Stopped early, or Invalid).
+
+To add it, click the **Add...** dropdown and select **Experiments list** under the **Experiments** group.
+
+The tile includes quick filters for narrowing the list directly from the dashboard:
+
+- **Status** - Filter by experiment status: any status, draft, running, paused, or complete.
+- **Creator** - Filter to show only experiments created by a specific team member.
+
+**Configuration options:**
+
+- **Sort by** - Sort experiments by created date, name, or start date. Default: created date.
+- **Direction** - Sort ascending or descending. Default: descending.
+- **Number of experiments** - Maximum number of experiments to display. Default: 10, maximum: 25.
+
+Clicking a row opens the experiment in a new tab. Clicking the tile title navigates to **Experiments**. If your project has no experiments yet, the widget shows a **New experiment** button to create one.
+
+#### Experiment results widget
+
+The Experiment results widget displays the current results for the primary metrics of a single [experiment](/docs/experiments) you select. It shows the experiment name and status alongside a results scorecard for each primary metric.
+
+To add it, click the **Add...** dropdown and select **Experiment results** under the **Experiments** group.
+
+Use the experiment picker on the tile to choose which experiment to show. The picker is searchable and shows each experiment's creator to help you find the right one.
+
+The widget shows results for up to the first three primary metrics. If an experiment has more, open it to see the rest.
+
+Clicking the experiment name opens the experiment in a new tab. If your project has no experiments yet, the widget shows a **New experiment** button to create one.
+
 ### Toggling labels and values on insights
 
 You can toggle the visibility of labels or values on insight charts directly from the dashboard without editing the insight. Click the **...** icon on an insight card and select the toggle option. For pie charts, the option is **Show/Hide labels on series**. For other supported chart types (trends, lifecycle, stickiness, and funnel trends), the option is **Show/Hide values on series**. This change is saved to the insight.
