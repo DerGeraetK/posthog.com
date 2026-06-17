@@ -93,6 +93,47 @@ Or when you want to trigger the reload, but don't care about the result:
 posthog.reloadFeatureFlags()
 ```
 
+### Supplying locally evaluated flags at runtime
+
+If you evaluate feature flags outside the SDK — for example, on your own backend with [`posthog-node` local evaluation](/docs/feature-flags/local-evaluation) — you can push those values into the React Native SDK at runtime with `updateFlags()`. This is useful when your backend computes flags after login and sends them to the app (over a WebView bridge, for example) and you don't want the SDK fetching its own values.
+
+Pair this with the [`disableRemoteFeatureFlags`](/docs/libraries/react-native#configuration-options) option, which stops the SDK from fetching or evaluating flags itself:
+
+```react-native
+const posthog = new PostHog('<ph_project_token>', {
+  disableRemoteFeatureFlags: true,
+})
+
+// Push flags you evaluated elsewhere
+posthog.updateFlags({
+  'my-boolean-flag': true,
+  'my-multivariate-flag': 'variant-1',
+})
+```
+
+The values persist to storage, and `getFeatureFlag()`, `isFeatureEnabled()`, and `getFeatureFlagPayload()` read them back. `updateFlags()` also fires the `featureflags` event, so anything listening through `onFeatureFlags()` (such as linked-flag session replay) re-evaluates. No network request is made.
+
+You can also supply payloads and control whether the new values replace or merge with the stored ones:
+
+```react-native
+// Include payloads, keyed by flag key
+posthog.updateFlags(
+  { 'my-flag': true },
+  { 'my-flag': { color: 'blue' } }
+)
+
+// Merge into the currently stored flags instead of replacing them
+posthog.updateFlags(
+  { 'my-flag': false },
+  undefined,
+  { merge: true }
+)
+```
+
+By default, `updateFlags()` replaces all stored flags, so any flag not in the object is cleared. Pass `{ merge: true }` to keep existing flags and update only the ones you pass.
+
+> **Note:** Until you call `updateFlags()`, flag reads return their not-loaded defaults. To have values available the moment the SDK loads, use [bootstrapping](/docs/feature-flags/bootstrapping). Keep in mind that `reset()` clears pushed flags, so re-push them after an identity change (for example, on logout and login).
+
 ### Feature flag caching
 
 The React Native SDK caches feature flag values in AsyncStorage. Cached values persist indefinitely with no TTL until updated by a successful API call. This enables offline support and reduces latency, but means **inactive users may see stale flag values** from their last session.
