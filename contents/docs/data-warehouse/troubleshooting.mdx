@@ -185,6 +185,16 @@ To fix this:
 2. If you connect through a pooler (for example, Supabase's transaction pooler), make sure the username includes your project ref, in the format `postgres.<project-ref>`.
 3. Re-enable the source in PostHog.
 
+## Why is my Postgres sync failing with "tenant/user not found"?
+
+If your Postgres sync of a Supabase database fails with a message like "Your database connection pooler couldn't find the tenant or user," it means Supabase's connection pooler (Supavisor) couldn't resolve the tenant or user for the connection. This usually happens when the project is paused or deleted, or when the pooler username or host is wrong. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying replays the same details the pooler can't resolve.
+
+To fix this:
+
+1. Check that your Supabase project is active. Resume it if it's paused, or recreate the source if the project was deleted.
+2. Verify the pooler username and host. The username should be in the format `postgres.<project-ref>`, and the host should match the connection pooling host shown under **Project Settings** → **Database** → **Connection pooling**.
+3. Re-enable the source in PostHog.
+
 ## Why is my GitHub sync failing with "No GitHub account is connected"?
 
 If your GitHub sync fails with a message like "No GitHub account is connected. Please reconnect your GitHub account," it means the source is configured to authenticate with a GitHub account, but no connected integration was found – either no account was ever connected, or the linked integration was deleted. Related messages cover a missing personal access token or a GitHub integration that no longer exists. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying can't restore a missing connection.
