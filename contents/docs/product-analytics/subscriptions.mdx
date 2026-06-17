@@ -127,13 +127,15 @@ You can then select any channel the app has access to and set a frequency. **Pri
   alt="Slack channel selection"
 />
 
-### Explore data from subscriptions
+## Asking @PostHog about subscription reports
 
-Every Slack subscription message includes an in-thread hint that nudges anyone in the channel to dig into the report. Reply in the message's thread and mention **@PostHog** with a question – for example, "Why did signups drop last Tuesday?" – and the [@PostHog bot](/docs/slack) answers it right there in the thread.
+Every Slack subscription message includes an in-thread hint that nudges anyone in the channel to dig into the report. Reply in the message's thread and mention [`@PostHog`](/docs/slack) with a follow-up question – for example, "Why did signups drop last Tuesday?" – and the [@PostHog bot](/docs/slack) answers it right there in the thread. The hint appears at the bottom of each subscription message when the [PostHog Slack app](/docs/slack) is fully configured with the required scopes.
 
 This works for both insight and dashboard subscriptions and [prompt subscriptions](#prompt-subscriptions).
 
-If the PostHog bot isn't fully set up in your workspace, the hint links to the [setup docs](/docs/slack/setup) instead.
+If the hint links to setup docs instead, your Slack integration needs to be reconnected with updated scopes. See the [PostHog Slack app setup guide](/docs/slack/setup) for instructions.
+
+This feature requires your organization to have AI data processing consent enabled in your organization settings.
 
 ## Scheduling options
 
