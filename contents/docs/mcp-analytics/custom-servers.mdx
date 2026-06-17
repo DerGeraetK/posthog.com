@@ -6,7 +6,9 @@ import CalloutBox from 'components/Docs/CalloutBox'
 
 [`instrument()`](/docs/mcp-analytics/installation) works by wrapping a `@modelcontextprotocol/sdk` `Server` or `McpServer` — it patches that object's request handlers. But not every MCP server is built that way. If you run a **custom dispatcher** — a [Hono](https://hono.dev/) or Express HTTP handler, a Cloudflare Worker / Vercel edge function, or anything that speaks the MCP protocol without the SDK's server abstraction — there's no object for `instrument()` to wrap.
 
-For those servers, use **`PostHogMCP`** instead. It's a subclass of the [`posthog-node`](/docs/libraries/node) client, so it's a drop-in replacement for your existing PostHog client — `capture`, `identify`, `flush`, `shutdown`, and feature flags all work unchanged — with `captureToolCall` and `captureInitialize` added on top. You resolve identity and context per request and call those methods yourself. They build the same canonical `$mcp_*` events as `instrument()` (same sanitization, truncation, and `$exception` fan-out) and hand them to the inherited `capture()`, so nothing downstream (insights, dashboards, error tracking) can tell the difference.
+For those servers, use **`PostHogMCP`** instead. It's a subclass of the [`posthog-node`](/docs/libraries/node) client, so it's a drop-in replacement for your existing PostHog client — `capture`, `identify`, `flush`, `shutdown`, and feature flags all work unchanged — with MCP-aware methods added on top. You resolve identity and context per request and call those methods yourself. They build the same canonical `$mcp_*` events as `instrument()` (same sanitization, truncation, and `$exception` fan-out) and hand them to the inherited `capture()`, so nothing downstream (insights, dashboards, error tracking) can tell the difference.
+
+The custom path has full parity with `instrument()` — intent (`$mcp_intent`), the `get_more_tools` virtual tool, and tool listings (`$mcp_tools_list`) are all available. The difference is that `instrument()` patches the wrapped server so everything happens automatically, while here you add a one-liner at each of the two points the protocol exposes: building `tools/list` and handling `tools/call`.
 
 ## When to use which
 
@@ -29,6 +31,14 @@ const posthog = new PostHogMCP(process.env.POSTHOG_PROJECT_API_KEY, {
 ```
 
 Because it *is* a `PostHog` client, every option and method you already know is available — including `beforeSend` (which runs on the MCP events too) and `enableExceptionAutocapture` (set it to `false` to stop errored tool calls from fanning out a `$exception`). The wrapping-path hooks (`identify`, `context`, `intentFallback`, `eventProperties`) don't apply here: there's no wrapped server to run them against, so you pass identity and properties on each call instead.
+
+To surface the SDK's internal warnings (which it otherwise discards, since MCP STDIO transports can't use `console.*`), import and call `setLogger`:
+
+```ts
+import { setLogger } from "@posthog/mcp"
+
+setLogger((message) => console.error(message))
+```
 
 ## Capture events
 
@@ -84,13 +94,66 @@ posthog.capture({
 
 </CalloutBox>
 
-## What you don't get (vs `instrument()`)
+## Capture intent and tool listings
 
-Because there's no wrapped server, `PostHogMCP` does **not** manage these for you — you pass the equivalent data per call:
+`instrument()` injects the `context` argument and serves the `get_more_tools` tool by patching the wrapped server. There's nothing to patch on the custom path, so two helper methods do the same work — you call them where your dispatcher builds `tools/list` and handles `tools/call`.
+
+### `tools/list`
+
+`prepareToolList(tools, options?)` returns a new array (your own tools are left untouched) with the `context` argument injected into each tool's input schema and, when `reportMissing` is on, the `get_more_tools` virtual tool appended. Pass the names you advertise to `captureToolsList` to emit `$mcp_tools_list`:
+
+```ts
+// building your tools/list response
+const tools = posthog.prepareToolList(myTools, { reportMissing: true })
+
+posthog.captureToolsList({
+  toolNames: tools.map((t) => t.name),
+  durationMs: Date.now() - start,
+  distinctId: user.id,
+})
+
+return { tools }
+```
+
+`options.context` defaults to `true` (set it to `false` to leave your schemas untouched, or `{ description }` to customize the prompt). `options.reportMissing` defaults to `false`. Both mirror the [`instrument()` options](/docs/mcp-analytics/installation#configuration).
+
+### `tools/call`
+
+`prepareToolCall(name, args)` reads an incoming call before you dispatch it. It returns `{ intent, intentSource, args, isMissingCapability }` — pulling the agent's intent off the injected `context` argument, stripping `context` from the arguments (so your handler and its schema validation never see it), and flagging whether the call targeted `get_more_tools`. Pass the returned `intent` and `intentSource` to `captureToolCall`, and dispatch the returned `args` to your tool:
+
+```ts
+import { getMoreToolsResult } from "@posthog/mcp"
+
+// On a tools/call:
+const { intent, intentSource, args, isMissingCapability } = posthog.prepareToolCall(name, request.params.arguments)
+
+if (isMissingCapability) {
+  // the agent invoked get_more_tools — record the unmet ask, don't run a tool
+  posthog.captureMissingCapability({ context: intent, distinctId: user.id })
+  return getMoreToolsResult()
+}
+
+const result = await runTool(name, args)
+posthog.captureToolCall({
+  toolName: name,
+  parameters: args,
+  response: result,
+  intent,            // → $mcp_intent
+  intentSource,      // → $mcp_intent_source
+  distinctId: user.id,
+})
+```
+
+`captureMissingCapability` emits a dedicated `$mcp_missing_capability` event (not a `$mcp_tool_call`), and `getMoreToolsResult()` is the canned acknowledgement to return to the agent. See [Capturing agent intent](/docs/mcp-analytics/intent) and [Tracking missing capabilities](/docs/mcp-analytics/missing-capability) for what these events power.
+
+## What you handle yourself (vs `instrument()`)
+
+The custom path captures the same events, but because there's no wrapped server, `PostHogMCP` can't run these invisibly — you call a method or pass the equivalent data per request:
 
 - **Sessions** — no MCP-session-derived `$session_id` or inactivity rollover. Pass your own `sessionId`.
 - **Identity caching / `$identify` dedupe** — pass `distinctId` (and optional `setProperties`) on each call.
-- **The injected `context` argument, `intentFallback`, `reportMissing`, and `conversation_id`** — these patch tool schemas and request handlers, which only the wrapping path can do.
+- **The injected `context` argument and `get_more_tools`** — call `prepareToolList` / `prepareToolCall` at `tools/list` and `tools/call` (see [above](#capture-intent-and-tool-listings)) rather than having the wrapper patch your schemas and handlers.
+- **`intentFallback` and `conversation_id`** — these have no custom-path equivalent yet. Supply the agent's intent through the `context` argument; `prepareToolCall` reads it off the call.
 
 Everything from the [event reference](/docs/mcp-analytics/events) onward — event names, property shapes, sanitization, error tracking — is identical.
 
