@@ -227,16 +227,18 @@ PostHog serves your team's latest skills as a private plugin marketplace. To con
 2. Click **Load skills in your agent**
 3. Click **Generate read-only credential & command**
 
-PostHog mints a dedicated, read-only credential scoped to skills only (`llm_skill:read`) and drops it into ready-to-paste install commands for both Claude Code and Codex. The credential is yours alone, so rotating it never affects a teammate, and you can revoke it anytime from **Settings** > **Project secret API keys**.
+PostHog mints a dedicated, read-only credential scoped to skills only (`llm_skill:read`) and drops it into ready-to-paste install commands for both Claude Code and Codex. This credential is a dedicated read-only Personal API key created just for this purpose. It's scoped to read this project's skills and nothing else, and it's locked to this one project. It's not your everyday Personal API key, and it's not a project secret key.
 
-The credential is shown only once. It's read-only, reads this project's skills and nothing else, and is never your personal API key.
+Because the credential is yours alone, rotating it never affects a teammate. And since it's tied to your account, it automatically stops working if you lose access to the project. Manage or revoke it anytime from **Settings** > **Personal API keys**.
+
+The credential is shown only once, so copy the generated commands before you close the modal.
 
 ### Claude Code
 
 Paste the two generated lines into Claude Code:
 
 ```text
-/plugin marketplace add https://x-access-token:YOUR_PHS_TOKEN@app.posthog.com/api/projects/:team_id/llm_skills/marketplace.git
+/plugin marketplace add https://x-access-token:YOUR_PHX_TOKEN@app.posthog.com/api/projects/:team_id/llm_skills/marketplace.git
 /plugin install posthog-skill-store@posthog-skill-store-marketplace
 ```
 
@@ -247,7 +249,7 @@ The first line registers your team's marketplace; the second installs the plugin
 Run both generated lines in your terminal:
 
 ```bash
-codex plugin marketplace add "https://x-access-token:YOUR_PHS_TOKEN@app.posthog.com/api/projects/:team_id/llm_skills/marketplace.git"
+codex plugin marketplace add "https://x-access-token:YOUR_PHX_TOKEN@app.posthog.com/api/projects/:team_id/llm_skills/marketplace.git"
 codex plugin add posthog-skill-store@posthog-skill-store-marketplace
 ```
 
@@ -255,7 +257,9 @@ This adds the same marketplace to Codex and installs the plugin. Codex loads the
 
 ## Export and import skills as a zip
 
-You can round-trip any stored skill to a spec-compliant `SKILL.md` directory. From the skills list or a skill's detail page, click **Download .zip** to export the skill — its frontmatter, body, and bundled files — as a zip. To bring a skill in, drop a `SKILL.md` directory zip back into the UI to import it. This is handy for moving a skill in or out of PostHog, or sharing it with an agent that reads `SKILL.md` directories directly.
+You can round-trip any stored skill to and from a spec-compliant `SKILL.md` directory. From the skills list or a skill's detail page, click **Download .zip** to export a skill as a `.zip` containing its frontmatter, body, and bundled files. To bring a skill in, click **Import** on the skills list and choose a spec-compliant `.zip` to create the skill from it.
+
+This is useful for moving a skill in or out of PostHog, or for sharing it with an agent that reads `SKILL.md` directories directly.
 
 ## Example: a full session
 
