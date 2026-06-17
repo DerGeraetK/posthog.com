@@ -533,6 +533,10 @@ export const handbookSidebar = [
                 url: '/handbook/brand/foundations',
             },
             {
+                name: 'Brand guidelines and messaging',
+                url: '/handbook/content/brand-message',
+            },
+            {
                 name: 'Voice & tone',
                 url: '/handbook/brand/tone',
             },
