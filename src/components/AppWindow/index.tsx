@@ -222,7 +222,8 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     const [closing, setClosing] = useState(false)
     const [closed, setClosed] = useState(false)
     const [minimizing, setMinimizing] = useState(false)
-    const [animating, setAnimating] = useState(true)
+    const skipsOpenAnimation = (item.expanded && !item.fromOrigin) || siteSettings.experience === 'boring'
+    const [animating, setAnimating] = useState(!skipsOpenAnimation)
     const animationStartTimeRef = useRef<number | null>(null)
     const posthog = usePostHog()
     const [view, setView] = useState<'marketing' | 'developer'>('marketing')
@@ -1009,6 +1010,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                 )}
                                 <div
                                     ref={contentRef}
+                                    style={animating ? { visibility: 'hidden' } : undefined}
                                     className={`size-full flex-grow ${
                                         chrome
                                             ? `overflow-hidden rounded-lg ${hasToolbar ? 'rounded-t-none' : ''} ${
