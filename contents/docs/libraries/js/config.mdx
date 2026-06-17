@@ -126,6 +126,7 @@ The `logs` config controls how browser log records are captured and sent to Post
 | `flushIntervalMs`<br/><br/>**Type:** Number<br/>**Default:** `3000` | How often batched log records are flushed, in milliseconds. |
 | `maxBufferSize`<br/><br/>**Type:** Number<br/>**Default:** `100` | Buffer size before forcing a flush. |
 | `maxLogsPerInterval`<br/><br/>**Type:** Number<br/>**Default:** `1000` | Rate limit per flush window. Excess records are dropped with a single warning, protecting against runaway loggers flooding the network. |
+| `beforeSend`<br/><br/>**Type:** Function or Array of Functions<br/>**Default:** `undefined` | Pre-send filter for log records, as a single function or a left-to-right chain. Each function can inspect, modify, or drop a record (return `null` to drop it) before it enters the rate limit or buffer. Runs for records sent via both `posthog.logger` and `posthog.captureLog`. See the [JavaScript web Logs installation guide](/docs/logs/installation/javascript) for an example. |
 
 Example:
 

@@ -49,6 +49,7 @@ posthog.init('<ph_project_token>', {
 | `flushIntervalMs` | How often batched log records are flushed. Defaults to `3000`. |
 | `maxBufferSize` | Buffer size before forcing a flush. Defaults to `100`. |
 | `maxLogsPerInterval` | Rate limit per flush window. Excess records are dropped with a single warning. Defaults to `1000`. |
+| `beforeSend` | Pre-send filter to inspect, redact, or drop log records. See [Filter and redact logs with `beforeSend`](#filter-and-redact-logs-with-beforesend) below. |
 
 See the [web SDK config reference](/docs/libraries/js/config#configuring-logs) for the complete list.
 
@@ -112,6 +113,34 @@ posthog.init('<ph_project_token>', {
 > 3. Prefer `posthog.logger` for anything you actually care about – it's structured, queryable, and doesn't pull in unrelated output.
 
 `posthog.logger` and `captureConsoleLogs` are independent and can be enabled together. The logger path emits OTLP records directly; the autocapture path scrapes console strings.
+
+</Step>
+
+<Step title="Filter and redact logs with beforeSend" badge="optional">
+
+Use `logs.beforeSend` to inspect, redact, or drop log records before they're sent. It runs for records from both `posthog.logger` and `posthog.captureLog`, so it's the right place to strip sensitive data or filter out noise, no matter how a record was created.
+
+```js-web
+posthog.init('<ph_project_token>', {
+  api_host: '<ph_client_api_host>',
+  defaults: '<ph_posthog_js_defaults>',
+  logs: {
+    serviceName: 'checkout-web',
+    beforeSend: (log) => {
+      // Drop records that contain sensitive data
+      if (log.body.includes('password')) return null
+
+      // Or return a modified copy to redact it
+      return {
+        ...log,
+        body: log.body.replace(/token=\S+/g, 'token=[REDACTED]'),
+      }
+    },
+  },
+})
+```
+
+To keep a record, return it (modified or not). To drop it, return `null`. You can also pass an array of functions to form a chain that's evaluated left to right – returning `null` from any function short-circuits the chain and drops the record. If a function throws, the record is dropped rather than crashing your app.
 
 </Step>
 
