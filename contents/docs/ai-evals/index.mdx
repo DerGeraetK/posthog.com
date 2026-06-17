@@ -2,10 +2,11 @@
 title: Evaluations
 ---
 
-Evaluations automatically assess the quality of your LLM [generations](/docs/ai-observability/generations) and return a pass/fail result with reasoning. PostHog supports two types of evaluations:
+Evaluations automatically assess your LLM [generations](/docs/ai-observability/generations) as they're captured. Most evaluations return a pass/fail result with reasoning, while sentiment evaluations classify how users feel in their messages. PostHog supports three types of evaluations:
 
 - **LLM-as-a-judge** – Uses an LLM to score each generation against a prompt you define. Great for nuanced, subjective checks like tone, helpfulness, or hallucination detection.
 - **Code-based (Hog)** – Runs deterministic code you write against each generation. Great for rule-based checks like format validation, keyword detection, or length limits. Free to run with no LLM cost.
+- **Sentiment analysis** – Classifies the sentiment of user messages on each matching generation as positive, neutral, or negative. Returns a sentiment label and score instead of a pass/fail result, with no prompt or code to write.
 
 ## Why use evaluations?
 
@@ -272,6 +273,25 @@ Click **Generate with AI** in the code editor to open Max, PostHog's AI assistan
 - Debug errors in your existing code
 - Iterate on the logic by testing and refining
 
+## Sentiment analysis evaluations
+
+Sentiment analysis evaluations classify the sentiment of user messages on each matching generation as **positive**, **neutral**, or **negative**. Unlike LLM-as-a-judge and code-based evaluations, they don't return a pass/fail verdict – each run produces a sentiment label and a confidence score. For more on how PostHog classifies sentiment, see [Sentiment classification](/docs/ai-observability/sentiment).
+
+Because sentiment is classified automatically, there's no prompt or code to write. You only choose which generations to evaluate, using the same sampling rate and property filters as other evaluation types.
+
+Sentiment evaluations don't use an LLM judge, so they don't require a provider API key and have no LLM cost. They also don't support N/A results, success rates, or evaluation reports, since those apply only to pass/fail evaluations.
+
+### Creating a sentiment evaluation
+
+1. Navigate to **AI Evals** > **Evaluations**
+2. Click **New evaluation**
+3. Select **Sentiment analysis** as the evaluation type
+4. Configure the evaluation:
+   - **Name**: A descriptive name for the evaluation
+   - **Sampling rate**: Percentage of generations to evaluate (0.1% – 100%)
+   - **Property filters** (optional): Narrow which generations to evaluate using event or person properties
+5. Enable the evaluation and click **Save**
+
 ## Managing evaluations via MCP
 
 You can also manage evaluations through the [PostHog MCP server](/docs/model-context-protocol) using AI agents like Claude Code, Cursor, or any MCP-connected tool.
@@ -282,7 +302,7 @@ The MCP server provides six evaluation management tools:
 | ------------------- | -------------------------------------------------------------- |
 | `evaluations-get`   | List evaluations with optional search and enabled filter       |
 | `evaluation-get`    | Get a specific evaluation by UUID                              |
-| `evaluation-create` | Create LLM judge or Hog code evaluations                       |
+| `evaluation-create` | Create LLM judge, Hog code, or sentiment evaluations           |
 | `evaluation-update` | Update evaluation config, name, or enabled status              |
 | `evaluation-delete` | Delete an evaluation (soft delete)                             |
 | `evaluation-run`    | Trigger an async evaluation run on a specific generation event |
