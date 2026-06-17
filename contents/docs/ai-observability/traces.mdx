@@ -2,7 +2,7 @@
 title: Traces
 ---
 
-import TraceEventSnippet from "./_snippets/trace-event.mdx"
+import TraceEventSnippet from "./_snippets/trace-event.mdx";
 
 Traces are a collection of [generations](/docs/ai-observability/generations) and [spans](/docs/ai-observability/spans) that capture a full interaction between a user and an LLM. The [traces tab](https://app.posthog.com/ai-observability/traces) lists them along with the properties autocaptured by PostHog like the person, total cost, total latency, and more.
 
@@ -26,7 +26,6 @@ Clicking on a trace opens a timeline of the interaction with all the generation 
 
 <Caption>A trace presents LLM event data in a timeline, tree-structured view </Caption>
 
-
 ## Conversation display options
 
 When viewing a trace, you can control how conversation messages are displayed using the display options dropdown. The available options are:
@@ -42,6 +41,12 @@ Traces display any [tools](/docs/ai-observability/tools) called by the generatio
 ## Sentiment classification
 
 PostHog can classify the sentiment of user messages in a trace as negative, neutral, or positive. Sentiment is computed on-demand using a local model when you view a trace — no data is sent to third-party services. Each trace gets an overall sentiment label and score, with a per-generation and per-message breakdown. See [Sentiment classification](/docs/ai-observability/sentiment) for more details.
+
+## Custom parsers
+
+PostHog uses parsers to recognize LLM event input and output structures and display them as a readable conversation. When no parser recognizes an event's shape, the input and output are shown as raw JSON with a callout: "Shown as raw JSON — no parser recognizes this event's shape."
+
+To create a custom parser, click **Set up custom parser with PostHog AI** in the callout. [PostHog AI](/docs/posthog-ai) analyzes the event's structure and generates a parser configuration. Once saved, the trace re-renders with the recognized structure displayed as a conversation.
 
 ## Search traces with PostHog AI
 
