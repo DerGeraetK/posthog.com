@@ -126,6 +126,15 @@ To fix this:
 1. Upgrade your database provider's plan, or wait for the compute-time quota to reset at the next billing period.
 2. Re-enable the source in PostHog.
 
+## Why is my Shopify sync failing with "402 Payment Required"?
+
+If your Shopify sync fails with a message like "Shopify returned 402 Payment Required — your Shopify store appears to be frozen due to an unpaid bill," it means Shopify's Admin API returned a 402 because your store is frozen for billing reasons, usually a past-due or unpaid Shopify subscription. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since it can't succeed until the billing issue is resolved on Shopify's side.
+
+To fix this:
+
+1. Settle your outstanding balance in your [Shopify billing settings](https://admin.shopify.com/settings/billing) to unfreeze the store.
+2. Re-enable the source in PostHog.
+
 ## How do I speed up my SQL queries?
 
 1. Reduce the date range you're querying.
