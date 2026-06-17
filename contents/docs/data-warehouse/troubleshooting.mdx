@@ -195,6 +195,15 @@ To fix this:
 2. Verify the pooler username and host. The username should be in the format `postgres.<project-ref>`, and the host should match the connection pooling host shown under **Project Settings** → **Database** → **Connection pooling**.
 3. Re-enable the source in PostHog.
 
+## Why is my Postgres sync failing with "canceling statement due to conflict with recovery"?
+
+If your Postgres sync of a read replica fails with a message like "PostHog repeatedly hit Postgres recovery conflicts while reading from your read replica," it means the replica kept canceling the sync's long-running reads because of a recovery conflict (`canceling statement due to conflict with recovery`). This happens when the replica applies changes streamed from the primary that remove row versions the sync is still reading, so it cancels the read to keep replaying WAL. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since the conflict keeps recurring until you adjust the replica's configuration or sync from the primary instead.
+
+To fix this:
+
+1. Increase `max_standby_streaming_delay` on the replica, or enable `hot_standby_feedback`, so the replica gives long-running reads more time to finish before canceling them. Alternatively, point the source at your primary database instead of the read replica.
+2. Re-enable the source in PostHog.
+
 ## Why is my GitHub sync failing with "No GitHub account is connected"?
 
 If your GitHub sync fails with a message like "No GitHub account is connected. Please reconnect your GitHub account," it means the source is configured to authenticate with a GitHub account, but no connected integration was found – either no account was ever connected, or the linked integration was deleted. Related messages cover a missing personal access token or a GitHub integration that no longer exists. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying can't restore a missing connection.
