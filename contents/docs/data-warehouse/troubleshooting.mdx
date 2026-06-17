@@ -147,6 +147,34 @@ To fix this:
 1. Settle your outstanding balance in your [Shopify billing settings](https://admin.shopify.com/settings/billing) to unfreeze the store.
 2. Re-enable the source in PostHog.
 
+## Why is my Stripe sync failing with "does not have access to account"?
+
+If your Stripe sync fails with a message like "Stripe rejected the request because your API key isn't authorized for the configured Stripe account," it means the API key can't reach the Stripe account the source is configured to use. This is usually because of an **Account id** (the `stripe_account` header) the key isn't authorized for, or a Stripe Connect application whose access was revoked. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying can't resolve a key/account mismatch or a revoked grant.
+
+To fix this:
+
+1. If your key belongs directly to the account, remove or correct the **Account id** in your source settings – it only applies to Stripe Connect platform accounts.
+2. If you connected via OAuth, reconnect your Stripe account in case the application's access was revoked.
+3. Re-enable the source in PostHog.
+
+## Why is my Postgres sync failing with "the password that was provided for the role is wrong"?
+
+If your Postgres sync fails with a message like "Your database proxy (for example AWS RDS Proxy) rejected the credentials," it means a database proxy in front of your Postgres database – such as AWS RDS Proxy – rejected the username and password the source connects with. Proxies report bad credentials in their own wording ("The password that was provided for the role ... is wrong") rather than PostgreSQL's standard authentication error. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying replays the same rejected credentials.
+
+To fix this:
+
+1. Check that the username and password configured for this source match what the proxy expects.
+2. Re-enable the source in PostHog.
+
+## Why is my GitHub sync failing with "No GitHub account is connected"?
+
+If your GitHub sync fails with a message like "No GitHub account is connected. Please reconnect your GitHub account," it means the source is configured to authenticate with a GitHub account, but no connected integration was found – either no account was ever connected, or the linked integration was deleted. Related messages cover a missing personal access token or a GitHub integration that no longer exists. This is a non-retryable error – PostHog stops the sync instead of retrying indefinitely, since retrying can't restore a missing connection.
+
+To fix this:
+
+1. Reconnect your GitHub account for the source, or update the source configuration with a valid personal access token.
+2. Re-enable the source in PostHog.
+
 ## How do I speed up my SQL queries?
 
 1. Reduce the date range you're querying.
