@@ -73,7 +73,7 @@ To add row filters during source setup:
 
 1. In the table picker, click **Columns and row filters** next to a table
 2. In the **Row filters** section, click **Add filter**
-3. Select a column, choose an operator (`=`, `!=`, `>`, `>=`, `<`, `<=`), and enter a value
+3. Select a column, choose an operator (`=`, `!=`, `>`, `>=`, `<`, `<=`, `IN`, `NOT IN`), and enter a value
 4. Add more filters as needed – all filters are ANDed together
 5. Click **Save**
 
@@ -84,7 +84,7 @@ To add row filters to an existing source:
 3. Under **Row filters**, add your filter conditions
 4. Click **Save**
 
-Row filters support integer, numeric, string, boolean, date (`YYYY-MM-DD`), and timestamp (`YYYY-MM-DDTHH:MM:SS`) columns. Filters are applied on the next sync and don't remove rows that were already synced.
+Row filters support integer, numeric, string, boolean, date (`YYYY-MM-DD`), and timestamp (`YYYY-MM-DDTHH:MM:SS`) columns. Filters are applied on the next sync and don't remove rows that were already synced. They aren't available for tables synced with [change data capture (CDC)](#how-posthog-cdc-works).
 
 See the [row filters documentation](/docs/cdp/sources#row-filters) for supported operators and value formats.
 

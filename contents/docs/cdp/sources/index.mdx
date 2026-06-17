@@ -177,7 +177,7 @@ To add row filters to an existing source:
 
 ### Supported operators
 
-Row filters support six comparison operators:
+Row filters support the following operators:
 
 | Operator | Description |
 |----------|-------------|
@@ -187,6 +187,10 @@ Row filters support six comparison operators:
 | `>=` | Greater than or equal |
 | `<` | Less than |
 | `<=` | Less than or equal |
+| `IN` | Matches any value in a list |
+| `NOT IN` | Matches no value in a list |
+
+For `IN` and `NOT IN`, enter the value as a comma-separated list – for example, `1, 2, 3` for an integer column or `'active', 'trialing'` for a string column.
 
 ### Supported column types
 
@@ -208,6 +212,7 @@ The value you enter is validated against the column's type. For example, you can
 - **Filters are ANDed** – A row must match all conditions to sync.
 - **Applied on next sync** – Filters take effect on the next sync. They don't remove rows that were already synced.
 - **Maximum 20 filters per schema** – You can add up to 20 filter conditions per table.
+- **Not available for CDC** – Row filters apply to snapshot-style syncs (full table, incremental, and append-only). They don't apply to tables synced with change data capture (CDC).
 
 <ProductScreenshot
   imageLight={SettingsLight}
