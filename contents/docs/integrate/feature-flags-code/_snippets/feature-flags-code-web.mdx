@@ -20,6 +20,21 @@ if (posthog.getFeatureFlag('flag-key')  == 'variant-key') { // replace 'variant-
 }
 ```
 
+### Feature flag values and payloads together
+
+If you need both the flag value and payload, use `getFeatureFlagResult` so both come from the same evaluation result.
+
+```js-web
+const result = posthog.getFeatureFlagResult('flag-key')
+
+if (result?.variant === 'variant-key') { // replace 'variant-key' with the key of your variant
+    const payload = result.payload
+    // Do something with the variant and payload
+}
+```
+
+The result includes the flag's `key`, `enabled`, `variant`, and `payload`. `getFeatureFlagPayload` still works, but it's deprecated in favor of `getFeatureFlagResult`.
+
 ### Ensuring flags are loaded before usage
 
 Every time a user loads a page, we send a request in the background to fetch the feature flags that apply to that user. We store those flags in your chosen persistence option (local storage by default).
