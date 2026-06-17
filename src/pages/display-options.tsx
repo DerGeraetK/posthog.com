@@ -248,7 +248,10 @@ export default function DisplayOptions() {
     return (
         <>
             <SEO title="Display options" description="Personalize your PostHog.com experience" />
-            <div data-scheme="secondary" className="w-full h-full bg-primary text-primary p-2">
+            <div
+                data-scheme="secondary"
+                className="w-full h-full bg-primary text-primary p-2 os:border-t border-primary"
+            >
                 <Fieldset legend="Display">
                     <div className="bg-primary grid grid-cols-2 gap-2">
                         <ToggleGroup

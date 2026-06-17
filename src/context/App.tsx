@@ -743,6 +743,7 @@ const appSettings: AppSettings = {
         position: {
             center: true,
         },
+        toolbar: true,
     },
     '/terms': {
         size: {
