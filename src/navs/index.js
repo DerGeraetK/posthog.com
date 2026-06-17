@@ -564,6 +564,10 @@ export const handbookSidebar = [
                 url: '/handbook/brand/assets',
             },
             {
+                name: 'Infographic style guide',
+                url: '/handbook/brand/infographic-style-guide',
+            },
+            {
                 name: 'Requesting custom art',
                 url: '/handbook/brand/art-requests',
             },
