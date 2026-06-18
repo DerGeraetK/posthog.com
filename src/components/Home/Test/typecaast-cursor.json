@@ -6,7 +6,7 @@
             "height": 640
         },
         "skin": {
-            "id": "slack",
+            "id": "cursor",
             "options": {
                 "channel": "#papercuts"
             }
@@ -38,35 +38,17 @@
             "type": "message",
             "id": "m1",
             "from": "ian",
-            "text": "there's a link on https://posthog.com/handbook/brand/tone that points to localhost"
+            "text": "there's a link on https://posthog.com/handbook/brand/tone that points to localhost. ask @PostHog to fix this."
         },
         {
             "type": "delay",
             "duration": 1000
         },
         {
-            "type": "composerType",
-            "from": "cory",
-            "text": "oops, @PostHog can you fix this?",
-            "id": "m2"
-        },
-        {
-            "type": "send",
-            "id": "m2"
-        },
-        {
-            "type": "reaction",
-            "target": "m2",
-            "emoji": "👀",
-            "shortcode": "eyes",
-            "from": "posthog-bot",
-            "delay": 900
-        },
-        {
             "type": "message",
             "from": "posthog-bot",
             "text": "Found it. Line 7 has `http://localhost:8002/handbook/content/posthog-style-guide`. Let me verify the target exists and fix it.",
-            "delay": 200
+            "delay": 1400
         },
         {
             "type": "delay",

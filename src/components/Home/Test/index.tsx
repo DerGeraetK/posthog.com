@@ -37,6 +37,7 @@ import { RenderInClient } from 'components/RenderInClient'
 import Customers from '../Customers'
 import { Typecaast } from '@typecaast/react'
 import configSlack from './typecaast-slack.json'
+import configCursor from './typecaast-cursor.json'
 
 const AppCount = () => <span className="text-xs font-normal">{APP_COUNT} apps</span>
 
@@ -231,6 +232,14 @@ function HeroImage(): JSX.Element {
                     {activeTab === 'slack' ? (
                         <Typecaast
                             config={configSlack}
+                            autoplay
+                            theme={isDark ? 'dark' : 'light'}
+                            className="overflow-hidden rounded"
+                        />
+                    ) : null}
+                    {activeTab === 'cursor' ? (
+                        <Typecaast
+                            config={configCursor}
                             autoplay
                             theme={isDark ? 'dark' : 'light'}
                             className="overflow-hidden rounded"
