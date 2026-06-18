@@ -56,6 +56,9 @@
         { "source": "/posts/:path*", "destination": "/posts/[slug]/index.html" }
     ],
     "redirects": [
+        { "source": "/docs/prompt-management/skills-store", "destination": "/docs/ai-engineering/skills-store", "statusCode": 301 },
+        { "source": "/docs/site-apps", "destination": "/docs/js-snippets" },
+        { "source": "/docs/site-apps/:path*", "destination": "/docs/js-snippets/:path*" },
         { "source": "/code/download", "destination": "/code#download" },
         { "source": "/code/download/", "destination": "/code#download" },
         {
@@ -1878,7 +1881,7 @@
         },
         {
             "source": "/docs/llm-analytics/skills-store",
-            "destination": "/docs/prompt-management/skills-store"
+            "destination": "/docs/ai-engineering/skills-store"
         },
         {
             "source": "/docs/llm-analytics/:path*",
@@ -1979,7 +1982,6 @@
         },
         { "source": "/professional-services", "destination": "/services" },
         { "source": "/posthug", "destination": "/" },
-        { "source": "/mcp", "destination": "/docs/model-context-protocol" },
         {
             "source": "/handbook/strategy/brand",
             "destination": "/handbook/brand/foundations"
