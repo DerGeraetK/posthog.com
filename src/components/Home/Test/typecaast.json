@@ -1,0 +1,85 @@
+{
+    "version": 1,
+    "meta": {
+        "canvas": {
+            "width": 480,
+            "height": 640
+        },
+        "skin": {
+            "id": "slack",
+            "options": {
+                "channel": "#papercuts"
+            }
+        },
+        "composer": "always"
+    },
+    "participants": [
+        {
+            "id": "cory",
+            "name": "Cory Watilo",
+            "avatar": "https://ca.slack-edge.com/TSS5W8YQZ-U01J0RDCALT-7d167f598268-512"
+        },
+        {
+            "id": "paul",
+            "name": "Paul D'Ambra",
+            "color": "#5b3a8e",
+            "isSelf": true,
+            "avatar": "https://ca.slack-edge.com/TSS5W8YQZ-U02DXFTVDNE-f2f95be10c5d-192"
+        },
+        {
+            "id": "posthog-bot",
+            "name": "PostHog",
+            "kind": "app",
+            "avatar": "https://avatars.slack-edge.com/2022-11-09/4332839178807_e4c788c631c52a9fe696_512.png"
+        }
+    ],
+    "timeline": [
+        {
+            "type": "message",
+            "id": "m1",
+            "from": "cory",
+            "text": "i got a billing toast error on the dashboard but i think it's a bug?"
+        },
+        {
+            "type": "composerType",
+            "from": "paul",
+            "text": "@PostHog the billing/spend API call shouldn't show an error toast to the user…"
+        },
+        {
+            "type": "send",
+            "id": "m2"
+        },
+        {
+            "type": "reaction",
+            "target": "m2",
+            "emoji": "👀",
+            "shortcode": "eyes",
+            "from": "posthog-bot",
+            "delay": 900
+        },
+        {
+            "type": "delay",
+            "duration": 1400
+        },
+        {
+            "type": "message",
+            "from": "posthog-bot",
+            "text": "Let me check how exceptions are captured in the frontend."
+        },
+        {
+            "type": "system",
+            "from": "posthog-bot",
+            "card": "pr-opened",
+            "text": "Pull request opened — guards the billing/spend call so it no longer toasts on error.",
+            "actions": [
+                {
+                    "label": "View PR",
+                    "href": "https://github.com/PostHog/posthog/pull/61879"
+                },
+                {
+                    "label": "Open in PostHog Code"
+                }
+            ]
+        }
+    ]
+}
