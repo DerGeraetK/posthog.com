@@ -492,6 +492,49 @@ If the wizard doesn't support the framework, see the [SDKs and Libraries](https:
     console.log('Generated: llms.txt')
 }
 
+// Function to generate llms-full.txt: the full text of every docs page concatenated
+// into a single file, for agents that prefer to ingest the whole corpus at once
+// rather than fetching individual `.md` URLs from llms.txt.
+export const generateLlmsFullTxt = (pages: Array<{ fields: { slug: string }; frontmatter: { title: string } }>) => {
+    console.log('Generating llms-full.txt file...')
+
+    const publicPath = path.resolve(__dirname, '../public')
+
+    let content = `# PostHog documentation (full text)
+
+> The complete text of PostHog's documentation, concatenated into a single file for LLM ingestion. Each page is delimited by a heading with its source URL. Individual pages are also available as raw Markdown by appending \`.md\` to any docs URL. See https://posthog.com/llms.txt for a structured index.
+`
+
+    // Sort by slug for deterministic output across builds.
+    const sortedPages = [...pages].sort((a, b) => a.fields.slug.localeCompare(b.fields.slug))
+
+    let included = 0
+    for (const doc of sortedPages) {
+        const { slug } = doc.fields
+        const mdPath = path.join(publicPath, `${slug}.md`)
+
+        if (!fs.existsSync(mdPath)) {
+            continue
+        }
+
+        const markdown = fs.readFileSync(mdPath, 'utf8').trim()
+        if (!markdown) {
+            continue
+        }
+
+        content += `\n\n---\n\n# Source: https://posthog.com${slug}\n\n${markdown}\n`
+        included++
+    }
+
+    const llmsFullTxtPath = path.join(publicPath, 'llms-full.txt')
+    if (!fs.existsSync(publicPath)) {
+        fs.mkdirSync(publicPath, { recursive: true })
+    }
+
+    fs.writeFileSync(llmsFullTxtPath, content, 'utf8')
+    console.log(`Generated: llms-full.txt (${included} pages)`)
+}
+
 // Function to generate pricing.md file for LLM and human consumption
 export const generatePricingMd = (products: any[]) => {
     console.log('Generating pricing.md file...')

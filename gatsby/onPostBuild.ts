@@ -12,6 +12,7 @@ import {
     generateRawMarkdownPages,
     generateApiSpecMarkdown,
     generateLlmsTxt,
+    generateLlmsFullTxt,
     generateSdkReferencesMarkdown,
     generatePricingMd,
 } from './rawMarkdownUtils'
@@ -593,6 +594,7 @@ export const onPostBuild: GatsbyNode['onPostBuild'] = async ({ graphql, reporter
     // Only include docs pages in llms.txt (not handbook)
     const docsPages = filteredPages.filter((page) => page.fields.slug.startsWith('/docs'))
     generateLlmsTxt(docsPages)
+    generateLlmsFullTxt(docsPages)
 
     if (process.env.AWS_CODEPIPELINE !== 'true') {
         console.log('Skipping onPostBuild tasks')
