@@ -501,11 +501,22 @@ export default function HomeTest() {
     const { setWindowTitle } = useApp()
     const posthog = usePostHog()
 
+    // Resolve the EU-cloud feature flag after mount to avoid an SSR/client hydration mismatch
+    // (React #418). SSR and the first client render both produce the 'app' host; we only switch
+    // to 'eu' once flags are available on the client.
+    const [signupHost, setSignupHost] = useState('app')
+
     useEffect(() => {
         if (appWindow) {
             setWindowTitle(appWindow, 'home.mdx')
         }
     }, [])
+
+    useEffect(() => {
+        posthog?.onFeatureFlags(() => {
+            setSignupHost(posthog?.isFeatureEnabled?.('direct-to-eu-cloud') ? 'eu' : 'app')
+        })
+    }, [posthog])
 
     return (
         <>
@@ -523,9 +534,7 @@ export default function HomeTest() {
                 readOnly
                 contentClassName="font-rounded"
                 cta={{
-                    url: `https://${
-                        posthog?.isFeatureEnabled?.('direct-to-eu-cloud') ? 'eu' : 'app'
-                    }.posthog.com/signup`,
+                    url: `https://${signupHost}.posthog.com/signup`,
                     label: 'Get started - free',
                 }}
             />
