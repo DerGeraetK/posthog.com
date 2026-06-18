@@ -3,7 +3,5 @@
 # for docs and handbook content.
 * @smallbrownbike @corywatilo
 
-# No code owners for docs and handbook content
-/contents/docs/
-/contents/handbook/
-
+# No code owners for Markdown content
+/contents/
