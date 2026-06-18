@@ -9,6 +9,26 @@ import { useToast } from '../context/Toast'
 // Sentinel value used by posthog-js for cookieless tracking mode
 const COOKIELESS_SENTINEL_VALUE = '$posthog_cookieless'
 
+// Shared POST + JSON-parse + Strapi error extraction for the /api/auth/posthog/*
+// endpoints. Returns the parsed body plus a normalized `error` string; callers
+// handle the success shape (jwt vs ok). Throws only on network/JSON failure.
+const postPosthogAuth = async (
+    path: string,
+    body: Record<string, unknown>,
+    token?: string | null
+): Promise<{ ok: boolean; data: any; error?: string }> => {
+    const res = await fetch(`${SQUEAK_HOST}/api/auth/posthog/${path}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(body),
+    })
+    const data = await res.json()
+    return { ok: res.ok, data, error: data?.error?.message || data?.message }
+}
+
 export type User = {
     id: number
     email: string
@@ -43,6 +63,15 @@ export type User = {
         monthlyCount: number
     }
     picasso?: boolean
+    // Surfaced by the Strapi `me` override (the raw posthogUserId is private).
+    // True when a PostHog OAuth identity is linked to this account.
+    hasPosthogLogin?: boolean
+}
+
+export type DisambiguationResult = {
+    status: 'needs_disambiguation'
+    pendingToken: string
+    emailInUse: boolean
 }
 
 type UserContextValue = {
@@ -53,7 +82,18 @@ type UserContextValue = {
     fetchUser: (token?: string | null) => Promise<User | null>
     getJwt: () => Promise<string | null>
     login: (args: { email: string; password: string }) => Promise<User | null | { error: string }>
-    loginWithProvider: (args: { provider: 'posthog'; accessToken: string }) => Promise<User | null | { error: string }>
+    loginWithProvider: (args: {
+        provider: 'posthog'
+        accessToken: string
+    }) => Promise<User | null | { error: string } | DisambiguationResult>
+    createWithProvider: (args: { pendingToken: string }) => Promise<User | null | { error: string }>
+    linkExisting: (args: {
+        pendingToken: string
+        identifier: string
+        password: string
+    }) => Promise<User | null | { error: string }>
+    linkCurrent: (args: { accessToken: string }) => Promise<{ ok: true } | { error: string }>
+    unlinkProvider: () => Promise<{ ok: true } | { error: string }>
     logout: () => Promise<void>
     signUp: (args: {
         email: string
@@ -100,6 +140,10 @@ export const UserContext = createContext<UserContextValue>({
     getJwt: async () => null,
     login: async () => null,
     loginWithProvider: async () => null,
+    createWithProvider: async () => null,
+    linkExisting: async () => null,
+    linkCurrent: async () => ({ error: '' }),
+    unlinkProvider: async () => ({ error: '' }),
     logout: async () => {
         // noop
     },
@@ -258,20 +302,30 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }: {
         provider: 'posthog'
         accessToken: string
-    }): Promise<User | null | { error: string }> => {
+    }): Promise<User | null | { error: string } | DisambiguationResult> => {
         setIsLoading(true)
 
         try {
             posthog?.capture('squeak oauth login start', { provider })
 
             const res = await fetch(
-                `${SQUEAK_HOST}/api/auth/${provider}/callback?access_token=${encodeURIComponent(accessToken)}`
+                `${SQUEAK_HOST}/api/auth/posthog/resolve?access_token=${encodeURIComponent(accessToken)}`
             )
 
             const data = await res.json()
 
             if (!res.ok) {
-                throw new Error(data?.error?.message)
+                throw new Error(data?.error?.message || data?.message)
+            }
+
+            // Non-employee with no durable link and no email match: the redirect
+            // page renders the disambiguation screen (create vs. log in to link).
+            if (data.status === 'needs_disambiguation') {
+                return {
+                    status: 'needs_disambiguation',
+                    pendingToken: data.pendingToken,
+                    emailInUse: data.emailInUse,
+                }
             }
 
             const user = await finalizeLogin(data.jwt)
@@ -298,6 +352,81 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             return null
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    // Disambiguation: create a brand-new community account from the verified
+    // PostHog identity carried in the pending token.
+    const createWithProvider = async ({
+        pendingToken,
+    }: {
+        pendingToken: string
+    }): Promise<User | null | { error: string }> => {
+        try {
+            const { ok, data, error } = await postPosthogAuth('create', { pendingToken })
+            if (!ok) {
+                return { error: error || 'Could not create account.' }
+            }
+            // await so a failure inside finalizeLogin (e.g. /me errors) is caught
+            // here rather than becoming an unhandled rejection in the caller.
+            return await finalizeLogin(data.jwt)
+        } catch (error) {
+            console.error(error)
+            return { error: 'Your account was created, but loading it failed. Please refresh and sign in.' }
+        }
+    }
+
+    // Disambiguation: prove ownership of an existing account via password, then
+    // additively link the PostHog identity (keeps password login — dual auth).
+    const linkExisting = async ({
+        pendingToken,
+        identifier,
+        password,
+    }: {
+        pendingToken: string
+        identifier: string
+        password: string
+    }): Promise<User | null | { error: string }> => {
+        try {
+            const { ok, data, error } = await postPosthogAuth('link', { pendingToken, identifier, password })
+            if (!ok) {
+                return { error: error || 'Could not link account.' }
+            }
+            return await finalizeLogin(data.jwt)
+        } catch (error) {
+            console.error(error)
+            return { error: 'Your account was linked, but loading it failed. Please refresh and sign in.' }
+        }
+    }
+
+    // Proactive link from account settings (user is already logged in).
+    const linkCurrent = async ({ accessToken }: { accessToken: string }): Promise<{ ok: true } | { error: string }> => {
+        try {
+            const token = await getJwt()
+            const { ok, error } = await postPosthogAuth('link-current', { accessToken }, token)
+            if (!ok) {
+                return { error: error || 'Could not connect PostHog.' }
+            }
+            await fetchUser(token)
+            return { ok: true }
+        } catch (error) {
+            console.error(error)
+            return { error: 'Could not connect PostHog. Please try again.' }
+        }
+    }
+
+    const unlinkProvider = async (): Promise<{ ok: true } | { error: string }> => {
+        try {
+            const token = await getJwt()
+            const { ok, error } = await postPosthogAuth('unlink', {}, token)
+            if (!ok) {
+                return { error: error || 'Could not disconnect PostHog.' }
+            }
+            await fetchUser(token)
+            return { ok: true }
+        } catch (error) {
+            console.error(error)
+            return { error: 'Could not disconnect PostHog. Please try again.' }
         }
     }
 
@@ -799,6 +928,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         getJwt,
         login,
         loginWithProvider,
+        createWithProvider,
+        linkExisting,
+        linkCurrent,
+        unlinkProvider,
         logout,
         signUp,
         fetchUser,

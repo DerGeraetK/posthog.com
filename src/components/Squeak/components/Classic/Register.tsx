@@ -9,6 +9,7 @@ import Wizard from 'components/Wizard'
 import SecurityHog from '../../../../images/security-hog.png'
 import { IconSpinner } from '@posthog/icons'
 import PostHogButton from './PostHogButton'
+import { isPostHogEmail } from 'lib/employee'
 
 const Input = ({
     label,
@@ -72,7 +73,7 @@ const RegisterForm: React.FC = () => {
                 errors.email = 'Required'
             } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
                 errors.email = 'Invalid email address'
-            } else if (values.email.toLowerCase().endsWith('@posthog.com')) {
+            } else if (isPostHogEmail(values.email)) {
                 errors.email = 'Your employee account is created automatically. Sign in with PostHog instead.'
             }
             if (!values.password) {

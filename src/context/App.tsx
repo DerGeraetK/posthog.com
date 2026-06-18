@@ -768,6 +768,22 @@ const appSettings: AppSettings = {
             fixed: true,
         },
     },
+    '/connect/posthog/redirect': {
+        size: {
+            min: {
+                width: 420,
+                height: 340,
+            },
+            max: {
+                width: 520,
+                height: 460,
+            },
+            fixed: false,
+        },
+        position: {
+            center: true,
+        },
+    },
     '/display-options': {
         size: {
             min: {
