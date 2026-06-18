@@ -36,7 +36,7 @@ import PlatformInstall, { wizardInstallSchema } from 'components/PlatformInstall
 import { RenderInClient } from 'components/RenderInClient'
 import Customers from '../Customers'
 import { Typecaast } from '@typecaast/react'
-import config from './typecaast.json'
+import configSlack from './typecaast-slack.json'
 
 const AppCount = () => <span className="text-xs font-normal">{APP_COUNT} apps</span>
 
@@ -200,13 +200,45 @@ export const CTAs = () => {
     )
 }
 
+const heroImageTabs: ToggleOption[] = [
+    { label: 'Slack', value: 'slack', default: true },
+    { label: 'Cursor', value: 'cursor' },
+]
+
 function HeroImage(): JSX.Element {
     const { siteSettings } = useApp()
     const isDark = siteSettings.theme === 'dark'
+    const [activeTab, setActiveTab] = useState('slack')
+
     return (
-        <aside className="max-w-[400px] h-[450px] mx-auto mt-4 @xl:mx-0 @2xl:mt-0 @2xl:w-72 @2xl:float-right @2xl:ml-4 @3xl:w-80 @4xl:w-96 @2xl:-mt-20 @3xl:-mt-16 border border-primary rounded shadow-xl overflow-hidden leading-[0] transition-all">
-            <Typecaast config={config} autoplay theme={isDark ? 'dark' : 'light'} className="overflow-hidden rounded" />
-        </aside>
+        <div className="max-w-[400px] mx-auto mt-4 @xl:mx-0 @2xl:float-right @2xl:ml-4 @2xl:w-72 @3xl:w-80 @4xl:w-96 @2xl:-mt-20 transition-all">
+            <ToggleGroup
+                title="View"
+                hideTitle
+                options={heroImageTabs}
+                value={activeTab}
+                onValueChange={(value) => value && setActiveTab(value)}
+                className="mb-2 w-max mx-auto"
+            />
+            <aside className="h-[420px] border border-primary rounded shadow-xl overflow-hidden leading-[0]">
+                <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="h-full"
+                >
+                    {activeTab === 'slack' ? (
+                        <Typecaast
+                            config={configSlack}
+                            autoplay
+                            theme={isDark ? 'dark' : 'light'}
+                            className="overflow-hidden rounded"
+                        />
+                    ) : null}
+                </motion.div>
+            </aside>
+        </div>
     )
 }
 
