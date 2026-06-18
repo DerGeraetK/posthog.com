@@ -114,8 +114,8 @@ importers:
         specifier: ^3.13.12
         version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@typecaast/react':
-        specifier: ^0.2.5
-        version: 0.2.5(react@18.3.1)
+        specifier: ^0.3.1
+        version: 0.3.1(react@18.3.1)
       '@types/lodash.groupby':
         specifier: ^4.6.7
         version: 4.6.9
@@ -5390,24 +5390,24 @@ packages:
   '@turist/time@0.0.2':
     resolution: {integrity: sha512-qLOvfmlG2vCVw5fo/oz8WAZYlpe5a5OurgTj3diIxJCdjRHpapC+vQCz3er9LV79Vcat+DifBjeAhOAdmndtDQ==}
 
-  '@typecaast/core@0.2.0':
-    resolution: {integrity: sha512-x586yDBI3QrNScHYKNDuU2wtSrO8SczgJpluSc+pJbvo6cSJFSCQK/NszYyiuSA0f8Ri+zUkpxle+XcqMCoBkw==}
+  '@typecaast/core@0.3.0':
+    resolution: {integrity: sha512-zyZYP2R6PU+nYN1eS2SReFxuwKFLqPwSFM8/RmEr96+EzJFFcm6Kku/0cl4zEV0MaJ3n47TCoTN8Yb+IYvNmxA==}
 
-  '@typecaast/react@0.2.5':
-    resolution: {integrity: sha512-UrpPwq2mcIqzEPy3hs6z6TfSjMlxa+ZBAbwi/J6EST9S+2FeZPpWHGuBlyhSiRvPCtap8p4n69vwn2YMToqofQ==}
+  '@typecaast/react@0.3.1':
+    resolution: {integrity: sha512-QtzXiqHKzECEFFylEx9ZQn/8CDXuXcdC4Oop9u067sWruwHiKzdP71FMiD2l3Z/5i9gVPM0u8OJX2dj9IcaM+w==}
     peerDependencies:
       react: '>=18'
 
-  '@typecaast/schema@0.2.0':
-    resolution: {integrity: sha512-80QKpf7EI9Q+TZyrkzbR+Rzv8KYqq8K7MaJfK+ZXN8tO962Obe4vtAHfKlXAWHYyKjFXzZiIqyYc38/5gZVMYw==}
+  '@typecaast/schema@0.2.1':
+    resolution: {integrity: sha512-0xUp4Aqt60kiBOBv49zZX3NDh5MAZvATd4iU0XsOPS1fw7Ak05aeM/H8uT528w/aR6WekGw34qLt2MJfNtvTzg==}
 
-  '@typecaast/skin-kit@0.2.3':
-    resolution: {integrity: sha512-yQnbC+ZlAKDGaibsXFhcymZ+v8skfhDYvSWKMTtTg9vFTuT18MC5qRQGviRX09gU7yTAq8dn318ScWVJBIWT5w==}
+  '@typecaast/skin-kit@0.3.1':
+    resolution: {integrity: sha512-mB+du8oIzIQwmM2NUV1eNb80zNAKmYslc5IIiPscRl7v4s5R1Ym/h00Z33w9qD2JCkVYVAl8s1J3ukBadlYAyw==}
     peerDependencies:
       react: '>=18'
 
-  '@typecaast/skins@0.2.3':
-    resolution: {integrity: sha512-iRU22WASh5gSvcmtq33JDCJ3b6G9I8W1GikvVp4/j9F8AW2J/mwJtXKrvVGM0E1+VC0qjewRvv9hS0ej9EVw6A==}
+  '@typecaast/skins@0.3.0':
+    resolution: {integrity: sha512-zA9c+jCF0fhM56jgb1kspbNDdHUT2hesKMR9+lkd2RAtWdlkSutGPp3VapO/QJu1AwZHm+aW4wJ17H0V2Er/3w==}
     peerDependencies:
       react: '>=18'
 
@@ -24114,34 +24114,34 @@ snapshots:
 
   '@turist/time@0.0.2': {}
 
-  '@typecaast/core@0.2.0':
+  '@typecaast/core@0.3.0':
     dependencies:
-      '@typecaast/schema': 0.2.0
+      '@typecaast/schema': 0.2.1
 
-  '@typecaast/react@0.2.5(react@18.3.1)':
+  '@typecaast/react@0.3.1(react@18.3.1)':
     dependencies:
-      '@typecaast/core': 0.2.0
-      '@typecaast/schema': 0.2.0
-      '@typecaast/skin-kit': 0.2.3(react@18.3.1)
-      '@typecaast/skins': 0.2.3(react@18.3.1)
+      '@typecaast/core': 0.3.0
+      '@typecaast/schema': 0.2.1
+      '@typecaast/skin-kit': 0.3.1(react@18.3.1)
+      '@typecaast/skins': 0.3.0(react@18.3.1)
       react: 18.3.1
 
-  '@typecaast/schema@0.2.0':
+  '@typecaast/schema@0.2.1':
     dependencies:
       zod: 4.4.3
 
-  '@typecaast/skin-kit@0.2.3(react@18.3.1)':
+  '@typecaast/skin-kit@0.3.1(react@18.3.1)':
     dependencies:
-      '@typecaast/core': 0.2.0
-      '@typecaast/schema': 0.2.0
+      '@typecaast/core': 0.3.0
+      '@typecaast/schema': 0.2.1
       react: 18.3.1
       zod: 4.4.3
 
-  '@typecaast/skins@0.2.3(react@18.3.1)':
+  '@typecaast/skins@0.3.0(react@18.3.1)':
     dependencies:
-      '@typecaast/core': 0.2.0
-      '@typecaast/schema': 0.2.0
-      '@typecaast/skin-kit': 0.2.3(react@18.3.1)
+      '@typecaast/core': 0.3.0
+      '@typecaast/schema': 0.2.1
+      '@typecaast/skin-kit': 0.3.1(react@18.3.1)
       react: 18.3.1
       zod: 4.4.3
 

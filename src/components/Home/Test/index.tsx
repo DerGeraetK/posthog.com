@@ -201,9 +201,11 @@ export const CTAs = () => {
 }
 
 function HeroImage(): JSX.Element {
+    const { siteSettings } = useApp()
+    const isDark = siteSettings.theme === 'dark'
     return (
-        <aside className="max-w-[400px] mx-auto mt-4 @xl:mx-0 @2xl:mt-0 @2xl:w-72 @2xl:float-right @2xl:ml-4 @3xl:w-80 @4xl:w-96 @2xl:-mt-20 @3xl:-mt-16 border border-primary rounded shadow-xl overflow-hidden leading-[0] transition-all">
-            <Typecaast config={config} autoplay />
+        <aside className="max-w-[400px] h-[450px] mx-auto mt-4 @xl:mx-0 @2xl:mt-0 @2xl:w-72 @2xl:float-right @2xl:ml-4 @3xl:w-80 @4xl:w-96 @2xl:-mt-20 @3xl:-mt-16 border border-primary rounded shadow-xl overflow-hidden leading-[0] transition-all">
+            <Typecaast config={config} autoplay theme={isDark ? 'dark' : 'light'} className="overflow-hidden rounded" />
         </aside>
     )
 }

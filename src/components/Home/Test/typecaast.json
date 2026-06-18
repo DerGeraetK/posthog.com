@@ -11,7 +11,8 @@
                 "channel": "#papercuts"
             }
         },
-        "composer": "always"
+        "composer": "always",
+        "fit": "reflow"
     },
     "participants": [
         {
