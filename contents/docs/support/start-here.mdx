@@ -82,6 +82,23 @@ Three ways to create tickets from Slack:
 </QuestLogItem>
 
 <QuestLogItem
+    title="Connect Microsoft Teams"
+    subtitle="Optional"
+    icon="IconMessage"
+>
+
+Connect your Microsoft Teams workspace to turn Teams messages into support tickets. The **SupportHog** bot enables two-way sync – messages in Teams create tickets, and your replies in PostHog are posted back to the Teams thread.
+
+Two ways messages become tickets:
+
+1. **Support channel** – every message in a dedicated channel becomes a ticket
+2. **Bot mention** – `@SupportHog` in any channel
+
+Shared channels use polling instead of real-time webhooks due to Microsoft API limitations. PostHog polls them via Microsoft Graph every minute to pick up new messages. Shared channels show a **Shared · polled** badge in the settings UI.
+
+</QuestLogItem>
+
+<QuestLogItem
     title="Connect Email"
     subtitle="Optional"
     icon="IconMail"
