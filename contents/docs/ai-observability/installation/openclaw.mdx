@@ -1,5 +1,6 @@
 ---
 title: OpenClaw AI Observability installation
+platformLabel: OpenClaw
 platformIconName: IconOpenClaw
 showStepsToc: true
 tableOfContents: [
@@ -42,7 +43,7 @@ tableOfContents: [
 
 You need:
 
-- A running [OpenClaw](https://github.com/openclaw/openclaw) gateway (Node.js >= 22)
+- A running [OpenClaw](https://github.com/openclaw/openclaw) gateway (the PostHog plugin supports Node.js >= 20)
 - A [PostHog account](https://us.posthog.com/signup) with a project API key
 
 ## Install the PostHog plugin
@@ -94,7 +95,7 @@ The PostHog plugin initializes automatically on startup. Once users send message
 
 After sending a few messages through your gateway:
 
-1. Go to the [AI Observability](https://us.posthog.com/llm-analytics) tab in PostHog.
+1. Go to the [AI Observability](https://us.posthog.com/ai-observability) tab in PostHog.
 2. You should see traces and generations appearing within a few minutes.
 
 ## Configuration options
