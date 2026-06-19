@@ -1407,18 +1407,28 @@ export interface SiteSettings {
 
 const isLabel = (item: any) => !item?.url && item?.name
 
-const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
+// SSR-safe defaults. These must match what the server renders so that the first
+// client render is identical to the server HTML (otherwise React throws hydration
+// error #418). Client-only values (theme, saved siteSettings, mobile/compact) are
+// applied after mount — see getInitialSiteSettings and the mount effect in Provider.
+const getDefaultSiteSettings = (): SiteSettings => ({
+    experience: 'posthog',
+    colorMode: 'light',
+    theme: 'light',
+    skinMode: 'modern',
+    cursor: 'default',
+    wallpaper: 'keyboard-garden',
+    clickBehavior: 'double',
+    performanceBoost: false,
+    screensaverDisabled: true,
+})
+
+const getInitialSiteSettings = (isMobile: boolean, compact: boolean): SiteSettings => {
     const lastReset = typeof window !== 'undefined' ? localStorage.getItem('lastReset') : null
     const siteSettings = {
-        experience: 'posthog',
+        ...getDefaultSiteSettings(),
         colorMode: (typeof window !== 'undefined' && (window as any).__theme) || 'light',
         theme: (typeof window !== 'undefined' && (window as any).__theme) || 'light',
-        skinMode: 'modern',
-        cursor: 'default',
-        wallpaper: 'keyboard-garden',
-        clickBehavior: 'double',
-        performanceBoost: false,
-        screensaverDisabled: true,
         ...(typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('siteSettings') || '{}') : {}),
         ...(!lastReset ? { experience: 'posthog' } : {}),
     }
@@ -1439,8 +1449,11 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const compact = typeof window !== 'undefined' && window !== window.parent
     const constraintsRef = useRef<HTMLDivElement>(null)
     const taskbarRef = useRef<HTMLDivElement>(null)
-    const [isMobile, setIsMobile] = useState(!isSSR && window.innerWidth < 768)
-    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getInitialSiteSettings(isMobile, compact))
+    // Initialize with SSR-safe defaults so the first client render matches the server
+    // HTML. The real values (mobile, theme, saved siteSettings) are applied after mount
+    // in an effect below to avoid a hydration mismatch (React error #418).
+    const [isMobile, setIsMobile] = useState(false)
+    const [siteSettings, setSiteSettings] = useState<SiteSettings>(getDefaultSiteSettings)
     const websiteMode = siteSettings.experience === 'boring'
     const [taskbarHeight, setTaskbarHeight] = useState(38)
     const [lastClickedElementRect, setLastClickedElementRect] = useState<{ x: number; y: number } | null>(null)
@@ -2362,6 +2375,22 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             document.body.setAttribute('data-wallpaper', siteSettings.wallpaper)
         }
     }, [siteSettings])
+
+    // Apply client-only settings (mobile, theme, saved siteSettings) after mount. The
+    // initial render uses SSR defaults so it matches the server HTML; doing this in an
+    // effect (which only runs on the client, after hydration) avoids React error #418.
+    useEffect(() => {
+        const mobile = window.innerWidth < 768
+        setIsMobile(mobile)
+        setSiteSettings(getInitialSiteSettings(mobile, compact))
+
+        // On the mobile homepage no windows open by default. The SSR window is created
+        // to match the server render, so clear it here once we know we're on mobile.
+        if (mobile && location.key === 'initial' && location.pathname === '/' && !paramsWindows) {
+            setWindows([])
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     useEffect(() => {
         const handleResize = () => {
