@@ -38,7 +38,7 @@
             "type": "message",
             "id": "m1",
             "from": "ian",
-            "text": "there's a link on https://posthog.com/handbook/brand/tone that points to localhost"
+            "text": "there's a broken link on https://posthog.com/handbook/brand/tone that points to localhost"
         },
         {
             "type": "delay",
@@ -70,7 +70,7 @@
         },
         {
             "type": "delay",
-            "duration": 500
+            "duration": 2000
         },
         {
             "type": "system",
@@ -85,12 +85,13 @@
                 {
                     "label": "Open in PostHog Code"
                 }
-            ]
+            ],
+            "instant": true
         }
     ],
     "pacing": {
         "humanize": 0.45,
-        "readingWpm": 250,
+        "readingWpm": 400,
         "typingCps": 25
     }
 }

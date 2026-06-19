@@ -114,8 +114,8 @@ importers:
         specifier: ^3.13.12
         version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@typecaast/react':
-        specifier: ^0.4.0
-        version: 0.4.0(react@18.3.1)
+        specifier: ^0.5.0
+        version: 0.5.0(react@18.3.1)
       '@types/lodash.groupby':
         specifier: ^4.6.7
         version: 4.6.9
@@ -5393,8 +5393,8 @@ packages:
   '@typecaast/core@0.4.0':
     resolution: {integrity: sha512-zy6eO7/okeox+3jr3GMzqmKgDHRWX6zCTGLJpwqU9isN+JrJIZyXJU8d0PM0SWVTzRVmv9NrWZKDX+Yhmy8R1Q==}
 
-  '@typecaast/react@0.4.0':
-    resolution: {integrity: sha512-47lXInNezgesLX0RtoD6Nu9JStvZXTDTYF9N/00bfKODiVsRhdEvYNfpX6DfoqowY4YsGsfB2WGKXFR3QnUl8Q==}
+  '@typecaast/react@0.5.0':
+    resolution: {integrity: sha512-rULB97/6Y1PFiyCJkYrrxbWm/szVP0Np0H8LEQkqKrlTcCz7G+hAmL9gWgvcqjCc0Nbch9cGwkTx9U9JCokmbA==}
     peerDependencies:
       react: '>=18'
 
@@ -6105,7 +6105,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version is no longer supported, please update to at least 0.8.*
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
@@ -16466,6 +16466,7 @@ packages:
   tsconfck@2.1.2:
     resolution: {integrity: sha512-ghqN1b0puy3MhhviwO2kGF8SeMDNhEbnKxjK7h6+fvY9JAxqvXi8y5NAHSQv687OVboS2uZIByzGd45/YxrRHg==}
     engines: {node: ^14.13.1 || ^16 || >=18}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^4.3.5 || ^5.0.0
@@ -17025,7 +17026,7 @@ packages:
 
   uuid@3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
-    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@8.3.2:
@@ -24118,7 +24119,7 @@ snapshots:
     dependencies:
       '@typecaast/schema': 0.2.1
 
-  '@typecaast/react@0.4.0(react@18.3.1)':
+  '@typecaast/react@0.5.0(react@18.3.1)':
     dependencies:
       '@typecaast/core': 0.4.0
       '@typecaast/schema': 0.2.1

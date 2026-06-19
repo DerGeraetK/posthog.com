@@ -21,12 +21,6 @@
             "isSelf": true
         },
         {
-            "id": "ian",
-            "name": "Ian Vanagas",
-            "color": "#5b3a8e",
-            "avatar": "https://ca.slack-edge.com/TSS5W8YQZ-U0432HMTU57-2bfb984646d1-512"
-        },
-        {
             "id": "posthog-bot",
             "name": "PostHog",
             "kind": "app",
@@ -36,9 +30,9 @@
     "timeline": [
         {
             "type": "message",
-            "id": "m1",
-            "from": "ian",
-            "text": "there's a link on https://posthog.com/handbook/brand/tone that points to localhost. ask @PostHog to fix this."
+            "from": "cory",
+            "text": "there's a link on https://posthog.com/handbook/brand/tone that points to localhost. ask PostHog to fix this.",
+            "id": "m1"
         },
         {
             "type": "delay",
@@ -48,11 +42,12 @@
             "type": "message",
             "from": "posthog-bot",
             "text": "Found it. Line 7 has `http://localhost:8002/handbook/content/posthog-style-guide`. Let me verify the target exists and fix it.",
-            "delay": 1400
+            "delay": 1400,
+            "instant": true
         },
         {
             "type": "delay",
-            "duration": 500
+            "duration": 2000
         },
         {
             "type": "system",
@@ -67,12 +62,13 @@
                 {
                     "label": "Open in PostHog Code"
                 }
-            ]
+            ],
+            "instant": true
         }
     ],
     "pacing": {
         "humanize": 0.45,
         "readingWpm": 250,
-        "typingCps": 25
+        "typingCps": 30
     }
 }

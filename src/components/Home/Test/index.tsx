@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import WhyPostHogReader from 'components/WhyPostHog'
 import SEO from 'components/seo'
@@ -233,6 +235,7 @@ function HeroImage(): JSX.Element {
                         <Typecaast
                             config={configSlack}
                             autoplay
+                            isolate
                             theme={isDark ? 'dark' : 'light'}
                             className="overflow-hidden rounded"
                         />
@@ -241,6 +244,7 @@ function HeroImage(): JSX.Element {
                         <Typecaast
                             config={configCursor}
                             autoplay
+                            isolate
                             theme={isDark ? 'dark' : 'light'}
                             className="overflow-hidden rounded"
                         />
