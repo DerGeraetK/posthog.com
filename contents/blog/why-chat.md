@@ -12,13 +12,13 @@ tags:
 
 "What can I help you with today?"
 
-It's what any business would ask a customer walking into their shop, so why is it so controversial when a piece of software does it?
+It's what most businesses would ask when a customer walks into their shop, so why is it so controversial when a piece of software does it?
 
-Companies like Linear, Attio, and us (PostHog) have all made an [AI chat](/ai) the default homepage experience recently and some are not happy about it.
+Companies like Linear, Attio, and PostHog have all made [AI chat](/ai) the default homepage experience recently – and developers have opinions.
 
 ![Complaints](https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/Clean_Shot_2026_04_17_at_11_14_10_2x_b8266e901c.png)
 
-We're seeing good results from doing this so far. Only 6% of homepage visitors clicked a dashboard link while 12% chat with AI. On top of this, only 2% of people over 30 days have put the default dashboard back within one hour of visiting.
+Not everyone is happy about it, but our data shows promising results so far. Only 6% of homepage visitors clicked a dashboard link while 12% chat with AI. On top of this, only 2% of people over 30 days have put the default dashboard back within one hour of visiting.
 
 To go further, we're explaining why we made this change and what we're doing to support it.
 
@@ -26,15 +26,15 @@ To go further, we're explaining why we made this change and what we're doing to 
 
 PostHog started as an "open source product analytics tool" but has grown to be much more. 48.5% of active PostHog users in the last 30 days didn't even use product analytics. They rely on [session replay](/session-replay), [web analytics](/web-analytics), [feature flags](/feature-flags), [error tracking](/error-tracking), or any of our other tools. 
 
-This is great as it shows we're making progress towards our mission of providing every tool engineers need to build successful products. We're sure aiming for it. We had 48 [changelog-worthy](/changelog) updates in March and LLMs are increasing the velocity at which we can ship new features.
+This is great as it shows we're making progress towards our mission of providing every tool engineers need to build successful products. We sure are aiming for it. We had 48 [changelog-worthy](/changelog) updates in March, and LLMs are increasing the velocity at which we can ship new features.
 
 But this shift and growth causes three problems:
 
 1. Defaulting to a product analytics dashboard doesn't make sense for ~50% of our users.
-2. There's a limited amount of room on the screen to put all of these products and features. 
+2. There isn't enough room on the screen to put all of these products and features. 
 3. Users have a limited amount of time and attention to learn the usage and best practices of these products too. 
 
-The combination of these creates the complaint that PostHog is "too complicated" and our UI is "too cluttered." Our [Platform UX team](/teams/platform-ux) is working on this, and we also have an exec leading a project on fixing "papercuts," 51 of which have been fixed in the last 2 weeks.
+As a result, a common complaint we've been hearing is that PostHog is "too complicated" and our UI is "too cluttered." Our [Platform UX team](/teams/platform-ux) is working on this and we also have an exec leading a project on fixing "papercuts," 51 of which have been fixed in the last 2 weeks.
 
 But we're also being helped by the biggest shift in how we build software: agents.
 
