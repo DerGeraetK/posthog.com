@@ -77,7 +77,7 @@ PostgreSQL sources created after February 18, 2026 require SSL/TLS encryption fo
 
 ## Sync methods
 
-Postgres tables support full table, incremental, append-only, and CDC sync methods.
+Postgres tables support full table, incremental, append-only, xmin, and CDC sync methods.
 
 Use CDC when you need PostHog to stay close to your source database and you care about deletes. It is especially useful when:
 
@@ -87,6 +87,22 @@ Use CDC when you need PostHog to stay close to your source database and you care
 - You want an optional change-history table for audit or lifecycle analysis.
 
 Use incremental or append-only sync instead when your table is append-heavy, has a reliable non-null cursor field, or you don't want to manage logical replication.
+
+Use xmin sync when your table has no reliable incremental cursor field like `updated_at` and you want incremental syncing without setting up CDC. xmin uses PostgreSQL's hidden `xmin` system column (the transaction ID that last modified each row) as a cursor. It's a middle ground between full table refresh and CDC:
+
+- Captures inserts and updates incrementally without requiring you to add a cursor column
+- Lighter than CDC since it doesn't require logical replication or a replication slot
+- Does not capture deletes (use CDC if you need delete tracking)
+
+xmin sync requires:
+
+- PostgreSQL 13 or newer
+- Table must have a primary key
+- Only works on regular (heap) tables and materialized views (not partitioned parents, views, or foreign tables)
+
+Because the `xmin` column is not indexed, syncs scan the entire table to find changed rows. For large tables with frequent syncs, this can be slower than indexed incremental sync. PostHog displays a warning when you select xmin sync to flag the unindexed scan.
+
+A `_ph_xmin` column is added to the synced table in PostHog containing the transaction ID for each row.
 
 <CalloutBox icon="IconWarning" title="CDC is an advanced feature" type="caution">
 
