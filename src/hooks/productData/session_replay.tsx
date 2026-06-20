@@ -45,6 +45,7 @@ export const sessionReplay = {
         title: 'Session Replay – Debug and analyze sessions with PostHog',
         description:
             'See how users interact with your product with Session Replay. Inspect sessions, diagnose issues, debug errors, and understand user behavior.',
+        image: 'https://res.cloudinary.com/dmukukwp6/image/upload/session_replay_44ec6fc51f.jpg',
     },
     /**
      * Sections rendered on the Product surface (`/session-replay`). Each entry
