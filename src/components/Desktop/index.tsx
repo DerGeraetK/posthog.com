@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'components/Link'
 import { useApp } from '../../context/App'
-import { IconDemoThumb, AppIcon, GradientGlyphIcon } from 'components/OSIcons'
+import { AppIcon, GlassIcon } from 'components/OSIcons'
+import {
+    HOME_SILHOUETTE,
+    DEMO_SILHOUETTE,
+    DEMO_VIEWBOX,
+    PLACEHOLDER_SILHOUETTE,
+    DEMO_THUMBNAIL,
+} from 'components/OSIcons/glyphs'
 import { AppItem } from 'components/OSIcons/AppIcon'
 import ContextMenu from 'components/RadixUI/ContextMenu'
 import CloudinaryImage from 'components/CloudinaryImage'
@@ -24,15 +31,6 @@ interface Product {
     color?: string
 }
 
-const HOME_ICON_PATH =
-    'M13.132 1.977a1.75 1.75 0 0 0-2.264 0L3.618 8.13A1.75 1.75 0 0 0 3 9.463v9.787c0 .966.784 1.75 1.75 1.75h3.5A1.75 1.75 0 0 0 10 19.25v-3.99a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.99c0 .966.784 1.75 1.75 1.75h3.5A1.75 1.75 0 0 0 21 19.25V9.463a1.75 1.75 0 0 0-.618-1.334l-7.25-6.152Z'
-
-const APPS_ICON_PATH =
-    'M6.75 13.5a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5M17.25 13.5a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5M6.75 3a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5M17.25 3a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5'
-
-const LIBRARY_ICON_PATH =
-    'M4.25 5C5.216 5 6 5.784 6 6.75v12.5A1.75 1.75 0 0 1 4.25 21h-.5A1.75 1.75 0 0 1 2 19.25V6.75C2 5.784 2.784 5 3.75 5zm8-2c.966 0 1.75.784 1.75 1.75v14.5A1.75 1.75 0 0 1 12.25 21h-3.5A1.75 1.75 0 0 1 7 19.25V4.75C7 3.784 7.784 3 8.75 3zm4.624 2.775a1.75 1.75 0 0 1 2.165 1.2l3.169 11.054a1.75 1.75 0 0 1-1.2 2.165l-1.442.413a1.75 1.75 0 0 1-2.164-1.199l-3.17-11.054a1.75 1.75 0 0 1 1.2-2.166zM9.25 15.5a.75.75 0 0 0 0 1.5h2.5a.75.75 0 0 0 0-1.5zm0-8.5a.75.75 0 0 0 0 1.5h2.5a.75.75 0 0 0 0-1.5z'
-
 export const useProductLinks = () => {
     const { posthogInstance, openNewChat, siteSettings, updateSiteSettings } = useApp()
     const { addToast } = useToast()
@@ -41,19 +39,21 @@ export const useProductLinks = () => {
     return [
         {
             label: 'Home',
-            Icon: <GradientGlyphIcon path={HOME_ICON_PATH} />,
+            Icon: <GlassIcon path={HOME_SILHOUETTE} />,
             url: '/',
             source: 'desktop',
         },
         {
+            // TODO: swap PLACEHOLDER_SILHOUETTE for the real Product OS glass path once available
             label: 'Product OS',
-            Icon: <GradientGlyphIcon path={APPS_ICON_PATH} />,
+            Icon: <GlassIcon path={PLACEHOLDER_SILHOUETTE} />,
             url: '/products',
             source: 'desktop',
         },
         {
+            // TODO: swap PLACEHOLDER_SILHOUETTE for the real Library glass path once available
             label: 'Library',
-            Icon: <GradientGlyphIcon path={LIBRARY_ICON_PATH} />,
+            Icon: <GlassIcon path={PLACEHOLDER_SILHOUETTE} />,
             url: '/posts',
             source: 'desktop',
         },
@@ -71,9 +71,8 @@ export const useProductLinks = () => {
         },
         {
             label: 'demo.mov',
-            Icon: IconDemoThumb,
+            Icon: <GlassIcon path={DEMO_SILHOUETTE} viewBox={DEMO_VIEWBOX} image={DEMO_THUMBNAIL} fillOpacity={0.2} />,
             url: '/demo',
-            className: 'size-14 -my-1',
             source: 'desktop',
         },
         {
@@ -642,7 +641,9 @@ export default function Desktop() {
                             className="absolute inset-0 opacity-100"
                             style={{
                                 backgroundImage:
-                                    "url('https://res.cloudinary.com/dmukukwp6/image/upload/grass_2x_3dc2ffb4bc.jpg')",
+                                    "url('https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/grass_9000_033cf4e104.jpg')",
+                                // backgroundImage:
+                                //    "url('https://res.cloudinary.com/dmukukwp6/image/upload/grass_2x_3dc2ffb4bc.jpg')",
                                 backgroundSize: 'cover',
                                 backgroundRepeat: 'no-repeat',
                                 backgroundPosition: 'right bottom',

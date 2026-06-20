@@ -1,4 +1,4 @@
 export * from './Icons'
 export * from './AppIcon'
-export { default as GradientGlyphIcon } from './GradientGlyphIcon'
-export type { GradientGlyphIconProps, GradientStop } from './GradientGlyphIcon'
+export { default as GlassIcon } from './GlassIcon'
+export type { GlassIconProps } from './GlassIcon'
