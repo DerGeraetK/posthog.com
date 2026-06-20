@@ -9,9 +9,16 @@ import { UserProvider } from './src/hooks/useUser'
 import Wrapper from './src/components/Wrapper'
 import KoreanWrapper from './src/components/Korean/KoreanWrapper'
 import { Provider } from './src/context/App'
+import { useKoreanSiteEnabled } from './src/hooks/useKoreanSite'
 initKea(false)
 
 const isKoreanPath = (pathname?: string) => pathname === '/ko' || pathname?.startsWith('/ko/')
+
+const KoreanAwareWrapper = ({ pathname }: { pathname?: string }) => {
+    const koreanEnabled = useKoreanSiteEnabled()
+    const WrapperComponent = isKoreanPath(pathname) && koreanEnabled ? KoreanWrapper : Wrapper
+    return <WrapperComponent />
+}
 
 export const wrapRootElement = ({ element }) => (
     <ToastProvider>
@@ -49,11 +56,9 @@ export const onRouteUpdate = ({ location, prevLocation }: RouteUpdateArgs) => {
 }
 
 export const wrapPageElement = ({ element, props: { location } }) => {
-    const WrapperComponent = isKoreanPath(location?.pathname) ? KoreanWrapper : Wrapper
-
     return (
         <Provider element={element} location={location}>
-            <WrapperComponent />
+            <KoreanAwareWrapper pathname={location?.pathname} />
         </Provider>
     )
 }

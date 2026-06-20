@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { navigate } from 'gatsby'
 import KoreanHomePage from './_KoreanHome'
 import { translateKo, translateKoHomeBody } from './_translations'
+import { useKoreanSiteEnabled } from '../../hooks/useKoreanSite'
 
 export default function KoreanHome() {
+    const koreanEnabled = useKoreanSiteEnabled()
+
+    useEffect(() => {
+        if (!koreanEnabled) {
+            navigate('/', { replace: true })
+        }
+    }, [koreanEnabled])
+
+    if (!koreanEnabled) {
+        return null
+    }
+
     return (
         <KoreanHomePage
             translate={translateKo}
