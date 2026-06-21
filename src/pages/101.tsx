@@ -1,6 +1,6 @@
 import React from 'react'
 import SEO from 'components/seo'
-import WhyPostHogReader from 'components/WhyPostHog'
+import WhyPostHogViewer from 'components/WhyPostHog'
 
 export default function WhatIsPostHog(): JSX.Element {
     return (
@@ -10,7 +10,7 @@ export default function WhatIsPostHog(): JSX.Element {
                 description="PostHog is a developer-focused platform to analyze, test, and improve your software products – and give your AI agents the context they need to do it."
                 image="/images/og/default.png"
             />
-            <WhyPostHogReader proseSize="lg">
+            <WhyPostHogViewer>
                 <h1>What is PostHog?</h1>
                 <p>
                     We're a developer-focused platform used to{' '}
@@ -101,7 +101,7 @@ export default function WhatIsPostHog(): JSX.Element {
                     </li>
                 </ul>
                 <p>Our tools are made to be used together, but you can also pick and choose what you want to use.</p>
-            </WhyPostHogReader>
+            </WhyPostHogViewer>
         </>
     )
 }

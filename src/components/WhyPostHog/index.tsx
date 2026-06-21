@@ -1,36 +1,36 @@
 import React from 'react'
-import ReaderView from 'components/ReaderView'
+import Viewer from 'components/Viewer'
 import { TreeMenu } from 'components/TreeMenu'
 import { whyPostHogNav } from '../../navs/whyPostHog'
 import WhyPostHogHeader from './Header'
 
-type ReaderViewProps = React.ComponentProps<typeof ReaderView>
+type ViewerProps = React.ComponentProps<typeof Viewer>
 
 /**
- * Shared layout for the "Why PostHog?" page collection (`/`, `/101`, `/workflow`,
- * `/why`, `/moat`, `/start`). Wraps `ReaderView` with the collection's sidebar:
+ * Shared layout for the "Why PostHog?" page collection (`/101`, `/workflow`, `/why`, `/moat`,
+ * `/start`). Wraps the `Viewer` template with the collection's left navigation sidebar:
  *
- * - `productSelect`: the static `WhyPostHogHeader` (logomark + "Why PostHog?").
- * - `leftSidebar`: the `whyPostHogNav` link list (`TreeMenu` sidebar appearance),
- *   each entry an individual page with the current one highlighted.
+ * - `sidebarHeader`: the static `WhyPostHogHeader` (logomark + "Why PostHog?").
+ * - `leftSidebar`: the `whyPostHogNav` link list (`TreeMenu` sidebar appearance), each entry an
+ *   individual page with the current one highlighted automatically from the pathname.
  *
- * Inline search is provided by `ReaderView` itself — it replaces the nav with
- * search results while typing, no extra wiring needed.
+ * On `@3xl`+ containers the sidebar is a persistent ~250px column (header + page search + nav);
+ * on narrow containers it collapses to a menu button that expands the search + nav downward.
  *
- * All other `ReaderView` props pass through so each page controls its own
- * content, SEO, prose size, etc. The sidebar defaults to pinned/visible.
+ * All other `Viewer` props pass through so each page controls its own content, SEO, etc.
+ * `proseSize` defaults to `lg` to match the collection's reading layout.
  */
-const WhyPostHogReader = ({ children, defaultNavVisible = true, ...props }: ReaderViewProps): JSX.Element => {
+const WhyPostHogViewer = ({ children, ...props }: ViewerProps): JSX.Element => {
     return (
-        <ReaderView
+        <Viewer
+            proseSize="lg"
             {...props}
-            defaultNavVisible={defaultNavVisible}
-            productSelect={<WhyPostHogHeader />}
+            sidebarHeader={<WhyPostHogHeader />}
             leftSidebar={<TreeMenu items={whyPostHogNav} appearance="sidebar" />}
         >
             {children}
-        </ReaderView>
+        </Viewer>
     )
 }
 
-export default WhyPostHogReader
+export default WhyPostHogViewer

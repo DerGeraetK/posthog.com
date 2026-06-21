@@ -1,44 +1,50 @@
 # WhyPostHog
 
-Shared layout for the **"Why PostHog?"** page collection — the homepage plus a
-handful of narrative/marketing pages that share one sidebar navigation.
+Shared layout for the **"Why PostHog?"** page collection — a handful of
+narrative pages that share one left-sidebar navigation.
 
-It's modeled on the session replay product layout (`ReaderViewProduct`), but
-without the side-by-side Product/Pricing/Docs tabs or anchor-scroll sections.
-Each nav entry is its own **individual page** (like the docs nav).
+`WhyPostHogViewer` wraps the [`Viewer`](../Viewer) template (the same template the
+homepage uses) and injects the collection's sidebar. Each nav entry is its own
+**individual page** (like the docs nav), not an anchor-scroll section.
+
+> The homepage (`/`) is **not** in this collection — it renders `Viewer` directly
+> with `controlsPlacement="header"` and no nav sidebar. It stays an entry in
+> `whyPostHogNav` only as a link target from the other pages' nav.
 
 ## What it renders
 
-`WhyPostHogReader` wraps [`ReaderView`](../ReaderView) and injects:
+`WhyPostHogViewer` passes two props to `Viewer`:
 
-- **`productSelect`** → [`Header.tsx`](./Header.tsx): a static `IconLogomark` +
-  "Why PostHog?" label (no dropdown, not a link). It collapses to an icon-only
-  state via `useSidebarExpanded()`, matching `ProductSwitcher`.
-- **`leftSidebar`** → [`TreeMenu`](../TreeMenu) with `appearance="sidebar"`,
-  fed by [`whyPostHogNav`](../../navs/whyPostHog.ts). The current page is
-  highlighted automatically from the pathname.
+- **`sidebarHeader`** → [`Header.tsx`](./Header.tsx): a static `IconLogomark` +
+  "Why PostHog?" label (no dropdown, not a link).
+- **`leftSidebar`** → [`TreeMenu`](../TreeMenu) with `appearance="sidebar"`, fed by
+  [`whyPostHogNav`](../../navs/whyPostHog.ts). The current page is highlighted
+  automatically from the pathname.
 
-Inline search is provided by `ReaderView` itself — typing in the sidebar search
-box replaces the nav list with search results, then restores it when cleared.
-No extra wiring is needed here.
+The `Viewer` renders these as a persistent ~250px sidebar column (header + page
+search + nav) on `@3xl`+ containers, collapsing to a menu button that expands the
+search + nav **downward** on narrow ones. Page search (mark.js highlight) is
+provided by `Viewer`'s sidebar (`InlineSearch`), wrapped in
+[`components/Editor/SearchProvider`](../Editor/SearchProvider.tsx).
 
-All other `ReaderView` props pass through (`title`, `hideTitle`, `proseSize`,
-`hideRightSidebar`, `showQuestions`, SEO is set by the page, etc.). The sidebar
-defaults to pinned/visible (`defaultNavVisible = true`).
+`proseSize` defaults to `lg`; all other `Viewer` props pass through (SEO is set by
+the page).
 
 ## Usage
 
 ```tsx
-import WhyPostHogReader from 'components/WhyPostHog'
-import { SEO } from 'components/seo'
+import WhyPostHogViewer from 'components/WhyPostHog'
+import SEO from 'components/seo'
 
 export default function MyPage() {
     return (
-        <WhyPostHogReader title="My page" proseSize="lg">
+        <>
             <SEO title="My page – PostHog" />
-            <h1>My page</h1>
-            {/* narrative prose */}
-        </WhyPostHogReader>
+            <WhyPostHogViewer>
+                <h1>My page</h1>
+                {/* narrative prose */}
+            </WhyPostHogViewer>
+        </>
     )
 }
 ```
@@ -46,14 +52,13 @@ export default function MyPage() {
 ## Adding a page to the collection
 
 1. Add a `{ name, url }` entry to [`src/navs/whyPostHog.ts`](../../navs/whyPostHog.ts).
-2. Create the page in `src/pages/` rendering `WhyPostHogReader`.
+2. Create the page in `src/pages/` rendering `WhyPostHogViewer`.
 3. If the URL replaces or moves an existing page, add a redirect in `vercel.json`.
 
 ## Pages in the collection
 
 | Page | URL |
 | --- | --- |
-| Let PostHog code (homepage) | `/` |
 | What is PostHog? | `/101` |
 | Works with your agents | `/workflow` |
 | Why we exist | `/why` |

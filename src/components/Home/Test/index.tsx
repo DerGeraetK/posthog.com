@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import WhyPostHogReader from 'components/WhyPostHog'
+import Viewer from 'components/Viewer'
 import SEO from 'components/seo'
 import { useApp } from '../../../context/App'
 import { useWindow } from '../../../context/Window'
@@ -307,7 +307,7 @@ export default function HomeTest() {
                 description="All your developer tools in one place. PostHog gives engineers everything to build, test, measure, and ship successful products faster. Get started free."
                 image="/images/og/default.png"
             />
-            <WhyPostHogReader hideTitle proseSize="lg" showQuestions={false} hideRightSidebar>
+            <Viewer proseSize="lg" controlsPlacement="header">
                 <div className="space-y-12">
                     <Hero />
                     <Customers />
@@ -319,7 +319,7 @@ export default function HomeTest() {
                     <ShamelessCTASection />
                     <HitCounter />
                 </div>
-            </WhyPostHogReader>
+            </Viewer>
         </>
     )
 }

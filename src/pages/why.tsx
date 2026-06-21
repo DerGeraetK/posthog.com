@@ -1,6 +1,6 @@
 import React from 'react'
 import SEO from 'components/seo'
-import WhyPostHogReader from 'components/WhyPostHog'
+import WhyPostHogViewer from 'components/WhyPostHog'
 import CloudinaryImage from 'components/CloudinaryImage'
 
 export default function Why(): JSX.Element {
@@ -11,7 +11,7 @@ export default function Why(): JSX.Element {
                 description="How we build on the internet has changed, but customer data is still siloed across dozens of services. PostHog is the single source of truth for product decisions."
                 image="/images/og/default.png"
             />
-            <WhyPostHogReader proseSize="lg">
+            <WhyPostHogViewer>
                 <h1>Why we exist</h1>
 
                 <h2>How we build on the internet has changed a lot lately</h2>
@@ -120,7 +120,7 @@ export default function Why(): JSX.Element {
                     And if you're using PostHog Code, our Signals suite constantly scans for bugs, issues, and UX
                     problems and creates pull requests to fix them – all automatically.
                 </p>
-            </WhyPostHogReader>
+            </WhyPostHogViewer>
         </>
     )
 }

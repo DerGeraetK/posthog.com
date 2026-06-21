@@ -1,6 +1,6 @@
 import React from 'react'
 import SEO from 'components/seo'
-import WhyPostHogReader from 'components/WhyPostHog'
+import WhyPostHogViewer from 'components/WhyPostHog'
 
 export default function Start(): JSX.Element {
     return (
@@ -10,7 +10,7 @@ export default function Start(): JSX.Element {
                 description="The fastest ways to get started with PostHog: run the Wizard, add the MCP to your AI editor, or try PostHog Code."
                 image="/images/og/default.png"
             />
-            <WhyPostHogReader proseSize="lg">
+            <WhyPostHogViewer>
                 <h1>How to get started</h1>
                 <p>There are a few ways to get going, depending on how you like to work.</p>
 
@@ -37,7 +37,7 @@ export default function Start(): JSX.Element {
                     above, plus features you can't get anywhere else – like Signals, which monitors logs, errors, and
                     session recordings to find patterns and ships PRs to fix issues automatically.
                 </p>
-            </WhyPostHogReader>
+            </WhyPostHogViewer>
         </>
     )
 }

@@ -1,18 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
-import {
-    IconSearch,
-    IconGear,
-    IconTextWidthFixed,
-    IconTextWidth,
-    IconRefresh,
-    IconSidebarClose,
-    IconSidebarOpen,
-} from '@posthog/icons'
+import { IconGear, IconTextWidthFixed, IconTextWidth, IconRefresh } from '@posthog/icons'
 import OSButton from 'components/OSButton'
 import ScrollArea from 'components/RadixUI/ScrollArea'
 import { Toolbar, ToolbarElement } from '../RadixUI/Toolbar'
 import { SearchProvider } from './SearchProvider'
-import { ViewerSearchBar } from './SearchBar'
+import EditorSearchProvider from 'components/Editor/SearchProvider'
+import { ViewerControls } from './ViewerControls'
+import { ViewerSidebar } from './ViewerSidebar'
 import { getProseClasses } from '../../constants/index'
 import { useApp } from '../../context/App'
 import Share from 'components/Share'
@@ -46,6 +40,22 @@ interface ViewerProps {
     articleRef?: React.RefObject<HTMLDivElement>
     hideToolbar?: boolean
     scrollable?: boolean
+    /**
+     * Where the control strip (search + tools) renders:
+     * - `rail` (default): vertical left column on `@md`+ containers, collapsing to a top row below `@md`.
+     * - `header`: horizontal row at the top-left of the content, mirroring the window controls.
+     */
+    controlsPlacement?: 'rail' | 'header'
+    /** Surface the content-width (gear) control alongside search. */
+    showOptions?: boolean
+    /**
+     * Navigation menu rendered in a left sidebar (persistent column on `@3xl`+ containers,
+     * collapsing to a downward menu button on narrow ones). When set, the sidebar owns page
+     * search and the `controlsPlacement` strip is not rendered.
+     */
+    leftSidebar?: React.ReactNode
+    /** Static header shown atop the `leftSidebar` column / as its mobile menu trigger. */
+    sidebarHeader?: React.ReactNode
 }
 
 const ScrollWrapper = ({ scrollable, children }: { scrollable: boolean; children: React.ReactNode }) =>
@@ -155,15 +165,18 @@ export function Viewer({
     articleRef,
     hideToolbar = false,
     scrollable = true,
+    controlsPlacement = 'rail',
+    showOptions = false,
+    leftSidebar,
+    sidebarHeader,
 }: ViewerProps) {
+    const hasLeftSidebar = Boolean(leftSidebar)
     const [showCher, setShowCher] = useState(false)
     const [showSearch, setShowSearch] = useState(false)
-    const [sidebarOpen, setSidebarOpen] = useState(false)
     const [isModifierKeyPressed, setIsModifierKeyPressed] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
-    const searchContentRef = useRef(null)
+    const searchContentRef = useRef<HTMLDivElement>(null)
     const { addWindow, focusedWindow, websiteMode } = useApp()
-    const hasShareButton = !cta?.url || !cta?.label
     const { appWindow } = useWindow()
     const [maxWidth, setMaxWidth] = useState(initialMaxWidth ?? 768)
     const fullWidthContent = typeof maxWidth === 'string' && maxWidth === '100%'
@@ -227,6 +240,30 @@ export function Viewer({
         setShowCher(isHovering && isModifierKeyPressed)
     }, [isHovering, isModifierKeyPressed])
 
+    // Controls beyond search. When any are present, search + these collapse into a single
+    // combo button (see ViewerControls); otherwise the strip shows a lone search icon.
+    const otherControls: React.ReactNode[] = []
+    if (showOptions) {
+        otherControls.push(
+            <Options
+                key="options"
+                fullWidthContent={fullWidthContent}
+                maxWidth={maxWidth}
+                setMaxWidth={setMaxWidth}
+                initialMaxWidth={initialMaxWidth ?? 768}
+            />
+        )
+    }
+    if (cta?.url && cta?.label) {
+        otherControls.push(<Share key="share" url={cta.url} title={title ?? cta.label} />)
+    }
+    if (bookmark) {
+        otherControls.push(<BookmarkButton key="bookmark" bookmark={bookmark} />)
+    }
+    if (extraMenuOptions) {
+        otherControls.push(<React.Fragment key="extra">{extraMenuOptions}</React.Fragment>)
+    }
+
     return (
         <SearchProvider onSearchChange={onSearchChange}>
             <div className="@container w-full h-full flex flex-col min-h-1">
@@ -238,44 +275,36 @@ export function Viewer({
                         </aside>
                     )} */}
                 <div className="flex flex-col flex-grow min-h-0">
-                    <main data-app="Viewer" data-scheme="primary" className="@container flex-1 relative h-full flex">
-                        <div
-                            className={`bg-dark/10 dark:bg-light/10 border-r border-secondary transition-all duration-300 overflow-hidden ${
-                                sidebarOpen ? 'basis-80' : 'basis-12'
-                            }`}
-                        >
-                            <OSButton
-                                onClick={() => setSidebarOpen(!sidebarOpen)}
-                                icon={
-                                    sidebarOpen ? (
-                                        <IconSidebarOpen className="size-5 text-primary" />
-                                    ) : (
-                                        <IconSidebarClose className="size-5 text-primary" />
-                                    )
-                                }
-                                size="md"
+                    <main
+                        data-app="Viewer"
+                        data-scheme="primary"
+                        className={`@container flex-1 relative h-full flex ${
+                            hasLeftSidebar
+                                ? 'flex-col @3xl:flex-row'
+                                : controlsPlacement === 'header'
+                                ? 'flex-col'
+                                : 'flex-col @md:flex-row'
+                        }`}
+                    >
+                        {hasLeftSidebar ? (
+                            <EditorSearchProvider>
+                                <ViewerSidebar
+                                    sidebarHeader={sidebarHeader}
+                                    nav={leftSidebar}
+                                    searchContentRef={searchContentRef}
+                                />
+                            </EditorSearchProvider>
+                        ) : (
+                            <ViewerControls
+                                placement={controlsPlacement}
+                                showSearch={showSearch}
+                                toggleSearch={toggleSearch}
+                                closeSearch={closeSearch}
+                                searchContentRef={searchContentRef}
+                                onSearchChange={onSearchChange}
+                                otherControls={otherControls}
                             />
-                            <OSButton
-                                onClick={toggleSearch}
-                                icon={<IconSearch className="size-5 text-primary" />}
-                                size="md"
-                            />
-
-                            {sidebarOpen && (
-                                <div className="w-80 p-4">
-                                    <h3 className="text-sm font-semibold">Search</h3>
-
-                                    <ViewerSearchBar
-                                        visible={showSearch}
-                                        onClose={closeSearch}
-                                        contentRef={onSearchChange ? undefined : searchContentRef}
-                                        dataScheme="secondary"
-                                        className=""
-                                        onSearch={onSearchChange}
-                                    />
-                                </div>
-                            )}
-                        </div>
+                        )}
 
                         <div className="@container flex-1 min-h-0 [mask-image:linear-gradient(to_bottom,transparent_0,black_2rem,black_calc(100%_-_2rem),transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0,black_1rem,black_calc(100%_-_1rem),transparent_100%)]">
                             {hasTabs ? (

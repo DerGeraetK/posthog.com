@@ -1,6 +1,6 @@
 import React from 'react'
 import SEO from 'components/seo'
-import WhyPostHogReader from 'components/WhyPostHog'
+import WhyPostHogViewer from 'components/WhyPostHog'
 
 export default function Moat(): JSX.Element {
     return (
@@ -10,7 +10,7 @@ export default function Moat(): JSX.Element {
                 description="We always try to do the right thing: transparent, usage-based pricing, a public codebase and roadmap, and a team that ships fast and listens to customers."
                 image="/images/og/default.png"
             />
-            <WhyPostHogReader proseSize="lg">
+            <WhyPostHogViewer>
                 <h1>Why people like us</h1>
                 <p>TL;DR: We always try to do the right thing.</p>
 
@@ -37,7 +37,7 @@ export default function Moat(): JSX.Element {
                     We're always listening to customers. You'll find us all across X, in our community forums, and in
                     GitHub issues. Without our customers, we don't have a business. They're our #1 priority.
                 </p>
-            </WhyPostHogReader>
+            </WhyPostHogViewer>
         </>
     )
 }

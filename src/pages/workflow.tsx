@@ -1,6 +1,6 @@
 import React from 'react'
 import SEO from 'components/seo'
-import WhyPostHogReader from 'components/WhyPostHog'
+import WhyPostHogViewer from 'components/WhyPostHog'
 
 export default function Workflow(): JSX.Element {
     return (
@@ -10,7 +10,7 @@ export default function Workflow(): JSX.Element {
                 description="PostHog fits into your AI workflow. Use the PostHog MCP from Claude Code, Cursor, or Codex to instrument tracking, wrap features in flags, build dashboards, and ask questions about your data – without leaving your editor."
                 image="/images/og/default.png"
             />
-            <WhyPostHogReader proseSize="lg">
+            <WhyPostHogViewer>
                 <h1>Works with your agents</h1>
                 <p>We're not writing much code by hand anymore and chances are neither are you.</p>
                 <p>
@@ -84,7 +84,7 @@ export default function Workflow(): JSX.Element {
                     With PostHog Code you don't need a separate subscription to Claude Code or Codex – you get access to
                     all the latest AI models directly within PostHog, and it costs about the same.
                 </p>
-            </WhyPostHogReader>
+            </WhyPostHogViewer>
         </>
     )
 }
