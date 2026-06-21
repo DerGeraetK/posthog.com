@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'components/Link'
 import { useApp } from '../../context/App'
-import { GlassIcon, PricingIcon } from 'components/OSIcons'
+import { GlassIcon, PricingIcon, DemoIcon } from 'components/OSIcons'
 import {
     HOME_SILHOUETTE,
     SELF_DRIVING_SILHOUETTE,
@@ -75,6 +75,13 @@ export const useProductLinks = () => {
             label: 'Docs',
             Icon: <GlassIcon path={DOCS_SILHOUETTE} fillRule="evenodd" />,
             url: '/docs',
+            source: 'desktop',
+        },
+        {
+            // Not a glass glyph — a baked light/dark isometric image (see DemoIcon).
+            label: 'demo.mov',
+            Icon: <DemoIcon />,
+            url: '/demo',
             source: 'desktop',
         },
         {
@@ -152,7 +159,7 @@ const validateIconPositions = (
     productLinks: ReturnType<typeof useProductLinks>
 ): boolean => {
     const iconWidth = 112
-    const iconHeight = 75
+    const iconHeight = 84
     const allApps = [...productLinks, ...apps]
 
     for (const app of allApps) {
@@ -223,7 +230,7 @@ export default function Desktop() {
             (typeof window !== 'undefined' ? window.innerHeight : 800)
 
         const iconWidth = 112
-        const iconHeight = 75
+        const iconHeight = 84
         const paddingHorizontal = 4
         const paddingVertical = 20
         const columnSpacing = 128 // Space between columns (icon width + gap)
@@ -337,7 +344,7 @@ export default function Desktop() {
         setFakeCursorActive(true)
 
         const iconWidth = 112
-        const iconHeight = 75
+        const iconHeight = 84
         const homePos = iconPositions['Home'] || { x: 0, y: 0 }
         const container = constraintsRef.current
         const containerRect = container?.getBoundingClientRect()
