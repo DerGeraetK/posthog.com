@@ -92,12 +92,12 @@ const Tagline = () => (
             Just ask <PostHogMention />.
         </h1>
         <HeroImage />
-        <p className="text-balance @xl:text-wrap text-lg">
+        <p className="text-balance @xl:text-wrap text-[17px]">
             <PostHogMention /> knows your product, customers, and what needs fixing. It answers questions, triages work,
             writes code, and is always working even when you don't prompt it.
         </p>
 
-        <p className="text-balance @xl:text-wrap text-secondary">
+        <p className="text-balance @xl:text-wrap text-secondary text-sm">
             500,000+ teams are shipping with PostHog. Don't get fomo.
         </p>
     </>
@@ -214,7 +214,7 @@ function HeroImage(): JSX.Element {
     const [activeTab, setActiveTab] = useState('slack')
 
     return (
-        <div className="max-w-[400px] mx-auto mt-4 @xl:mx-0 @2xl:float-right @2xl:ml-4 @2xl:w-72 @3xl:w-80 @4xl:w-96 @2xl:-mt-20 transition-all">
+        <div className="max-w-[400px] mx-auto mt-4 @xl:mx-0 @2xl:float-right @2xl:ml-4 @2xl:ml-8 @2xl:w-72 @3xl:w-80 @4xl:w-96 @2xl:-mt-20 transition-all">
             <ToggleGroup
                 title="View"
                 hideTitle
@@ -256,11 +256,17 @@ function HeroImage(): JSX.Element {
 }
 
 function TestHero(): JSX.Element {
+    const { siteSettings } = useApp()
+    const isDark = siteSettings.theme === 'dark'
     return (
         <>
-            <div className="text-center @xl:text-left mb-12">
+            <div className="text-center @xl:text-left mb-24">
                 <h1 className="[&_p]:m-0 flex gap-1 flex-wrap justify-center @xl:justify-start !text-2xl mb-8 pt-2">
-                    <Logo className="max-w-[157px]" />
+                    <Logo
+                        className="max-w-[157px]"
+                        variant={isDark ? 'mono' : 'gradient'}
+                        color={isDark ? 'white' : undefined}
+                    />
                 </h1>
 
                 <Tagline />
