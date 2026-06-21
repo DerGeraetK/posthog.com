@@ -20,8 +20,10 @@ export interface GlassIconProps {
     fillOpacity?: number
     /** Backdrop blur radius in px. Default 1.3 (≈ the export's blur at 36px). */
     blur?: number
-    /** Hover glow color (CSS color string) */
+    /** Hover glow color in light mode (CSS color string) */
     glowColor?: string
+    /** Hover glow color in dark mode (CSS color string) */
+    glowColorDark?: string
     /** Additional className for the wrapper (size lives here — default `size-9` / 36px) */
     className?: string
     /** Arbitrary SVG content clipped into the silhouette (rendered under the glass fill) */
@@ -65,6 +67,7 @@ export default function GlassIcon({
     fillOpacity = 0.5,
     blur = 1.3,
     glowColor = '#53FFCB',
+    glowColorDark = '#49BAC5',
     className = '',
     children,
 }: GlassIconProps) {
@@ -93,11 +96,18 @@ export default function GlassIcon({
 
     return (
         <span className={`relative inline-flex items-center justify-center size-9 ${className}`}>
-            {/* Soft glow behind the shape, revealed on hover (slow fade in) */}
+            {/* Soft glow behind the shape, revealed on hover (slow fade in). Light/dark colors are
+                stacked and toggled by the `dark` class so the glow matches the active wallpaper. The
+                light span is suppressed in dark mode by the higher-specificity `dark:group-hover:opacity-0`. */}
             <span
                 aria-hidden
-                className="pointer-events-none absolute inset-1 rounded-[40%] blur-md opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-60"
+                className="pointer-events-none absolute inset-1 rounded-[40%] blur-md opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-60 dark:group-hover:opacity-0"
                 style={{ backgroundColor: glowColor }}
+            />
+            <span
+                aria-hidden
+                className="pointer-events-none absolute inset-1 rounded-[40%] blur-md opacity-0 transition-opacity duration-700 ease-out dark:group-hover:opacity-60"
+                style={{ backgroundColor: glowColorDark }}
             />
 
             {/* Layer A frost: real backdrop blur, clipped to the silhouette. Lives outside

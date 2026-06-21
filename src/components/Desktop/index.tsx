@@ -24,7 +24,7 @@ import DraggableDesktopIcon from './DraggableDesktopIcon'
 import { Screensaver } from '../Screensaver'
 import { useInactivityDetection } from '../../hooks/useInactivityDetection'
 import NotificationsPanel from 'components/NotificationsPanel'
-import Wallpapers from './Wallpapers'
+import Wallpapers, { getWallpaperGlow } from './Wallpapers'
 import { motion, useMotionValue, animate } from 'framer-motion'
 import HedgeHogModeEmbed from 'components/HedgehogMode'
 import ReactConfetti from 'react-confetti'
@@ -453,7 +453,19 @@ export default function Desktop() {
         }, 2000)
     }
 
-    const allApps = [...productLinks, ...apps]
+    // Drive the desktop icons' hover-glow color from the active wallpaper (light + dark).
+    const glow = getWallpaperGlow(siteSettings.wallpaper)
+    const allApps = [...productLinks, ...apps].map((app) =>
+        React.isValidElement(app.Icon) && app.Icon.type === GlassIcon
+            ? {
+                  ...app,
+                  Icon: React.cloneElement(app.Icon as React.ReactElement, {
+                      glowColor: glow.light,
+                      glowColorDark: glow.dark,
+                  }),
+              }
+            : app
+    )
 
     const handleScreensaverDismiss = () => {
         addToast({
