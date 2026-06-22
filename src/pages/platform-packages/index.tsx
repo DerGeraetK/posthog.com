@@ -22,7 +22,7 @@ export default function PlatformPackages() {
         new Set(
             platformAddons.flatMap((addon: any) =>
                 (addon.plans[0].features || [])
-                    .filter((f: any) => f.key !== 'support_response_time')
+                    .filter((f: any) => f.key !== 'support_response_time' && f.key !== 'invoice_payments')
                     .map((f: any) => f.name)
             )
         )
