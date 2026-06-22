@@ -15,7 +15,7 @@ import {
     STORE_SILHOUETTE,
     WORK_HERE_SILHOUETTE,
     TRASH_SILHOUETTE,
-    PLACEHOLDER_SILHOUETTE,
+    CONTEXT_WAREHOUSE_SILHOUETTE,
 } from 'components/OSIcons/glyphs'
 import { AppItem } from 'components/OSIcons/AppIcon'
 import ContextMenu from 'components/RadixUI/ContextMenu'
@@ -59,9 +59,8 @@ export const useProductLinks = () => {
             source: 'desktop',
         },
         {
-            // TODO: swap PLACEHOLDER_SILHOUETTE for the real Context warehouse glass path once available
             label: 'Context warehouse',
-            Icon: <GlassIcon path={PLACEHOLDER_SILHOUETTE} />,
+            Icon: <GlassIcon path={CONTEXT_WAREHOUSE_SILHOUETTE} />,
             url: '/context-warehouse',
             source: 'desktop',
         },
