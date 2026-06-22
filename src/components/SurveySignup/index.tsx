@@ -5,21 +5,14 @@ import Link from 'components/Link'
 import { IconCheckCircle } from '@posthog/icons'
 import { IconDiscord } from 'components/OSIcons/Icons'
 import { useApp } from '../../context/App'
-import { useEarlyAccessEnroll, EarlyAccessFeatureStage } from 'hooks/useEarlyAccessFeatures'
+import usePostHog from '../../hooks/usePostHog'
 
-export type EarlyAccessSignupMode = 'waitlist' | 'try'
-
-interface EarlyAccessSignupProps {
-    /** EAF flag key to enroll into. If omitted/unmapped, the form captures only (no enrollment). */
-    flagKey?: string
-    /** Drives copy + whether email is required when `mode` is not set explicitly. */
-    stage?: EarlyAccessFeatureStage
-    /**
-     * `waitlist` (concept/alpha → register interest, email required) or
-     * `try` (beta → enroll/flip the flag, email optional). Defaults from `stage`.
-     */
-    mode?: EarlyAccessSignupMode
-    /** Used in success/button copy. */
+interface SurveySignupProps {
+    /** PostHog Survey id to record the response against. If omitted, no survey event fires. */
+    surveyId?: string
+    /** Question id for ID-based responses (`$survey_response_{id}`). Falls back to legacy `$survey_response`. */
+    surveyQuestionId?: string
+    /** Used in success/placeholder copy. */
     productName?: string
     /** Optional heading rendered above the form (hidden in the success state). */
     title?: React.ReactNode
@@ -29,71 +22,58 @@ interface EarlyAccessSignupProps {
     autoFocus?: boolean
     confetti?: boolean
     showDiscord?: boolean
-    /** Opt-in to `posthog.identify(email)` — off by default (see useEarlyAccessFeatures). */
-    identify?: boolean
-    eventName?: string
-    extraProps?: Record<string, any>
-    /** Called after a successful submit with the entered email (e.g. to fire a legacy survey event). */
+    /** Fired after a successful submit (e.g. to capture an extra analytics event). */
     onSuccess?: (email: string) => void
     className?: string
 }
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
-export function EarlyAccessSignup({
-    flagKey,
-    stage = 'concept',
-    mode,
+/**
+ * A no-login email form that records a sign-up as a PostHog Survey response
+ * (`survey sent`). This is the single waitlist mechanism on the site — used by the
+ * /roadmap Coming Soon cards, the /code waitlist, and the managed-warehouse waitlist —
+ * so every sign-up lands in one place: the survey's responses.
+ */
+export function SurveySignup({
+    surveyId,
+    surveyQuestionId,
     productName,
     title,
-    buttonLabel,
+    buttonLabel = 'Notify me at launch',
     successTitle = "You're on the list!",
     successMessage,
     autoFocus = false,
     confetti = true,
     showDiscord = false,
-    identify = false,
-    eventName,
-    extraProps,
     onSuccess,
     className = '',
-}: EarlyAccessSignupProps): JSX.Element {
-    const { enroll } = useEarlyAccessEnroll()
+}: SurveySignupProps): JSX.Element {
+    const posthog = usePostHog()
     const { setConfetti } = useApp()
     const [email, setEmail] = useState('')
     const [submitted, setSubmitted] = useState(false)
-    const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
 
-    const effectiveMode: EarlyAccessSignupMode = mode ?? (stage === 'beta' ? 'try' : 'waitlist')
-    const emailRequired = effectiveMode === 'waitlist'
-    const label = buttonLabel ?? (effectiveMode === 'try' ? 'Enable & try it' : 'Notify me at launch')
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
-        if (emailRequired && !EMAIL_RE.test(email)) {
+        if (!EMAIL_RE.test(email)) {
             setError('Please enter a valid email address')
             return
         }
-        setSubmitting(true)
-        try {
-            await enroll({
-                flagKey,
-                stage,
-                email: email || undefined,
-                identify,
-                eventName,
-                extraProps,
-            })
-            if (confetti) {
-                setConfetti(true)
+        if (surveyId) {
+            const props: Record<string, any> = { $survey_id: surveyId, $survey_response: email }
+            if (surveyQuestionId) {
+                props[`$survey_response_${surveyQuestionId}`] = email
             }
-            setSubmitted(true)
-            onSuccess?.(email)
-        } finally {
-            setSubmitting(false)
+            posthog?.capture('survey sent', props)
         }
+        if (confetti) {
+            setConfetti(true)
+        }
+        setSubmitted(true)
+        onSuccess?.(email)
     }
 
     if (submitted) {
@@ -103,12 +83,7 @@ export function EarlyAccessSignup({
                     <span className="flex items-center gap-1 font-bold">
                         <IconCheckCircle className="size-4 text-green" /> {successTitle}
                     </span>
-                    <span>
-                        {successMessage ??
-                            (effectiveMode === 'try'
-                                ? `${productName ?? 'This feature'} is now enabled for you in PostHog.`
-                                : `We'll let you know when ${productName ?? 'it'} is ready.`)}
-                    </span>
+                    <span>{successMessage ?? `We'll email you the moment ${productName ?? 'it'} is ready.`}</span>
                     {showDiscord && (
                         <Link
                             className="group flex items-center gap-1 text-sm font-medium mt-2"
@@ -137,15 +112,15 @@ export function EarlyAccessSignup({
                 value={email}
                 autoFocus={autoFocus}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                required={emailRequired}
+                required
                 touched={!!error}
                 error={error}
             />
-            <OSButton type="submit" variant="primary" size="md" width="full" disabled={submitting}>
-                {label}
+            <OSButton type="submit" variant="primary" size="md" width="full">
+                {buttonLabel}
             </OSButton>
         </form>
     )
 }
 
-export default EarlyAccessSignup
+export default SurveySignup

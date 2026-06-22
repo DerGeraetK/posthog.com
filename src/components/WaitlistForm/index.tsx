@@ -1,8 +1,7 @@
 import React from 'react'
 import usePostHog from '../../hooks/usePostHog'
 import useProduct from '../../hooks/useProduct'
-import EarlyAccessSignup from 'components/EarlyAccessSignup'
-import { getFlagKeyForProduct } from 'components/EarlyAccessSignup/flagKeys'
+import SurveySignup from 'components/SurveySignup'
 
 interface WaitlistFormProps {
     autoFocus?: boolean
@@ -27,32 +26,26 @@ export function WaitlistForm({
 }: WaitlistFormProps) {
     const posthog = usePostHog()
     const selectedProduct = useProduct({ handle: productHandle })
-    const flagKey = getFlagKeyForProduct(productHandle)
 
-    // Preserve the existing survey response capture (used e.g. by Replay Vision) on top
-    // of the unified Early Access Feature enrollment.
+    // Keep the product-updates analytics event alongside the survey response.
     const handleSuccess = (email: string) => {
-        if (surveyId) {
-            posthog?.capture('survey sent', {
-                $survey_id: surveyId,
-                $survey_response: email,
-            })
-        }
+        posthog?.capture('subscribe_to_product_updates', { email, selectedProduct })
     }
 
     return (
-        <EarlyAccessSignup
-            flagKey={flagKey}
-            stage="concept"
-            mode="waitlist"
+        <SurveySignup
+            surveyId={surveyId}
             productName={productName}
             title={showTitle ? 'Join the waitlist' : undefined}
             buttonLabel={buttonLabel}
             autoFocus={autoFocus}
             confetti={confetti}
             showDiscord={showDiscord}
-            eventName="subscribe_to_product_updates"
-            extraProps={{ selectedProduct }}
+            successMessage={
+                <>
+                    We&apos;ll let you know when <span className="inline-block">{productName}</span> is ready.
+                </>
+            }
             onSuccess={handleSuccess}
         />
     )

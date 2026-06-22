@@ -9,6 +9,13 @@ export interface EarlyAccessFeature {
     stage: EarlyAccessFeatureStage
     documentationUrl: string
     flagKey: string
+    /**
+     * Arbitrary JSON set on the Early Access Feature in PostHog and served by the public
+     * EAF endpoint. For Coming Soon items this carries the linked waitlist survey:
+     * `{ survey_id, survey_question_id }`. (posthog-js doesn't type `payload` yet, but it
+     * passes it through at runtime — see PostHog/posthog-js#2642.)
+     */
+    payload?: Record<string, any>
 }
 
 export interface GroupedEarlyAccessFeatures {
@@ -18,74 +25,9 @@ export interface GroupedEarlyAccessFeatures {
     comingSoon: EarlyAccessFeature[]
 }
 
-export interface EnrollParams {
-    flagKey?: string
-    stage?: EarlyAccessFeatureStage
-    /** Optional, but required for waitlist flows. Persisted on the person so we can notify at launch. */
-    email?: string
-    /**
-     * Whether to `identify(email)`. Defaults to false — identifying anonymous marketing
-     * visitors risks merging distinct browsers into one person and prematurely creating
-     * identified profiles. `setPersonProperties({ email })` is enough to attach the email.
-     */
-    identify?: boolean
-    /** Analytics event fired alongside enrollment. */
-    eventName?: string
-    extraProps?: Record<string, any>
-}
-
 const DEFAULT_STAGES: EarlyAccessFeatureStage[] = ['concept', 'alpha', 'beta']
 const POLL_INTERVAL_MS = 300
 const GIVE_UP_MS = 6000
-const DEFAULT_EVENT = 'early_access_feature_signup'
-
-/**
- * Enrollment-only hook. Does NOT fetch, so it's safe to mount many times (e.g. once
- * per card). Writes the `$feature_enrollment/{flagKey}` person property — the same one
- * the in-app "Coming Soon" / Feature Previews opt-in sets — so website and in-app
- * sign-ups land in one list with no extra plumbing.
- *
- * Accounts for `person_profiles: 'identified_only'` (see gatsby/onPreBootstrap.ts):
- * properties/enrollment don't persist for anonymous visitors unless a profile exists,
- * so we call `createPersonProfile()` first (same pattern as CallToAction + Link).
- */
-export function useEarlyAccessEnroll(): { enroll: (params: EnrollParams) => Promise<void> } {
-    const posthog = usePostHog()
-
-    const enroll = useCallback(
-        async ({
-            flagKey,
-            stage,
-            email,
-            identify = false,
-            eventName = DEFAULT_EVENT,
-            extraProps = {},
-        }: EnrollParams) => {
-            if (!posthog) return
-
-            // Required for anonymous visitors under identified_only — without this,
-            // properties and enrollment silently do not persist.
-            posthog.createPersonProfile?.()
-
-            if (email) {
-                if (identify) {
-                    posthog.identify?.(email, { email })
-                } else {
-                    posthog.setPersonProperties?.({ email })
-                }
-            }
-
-            if (flagKey && typeof posthog.updateEarlyAccessFeatureEnrollment === 'function') {
-                posthog.updateEarlyAccessFeatureEnrollment(flagKey, true)
-            }
-
-            posthog.capture?.(eventName, { flagKey, stage, email, ...extraProps })
-        },
-        [posthog]
-    )
-
-    return { enroll }
-}
 
 interface UseEarlyAccessFeaturesOptions {
     /** Which stages to request from the API. Defaults to concept + alpha + beta. */
@@ -108,11 +50,11 @@ interface UseEarlyAccessFeaturesResult {
 
 /**
  * Fetches PostHog Early Access Features client-side, grouped by stage. Call this ONCE
- * per page — it hits the network. Use `useEarlyAccessEnroll` (above) for the sign-up
- * action so individual cards don't each trigger a fetch.
+ * per page — it hits the network.
  *
  * posthog-js is loaded as a CDN snippet; its EAF methods only exist once the async
- * `array.js` has loaded, so this polls for `getEarlyAccessFeatures` before calling it.
+ * `array.js` has loaded, so this polls for `getEarlyAccessFeatures` before calling it
+ * and guards SSR (the snippet stub / window are absent at build time).
  */
 export function useEarlyAccessFeatures(options: UseEarlyAccessFeaturesOptions = {}): UseEarlyAccessFeaturesResult {
     const { stages = DEFAULT_STAGES, forceReload = true } = options

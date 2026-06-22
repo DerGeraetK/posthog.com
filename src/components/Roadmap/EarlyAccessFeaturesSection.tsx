@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { IconRocket, IconClock } from '@posthog/icons'
 import Input from 'components/OSForm/input'
 import OSButton from 'components/OSButton'
-import EarlyAccessSignup from 'components/EarlyAccessSignup'
+import SurveySignup from 'components/SurveySignup'
 import useEarlyAccessFeatures, { EarlyAccessFeature } from 'hooks/useEarlyAccessFeatures'
 
 // Where in-app betas are toggled on. Betas don't collect an email — we point people here.
@@ -61,26 +61,28 @@ const FeatureCard = ({
     </div>
 )
 
-// Coming soon — keep the card compact by revealing the email field only on intent.
+// Coming soon — collect an email via the feature's linked waitlist survey. Reveal the
+// field only on intent so the grid stays compact.
 const ComingSoonCard = ({ feature }: { feature: EarlyAccessFeature }): JSX.Element => {
     const [showForm, setShowForm] = useState(false)
+    const surveyId = feature.payload?.survey_id as string | undefined
+    const surveyQuestionId = feature.payload?.survey_question_id as string | undefined
+
+    // Without a linked survey there's nowhere to record the sign-up, so show info only.
+    if (!surveyId) {
+        return <FeatureCard feature={feature} />
+    }
+
     return (
         <FeatureCard feature={feature}>
             {showForm ? (
-                <EarlyAccessSignup
-                    flagKey={feature.flagKey}
-                    stage={feature.stage}
-                    mode="waitlist"
+                <SurveySignup
+                    surveyId={surveyId}
+                    surveyQuestionId={surveyQuestionId}
                     productName={feature.name}
                     autoFocus
                     confetti={false}
                     buttonLabel="Notify me at launch"
-                    eventName="early_access_waitlist_joined"
-                    extraProps={{
-                        source: 'roadmap',
-                        early_access_feature: feature.flagKey,
-                        feature_name: feature.name,
-                    }}
                 />
             ) : (
                 <OSButton variant="secondary" size="md" width="full" onClick={() => setShowForm(true)}>
@@ -95,7 +97,7 @@ const ComingSoonCard = ({ feature }: { feature: EarlyAccessFeature }): JSX.Eleme
  * The roadmap's Early Access Feature sections, fetched live from posthog-js so newly
  * added in-app features appear without a rebuild:
  *  - Betas — live now; one CTA points to feature previews to enable them (no email).
- *  - Coming soon — collect an email so a PostHog Workflow can notify on launch.
+ *  - Coming soon — collect an email via each feature's linked waitlist survey.
  * Search + a stage filter keep a long list scannable. Renders nothing when empty.
  */
 export default function EarlyAccessFeaturesSection(): JSX.Element | null {
