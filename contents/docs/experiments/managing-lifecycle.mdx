@@ -24,7 +24,7 @@ Beyond this, we recommend:
 
 3. Removing the experiment and losing variant's code.
 
-4. Archiving the experiment.
+4. Archiving the experiment. When you archive an experiment, PostHog also archives its linked feature flag automatically — but only if the flag is already disabled and no other live experiment uses it. If the flag is still enabled (e.g., you're rolling out the winning variant), it's left untouched. Unarchiving the experiment unarchives the flag too (it stays disabled).
 
 5. Disabling or deleting the feature flag once the winning variant is hardcoded in your application and the flag check has been removed from your code. You can [delete flags linked to non-running experiments](/docs/feature-flags/creating-feature-flags#deleting-flags-linked-to-experiments) without losing the experiment's historical data. Every active flag counts toward your [feature flag billing](/docs/feature-flags/cutting-costs), even if it's rolled out to 100% and no longer doing anything useful.
 
