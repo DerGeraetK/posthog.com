@@ -4768,9 +4768,9 @@ export const docsMenu = {
                     color: 'blue',
                 },
                 {
-                    name: 'Anonymous user experiments',
+                    name: 'Server-side anonymous experiments',
                     url: '/docs/experiments/run-experiments-on-anonymous-users',
-                    icon: 'IconPerson',
+                    icon: 'IconServer',
                     color: 'purple',
                 },
                 {
