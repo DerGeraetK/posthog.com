@@ -169,70 +169,11 @@ const KeyboardGarden = ({ reduceMotion }: SceneProps) => (
     </>
 )
 
-const Bliss2001 = ({ reduceMotion }: SceneProps) => (
-    <div
-        className="absolute inset-0 bg-repeat bg-center"
-        style={{
-            backgroundImage: "url('https://res.cloudinary.com/dmukukwp6/image/upload/bliss_8bit_1x_27e9e47112.jpg')",
-            backgroundSize: '1180px 738px',
-        }}
-    >
-        <CloudinaryImage
-            loading="lazy"
-            src="https://res.cloudinary.com/dmukukwp6/image/upload/bliss_8bit_1x_27e9e47112.jpg"
-            alt=""
-            width={1180}
-            height={738}
-            imgClassName="hidden"
-        />
-        <div className={`absolute inset-0 bg-white/60 dark:bg-black/60 ${fadeColors(reduceMotion)}`} />
-    </div>
-)
-
-const Parade = ({ reduceMotion }: SceneProps) => (
-    <>
-        <CloudinaryImage
-            loading="lazy"
-            src="https://res.cloudinary.com/dmukukwp6/image/upload/parade_light_ffe041646a.png"
-            alt=""
-            width={1565}
-            height={744}
-            className={`absolute inset-x-0 bottom-0 opacity-100 dark:opacity-0 ${fadeOpacity(reduceMotion)}`}
-            imgClassName="w-full"
-        />
-        <CloudinaryImage
-            loading="lazy"
-            src="https://res.cloudinary.com/dmukukwp6/image/upload/parade_dark_238d90c5ef.png"
-            alt=""
-            width={1565}
-            height={744}
-            className={`absolute inset-x-0 bottom-0 opacity-0 dark:opacity-100 ${fadeOpacity(reduceMotion)}`}
-            imgClassName="w-full"
-        />
-    </>
-)
-
-const CodingAtNight = (_: SceneProps) => (
-    <div className="absolute inset-0 flex items-end">
-        <CloudinaryImage
-            loading="lazy"
-            src="https://res.cloudinary.com/dmukukwp6/image/upload/coding_at_night_5d7d21791e.png"
-            alt=""
-            width={2360}
-            height={696}
-            className="w-full"
-        />
-    </div>
-)
-
 const WALLPAPER_COMPONENTS: Record<string, React.FC<SceneProps>> = {
     hogzilla: Hogzilla,
     'startup-monopoly': StartupMonopoly,
     'office-party': OfficeParty,
     'keyboard-garden': KeyboardGarden,
-    '2001-bliss': Bliss2001,
-    parade: Parade,
-    'coding-at-night': CodingAtNight,
 }
 
 export interface WallpaperGlow {

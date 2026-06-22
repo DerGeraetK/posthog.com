@@ -55,37 +55,6 @@ export const themeOptions: ThemeOption[] = [
             },
         },
     },
-    {
-        label: '2001 bliss',
-        value: '2001-bliss',
-        background: {
-            thumb: {
-                light: 'https://res.cloudinary.com/dmukukwp6/image/upload/bliss_8bit_light_0b2e4ef53c.jpg',
-                dark: 'https://res.cloudinary.com/dmukukwp6/image/upload/bliss_8bit_dark_703ec033d6.jpg',
-            },
-        },
-    },
-    {
-        label: 'Parade',
-        value: 'parade',
-        background: {
-            thumb: {
-                light: 'https://res.cloudinary.com/dmukukwp6/image/upload/thumb_parade_light_7e7662c9dd.png',
-                dark: 'https://res.cloudinary.com/dmukukwp6/image/upload/thumb_parade_dark_cc5b24c520.png',
-            },
-        },
-    },
-    {
-        label: 'Coding at night',
-        value: 'coding-at-night',
-        background: {
-            thumb: {
-                light: 'https://res.cloudinary.com/dmukukwp6/image/upload/thumb_coding_at_night_2df33d2f3d.png',
-                dark: 'https://res.cloudinary.com/dmukukwp6/image/upload/thumb_coding_at_night_2df33d2f3d.png',
-            },
-            classes: 'wallpaper-coding-at-night:bg-[#54618E] dark:wallpaper-coding-at-night:bg-[#54618E]',
-        },
-    },
 ]
 
 const generateThemeClasses = (theme: ThemeOption) => {

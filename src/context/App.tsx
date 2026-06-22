@@ -1376,14 +1376,7 @@ export interface SiteSettings {
     theme: 'light' | 'dark'
     skinMode: 'modern' | 'classic'
     cursor: 'default' | 'xl' | 'james'
-    wallpaper:
-        | 'keyboard-garden'
-        | 'hogzilla'
-        | 'startup-monopoly'
-        | 'office-party'
-        | '2001-bliss'
-        | 'parade'
-        | 'coding-at-night'
+    wallpaper: 'keyboard-garden' | 'hogzilla' | 'startup-monopoly' | 'office-party'
     screensaverDisabled?: boolean
     heaterMode?: boolean
     clickBehavior?: 'single' | 'double'
@@ -1415,7 +1408,8 @@ const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
         siteSettings.experience = 'boring'
     }
 
-    if (siteSettings.wallpaper === 'action-figure') {
+    const retiredWallpapers = ['action-figure', '2001-bliss', 'parade', 'coding-at-night']
+    if (retiredWallpapers.includes(siteSettings.wallpaper)) {
         siteSettings.wallpaper = 'keyboard-garden'
     }
 
@@ -2262,8 +2256,8 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                 navigate('/kbd', { state: { newWindow: true } })
             }
 
-            // Theme toggle with \ key (without Shift)
-            if (e.key === '\\' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            // Theme toggle with m key
+            if (e.key === 'm' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
                 e.preventDefault()
                 e.stopPropagation()
 
@@ -2312,8 +2306,8 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                 }
             }
 
-            // Wallpaper cycle with | key (which is Shift + \ on most keyboards)
-            if (e.key === '|') {
+            // Wallpaper cycle with \ key (without Shift)
+            if (e.key === '\\' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
                 e.preventDefault()
                 e.stopPropagation()
 

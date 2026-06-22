@@ -8,7 +8,6 @@ import { useWindow } from '../../../context/Window'
 import ControlHero from 'components/Home/Sections/Hero'
 import DataStackSection from 'components/Home/Sections/DataStackSection'
 import PricingSection from 'components/Home/Sections/PricingSection'
-import AISection from 'components/Home/Sections/AISection'
 import WhyPostHogSection from 'components/Home/Sections/WhyPostHogSection'
 import BedtimeReadingSection from 'components/Home/Sections/BedtimeReadingSection'
 import ShamelessCTASection from 'components/Home/Sections/ShamelessCTASection'
@@ -319,7 +318,6 @@ export default function HomeTest() {
                     <Customers />
                     <DataStackSection />
                     <PricingSection />
-                    <AISection />
                     <WhyPostHogSection />
                     <BedtimeReadingSection />
                     <ShamelessCTASection />
