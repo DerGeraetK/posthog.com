@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Viewer from 'components/Viewer'
+import ReaderView from 'components/ReaderView'
 import SEO from 'components/seo'
 import { useApp } from '../../../context/App'
 import { useWindow } from '../../../context/Window'
@@ -312,7 +312,7 @@ export default function HomeTest() {
                 description="All your developer tools in one place. PostHog gives engineers everything to build, test, measure, and ship successful products faster. Get started free."
                 image="/images/og/default.png"
             />
-            <Viewer proseSize="lg" controlsPlacement="header">
+            <ReaderView proseSize="lg" hideLeftSidebar>
                 <div className="space-y-12">
                     <Hero />
                     <Customers />
@@ -323,7 +323,7 @@ export default function HomeTest() {
                     <ShamelessCTASection />
                     <HitCounter />
                 </div>
-            </Viewer>
+            </ReaderView>
         </>
     )
 }

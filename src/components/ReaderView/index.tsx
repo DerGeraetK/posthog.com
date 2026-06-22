@@ -4,6 +4,8 @@ import OSButton from 'components/OSButton'
 import {
     IconPencil,
     IconPullRequest,
+    IconSearch,
+    IconX,
     IconTextWidth,
     IconGear,
     IconClockRewind,
@@ -1316,6 +1318,79 @@ const LeftSidebar = ({
     )
 }
 
+const FloatingSearch = ({
+    contentRef,
+    onSearch,
+    currentPath,
+}: {
+    contentRef?: React.RefObject<HTMLElement>
+    onSearch?: (query: string) => void
+    currentPath?: string
+}) => {
+    const [open, setOpen] = useState(false)
+    const panelRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (!open) return
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setOpen(false)
+        }
+        const handleClick = (e: MouseEvent) => {
+            if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+                setOpen(false)
+            }
+        }
+        document.addEventListener('keydown', handleKey)
+        document.addEventListener('mousedown', handleClick)
+        return () => {
+            document.removeEventListener('keydown', handleKey)
+            document.removeEventListener('mousedown', handleClick)
+        }
+    }, [open])
+
+    return (
+        <div ref={panelRef} data-scheme="secondary z-50">
+            <div className="p-2">
+                <OSButton
+                    size="md"
+                    icon={open ? <IconX className="size-4" /> : <IconSearch className="size-4" />}
+                    onClick={() => setOpen(!open)}
+                />
+            </div>
+            <AnimatePresence initial={false}>
+                {open && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeInOut' }}
+                        className="relative"
+                    >
+                        <div className="px-2 space-y-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="flex-1">
+                                    <InlineSearch
+                                        contentRef={onSearch ? undefined : contentRef}
+                                        onSearch={onSearch}
+                                        placeholder="Search..."
+                                        clearable={false}
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
+                            <ScrollArea className="!m-0">
+                                <div className="max-h-[300px]">
+                                    <SidebarSearchResults contentRef={contentRef} currentPath={currentPath} />
+                                </div>
+                            </ScrollArea>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    )
+}
+
 interface FloatingTOCProps {
     isTocVisible: boolean
     toggleToc: () => void
@@ -1522,6 +1597,13 @@ function ReaderViewContent({
                             : undefined
                     }
                 >
+                    {hideLeftSidebar && !compact && (
+                        <FloatingSearch
+                            contentRef={onSearch ? undefined : contentRef}
+                            onSearch={onSearch}
+                            currentPath={appWindow?.path}
+                        />
+                    )}
                     <div className="flex flex-1 min-h-0">
                         <ScrollArea
                             dataScheme="primary"

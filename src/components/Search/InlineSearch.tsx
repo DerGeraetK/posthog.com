@@ -17,11 +17,15 @@ export const InlineSearch = ({
     onSearch,
     placeholder = 'Search this page...',
     className,
+    clearable = true,
+    autoFocus = false,
 }: {
     contentRef?: React.RefObject<HTMLElement>
     onSearch?: (search: string) => void
     placeholder?: string
     className?: string
+    clearable?: boolean
+    autoFocus?: boolean
 }) => {
     const { searchQuery, setSearchQuery } = useSearch()
     const [inputValue, setInputValue] = useState(searchQuery)
@@ -84,9 +88,10 @@ export const InlineSearch = ({
                     className="w-full pl-7 pr-2 py-1 rounded border border-input text-primary text-sm bg-light dark:bg-dark"
                     value={inputValue}
                     onChange={handleInputChange}
+                    autoFocus={autoFocus}
                 />
             </div>
-            {inputValue && (
+            {clearable && inputValue && (
                 <OSButton
                     size="xs"
                     icon={<IconX />}
