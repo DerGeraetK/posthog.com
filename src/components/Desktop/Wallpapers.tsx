@@ -31,32 +31,52 @@ interface SceneProps {
 
 const Hogzilla = ({ reduceMotion }: SceneProps) => (
     <>
+        {/* Background gradient (light) */}
         <div
-            className={`absolute inset-0 bg-gradient-to-b from-[#FFF1D5] to-[#DAE0EB] dark:opacity-0 ${fadeOpacity(
+            className={`absolute inset-0 bg-[linear-gradient(268.63deg,#E3E1E4_0%,#FDFDFD_80%,#FDFDFD_100%)] opacity-100 dark:opacity-0 ${fadeOpacity(
+                reduceMotion
+            )}`}
+        />
+        {/* Background gradient (dark) */}
+        <div
+            className={`absolute inset-0 bg-[linear-gradient(180deg,#141E40_0%,#46368B_100%)] opacity-0 dark:opacity-100 ${fadeOpacity(
                 reduceMotion
             )}`}
         />
         <CloudinaryImage
-            src="https://res.cloudinary.com/dmukukwp6/image/upload/hogzilla_bf40c5e271.png"
+            loading="lazy"
+            src="https://res.cloudinary.com/dmukukwp6/image/upload/9000_hogzilla_359a450fb3.png"
             alt=""
-            width={2574}
-            height={1256}
+            width={1780}
+            height={868}
             className="absolute inset-0 flex items-end justify-end"
-            imgClassName="max-w-none md:max-h-[628px] h-auto md:h-full w-[700px] md:w-auto z-10"
+            imgClassName="w-full max-w-[1780px] h-auto z-10"
         />
     </>
 )
 
 const StartupMonopoly = ({ reduceMotion }: SceneProps) => (
     <>
-        <div className={`absolute inset-0 bg-[#FEFCED] dark:bg-[#1d1f27] ${fadeColors(reduceMotion)}`} />
+        <div className={`absolute inset-0 bg-[#E7E0DA] dark:bg-[#686E88] ${fadeColors(reduceMotion)}`} />
         <CloudinaryImage
             loading="lazy"
-            src="https://res.cloudinary.com/dmukukwp6/image/upload/startup_monopoly_2ac9d45ce3.png"
+            src="https://res.cloudinary.com/dmukukwp6/image/upload/9000_monopoly_light_6614a8a5d5.jpg"
             alt=""
-            width={1087}
-            height={540}
-            className="absolute right-0 top-0 w-[1087px] h-[540px]"
+            width={2967}
+            height={1463}
+            className={`absolute right-0 top-0 w-[1483.5px] h-[731.5px] max-w-full opacity-100 dark:opacity-0 ${fadeOpacity(
+                reduceMotion
+            )}`}
+        />
+        <CloudinaryImage
+            loading="lazy"
+            src="https://res.cloudinary.com/dmukukwp6/image/upload/9000_monopoly_dark_26c85ccad8.jpg"
+            alt=""
+            width={1582}
+            height={782}
+            className={`absolute right-0 top-0 w-[1483.5px] h-[731.5px] max-w-full opacity-0 dark:opacity-100 ${fadeOpacity(
+                reduceMotion
+            )}`}
         />
     </>
 )
