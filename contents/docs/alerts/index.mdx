@@ -10,7 +10,7 @@ availability:
 
 Alerts enable you to monitor your [insights](/product-analytics) and get notified when something important changes. You can set fixed thresholds (e.g., notify me when unique visitors exceed 5,000) or use [anomaly detection](#anomaly-detection) to automatically flag unusual patterns in your data.
 
-Currently, alerts are supported on all [trends](/docs/product-analytics/trends).
+Alerts are supported on [trends](/docs/product-analytics/trends), [funnels](/docs/product-analytics/funnels), and [SQL insights](/docs/sql).
 
 ## How to create an alert
 
@@ -21,7 +21,7 @@ Currently, alerts are supported on all [trends](/docs/product-analytics/trends).
   classes="rounded"
 />
 
-1. Alerts are based off of [insights](/docs/product-analytics/insights). You can pick any existing trend insight or create a new one.
+1. Alerts are based off of [insights](/docs/product-analytics/insights). You can pick any existing trend, funnel, or SQL insight, or create a new one.
 2. Click **Actions** in the sidebar and select **Alerts**. This shows you all the alerts for this insight.
 
 <ProductScreenshot
@@ -116,13 +116,7 @@ You can also create and manage alerts using [PostHog AI](/docs/posthog-ai/overvi
 - "Change my alert threshold to 200"
 - "Disable the signups alert"
 
-PostHog AI can create alerts on existing insights or generate new trend insights and set up alerts on them automatically. To update existing alerts, PostHog AI finds the alert by name and applies your changes.
-
-<CalloutBox icon="IconInfo" title="Note" type="fyi">
-
-PostHog AI can only create alerts on [trends](/docs/product-analytics/trends). Other insight types like funnels and retention don't support alerts.
-
-</CalloutBox>
+PostHog AI can create alerts on existing insights or generate new insights and set up alerts on them automatically. To update existing alerts, PostHog AI finds the alert by name and applies your changes.
 
 ### Manage alerts via MCP
 
