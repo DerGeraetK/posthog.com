@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
     IconSearch,
@@ -48,9 +48,11 @@ export default function TaskBarMenu() {
         setSearchOpen,
         updateTaskbarHeight,
         focusedWindow,
+        initialHomepage,
     } = useApp()
     const [isAnimating, setIsAnimating] = useState(false)
     const [rendered, setRendered] = useState(false)
+    const shouldAnimate = useRef(initialHomepage)
     const totalWindows = windows.length
 
     const { user, notifications, logout, isModerator } = useUser()
@@ -287,9 +289,17 @@ export default function TaskBarMenu() {
                     id="taskbar"
                     data-scheme="primary"
                     data-menu-container
-                    initial={{ rotateX: 90, opacity: 0 }}
-                    animate={rendered ? { rotateX: 0, opacity: 1 } : { rotateX: 90, opacity: 0 }}
-                    transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1], delay: 0.6 }}
+                    initial={shouldAnimate.current ? { rotateX: 90, opacity: 0 } : false}
+                    animate={
+                        shouldAnimate.current
+                            ? rendered
+                                ? { rotateX: 0, opacity: 1 }
+                                : { rotateX: 90, opacity: 0 }
+                            : undefined
+                    }
+                    transition={
+                        shouldAnimate.current ? { duration: 0.8, ease: [0.34, 1.56, 0.64, 1], delay: 0.6 } : undefined
+                    }
                     style={{
                         transformOrigin: '50% 50%',
                         transformPerspective: 1200,
