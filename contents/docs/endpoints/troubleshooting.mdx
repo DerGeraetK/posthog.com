@@ -77,6 +77,47 @@ The `filters_override` parameter has been removed. Requests using `filters_overr
 - You've hit the concurrency limit
 - Reduce parallel requests or wait before retrying
 
+## Query performance errors (400)
+
+When a query exceeds ClickHouse resource limits, the API returns HTTP 400 with a machine-readable `code` field. These are deterministic failures — retrying the same query won't help.
+
+| Code                       | Description                                 | Solution                                                                                                          |
+| -------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `query_timeout`            | The query exceeded the execution time limit | Narrow the query scope (e.g. a smaller date range) or [materialize the endpoint](/docs/endpoints/materialization) |
+| `query_memory_limit`       | The query exceeded the memory limit         | Narrow the query scope or [materialize the endpoint](/docs/endpoints/materialization)                             |
+| `query_too_large`          | The query text is too large to execute      | Simplify the query by reducing its complexity                                                                     |
+| `query_estimated_too_slow` | The query is estimated to run too long      | Narrow the time range or [materialize the endpoint](/docs/endpoints/materialization)                              |
+
+**Example error response:**
+
+```json
+{
+  "type": "server_error",
+  "code": "query_timeout",
+  "detail": "This query exceeded the execution time limit. Narrow its scope (e.g. a smaller date range) or materialize the endpoint for dedicated compute."
+}
+```
+
+Branch on the `code` field in your application to handle specific error cases programmatically.
+
+## Capacity errors (503)
+
+**"Queries are momentarily at capacity — please retry shortly."**
+
+The shared ClickHouse query pool is temporarily overloaded. This is transient — the same query may succeed after a short delay.
+
+For endpoints that consistently hit capacity limits, [materialize the endpoint](/docs/endpoints/materialization). Materialized endpoints run on dedicated compute that isn't affected by shared query pool load.
+
+**Example error response:**
+
+```json
+{
+  "type": "server_error",
+  "code": "query_capacity",
+  "detail": "Queries are momentarily at capacity — please retry shortly. For consistently heavy endpoints, materialize to run on dedicated endpoint compute that isn't affected by shared query load."
+}
+```
+
 ## Materialization errors
 
 `"Cannot materialize endpoint: ..."`
