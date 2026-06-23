@@ -14,12 +14,12 @@ import { IconTestTube } from '@posthog/icons'
 
 No-code experiments are great because they're quick to set up and require no coding, but it's important to understand their limitations and ensure they're the right fit for your website.
 
-| Use case | Explanation |
-|----------|-----|
-| ✅ **Simple layout changes** | Small edits to text or basic formatting are easy to manage and less likely to break anything |
-| ✅ **Server-rendered web applications (e.g., Next.js)** | Because the page doesn't typically re-render on the client, your changes are less likely to be overwritten |
-| ❌ **Complex changes or interactions** | While possible, making multiple or intricate CSS and HTML modifications can introduce more risk and requires careful management |
-| ❌ **Single-page applications (e.g., React, Vue, Angular)** | Frameworks that frequently re-render or replace DOM elements may overwrite any no-code changes you apply |
+| Use case                                                    | Explanation                                                                                                                     |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ **Simple layout changes**                                | Small edits to text or basic formatting are easy to manage and less likely to break anything                                    |
+| ✅ **Server-rendered web applications (e.g., Next.js)**     | Because the page doesn't typically re-render on the client, your changes are less likely to be overwritten                      |
+| ❌ **Complex changes or interactions**                      | While possible, making multiple or intricate CSS and HTML modifications can introduce more risk and requires careful management |
+| ❌ **Single-page applications (e.g., React, Vue, Angular)** | Frameworks that frequently re-render or replace DOM elements may overwrite any no-code changes you apply                        |
 
 ## Building a new experiment
 
@@ -34,6 +34,7 @@ In this example, we will change the text of a button on a sample webpage without
 Before creating your experiment, you'll need to add `disable_web_experiments: false` to your PostHog web snippet configuration. Otherwise, experiments configured with the toolbar won't run on your live site.
 
 Add `disable_web_experiments: false` to your PostHog init code like this:
+
 ```js-web
 posthog.init('<ph_project_token>', {
   api_host: '<ph_client_api_host>',
@@ -72,10 +73,10 @@ For security reasons, certain HTML tags and patterns are not allowed in the **Te
 
 <CalloutBox icon="IconInfo" title="Changing an element on multiple pages">
 
-If you need to update an element such as a button shared by many pages, use a common **CSS class selector**. For example, to change the **Sign up** button: 
+If you need to update an element such as a button shared by many pages, use a common **CSS class selector**. For example, to change the **Sign up** button:
 
 1. Add a common class such as `class="sign-up-button"`
-2. Select it using the `.sign-up-button` CSS selector. 
+2. Select it using the `.sign-up-button` CSS selector.
 
 </CalloutBox>
 
@@ -98,14 +99,14 @@ Once you save your experiment in the toolbar, it appears in the [Experiments tab
 
 The toolbar also enables further editing of your experiment. For example, you can:
 
--   Add multiple element changes to a variant by clicking **+ Add element**. Elements are buttons, headers, images, and more.
--   Remove an element from a variant by clicking the trash bin icon.
--   Add more versions of your experiment by clicking **+ Add variant**.
--   Change all elements, headers, buttons, and/or images by clicking the **Change element** dropdown.
+- Add multiple element changes to a variant by clicking **+ Add element**. Elements are buttons, headers, images, and more.
+- Remove an element from a variant by clicking the trash bin icon.
+- Add more versions of your experiment by clicking **+ Add variant**.
+- Change all elements, headers, buttons, and/or images by clicking the **Change element** dropdown.
 
 ## How to see how your experiment will look
 
-To preview the different versions of your experiment, go back to your experiment details page in PostHog and click the **Variants** tab. Here, you'll see your variants along with a button to preview each of them (and the ability to add a screenshot for them).
+To preview the different versions of your experiment, go back to your experiment details page in PostHog and click the **Variants** tab. Here, you'll see your variants along with a button to preview each of them, add a screenshot, or add notes to document what each variant does.
 
 <ProductScreenshot
   imageLight="https://res.cloudinary.com/dmukukwp6/image/upload/Clean_Shot_2025_01_16_at_14_06_28_2x_1ca848f7ca.png"
@@ -124,7 +125,7 @@ Before launching, ensure the following:
 
 1. **Test thoroughly**: Verify that all variants display and function as expected across devices and browsers. See our [testing feature flags doc](/docs/feature-flags/testing) for more details.
 
-2. **Document changes**: Record the modifications made to each variant and their goals. Add a description of the changes to your experiment as well as screenshots of each of the variants.
+2. **Document changes**: Record the modifications made to each variant and their goals. Add a description of the changes to your experiment as well as screenshots or notes for each variant.
 
 ## Troubleshooting and FAQs
 
