@@ -141,6 +141,8 @@ Each metric can be set as either a **primary** or **secondary** metric. This is 
 
 Once added and data starts being collected, we show the results as a credible interval bar chart along with details about significance, win probability, and delta between variants.
 
+When viewing experiment results in a [dashboard widget](/docs/product-analytics/dashboards#adding-widgets), both primary and secondary metrics are displayed. Each section shows up to three metrics. If an experiment has more than three metrics in either section, the widget displays "Showing the first N of M metrics. Open the experiment to see all of them." The full experiment page shows all metrics without this limit.
+
 ### How to read credible interval bar charts
 
 Each bar shows how a variant is performing compared to the control (the gray bar) for the metric, using a 95% credible interval. That means there's a 95% chance the true difference for that variant falls within this range. The vertical "0%" line is your baseline:
