@@ -1,16 +1,64 @@
 import React, { useEffect } from 'react'
 import SEO from 'components/seo'
 import ReaderView from 'components/ReaderView'
-import Link from 'components/Link'
+import { IconCheck, IconX } from '@posthog/icons'
 import { customerDataInfrastructureNav } from '../../hooks/useCustomerDataInfrastructureNavigation'
 import { TreeMenu } from 'components/TreeMenu'
 import { useApp } from '../../context/App'
-import CloudinaryImage from 'components/CloudinaryImage'
 import { useWindow } from '../../context/Window'
-import { CallToAction } from 'components/CallToAction'
+import OSTable from 'components/OSTable'
 
 const LeftSidebarContent = () => {
     return <TreeMenu items={customerDataInfrastructureNav.children} />
+}
+
+type CellStatus = 'yes' | 'no' | 'limited'
+
+type ComparisonRow = {
+    feature: string
+    description: string
+    dataWarehouse: CellStatus
+    contextWarehouse: CellStatus
+}
+
+const comparisonData: ComparisonRow[] = [
+    {
+        feature: 'Customer data',
+        description: 'CRM, billing/revenue, ad spend, ERP',
+        dataWarehouse: 'yes',
+        contextWarehouse: 'yes',
+    },
+    {
+        feature: 'Business context',
+        description:
+            'AI skills, code repositories, discussions (Slack), strategy (Notion, Google Docs), roadmap (Linear, GitHub issues)',
+        dataWarehouse: 'no',
+        contextWarehouse: 'yes',
+    },
+    {
+        feature: 'Modeled context',
+        description: 'Shared metrics and definitions around activation, churn, power users, etc',
+        dataWarehouse: 'yes',
+        contextWarehouse: 'yes',
+    },
+    {
+        feature: 'Product usage data',
+        description: 'Auto capture, custom events, AI interactions, errors, logs, experiments, surveys',
+        dataWarehouse: 'limited',
+        contextWarehouse: 'yes',
+    },
+    {
+        feature: 'Qualitative signals',
+        description: 'Support tickets, surveys, feedback, online brand mentions',
+        dataWarehouse: 'no',
+        contextWarehouse: 'yes',
+    },
+]
+
+const StatusCell = ({ status }: { status: CellStatus }) => {
+    if (status === 'yes') return <IconCheck className="size-6 text-green" />
+    if (status === 'no') return <IconX className="size-6 text-red" />
+    return <span className="text-sm text-secondary">Limited</span>
 }
 
 export default function ContextWarehouse(): JSX.Element {
@@ -19,130 +67,74 @@ export default function ContextWarehouse(): JSX.Element {
 
     useEffect(() => {
         if (appWindow) {
-            setWindowTitle(appWindow, 'PostHog context warehouse.md')
+            setWindowTitle(appWindow, 'context-warehouse.md')
         }
     }, [])
+
+    const columns = [
+        { name: '', width: 'minmax(200px, 3fr)', align: 'left' as const },
+        { name: 'Data warehouse', width: 'minmax(130px, 1fr)', align: 'center' as const },
+        { name: 'Context warehouse', width: 'minmax(150px, 1fr)', align: 'center' as const },
+    ]
+
+    const rows = comparisonData.map((row) => ({
+        cells: [
+            {
+                content: (
+                    <>
+                        <span className="font-bold">{row.feature}</span>
+                        <p className="text-sm !my-0">{row.description}</p>
+                    </>
+                ),
+            },
+            { content: <StatusCell status={row.dataWarehouse} />, className: '!justify-center' },
+            { content: <StatusCell status={row.contextWarehouse} />, className: '!justify-center' },
+        ],
+    }))
 
     return (
         <>
             <SEO
-                title="Context warehouse"
+                title="Context Warehouse"
                 updateWindowTitle={false}
-                description="Your data is the context layer for your AI. PostHog ingests all of your customer data plus product usage activity, and uses it to improve your product automatically."
+                description="A context warehouse is a more complete system than a data warehouse, built for agents, giving them the context they need to analyze data and take action on it."
                 image="https://res.cloudinary.com/dmukukwp6/image/upload/opengraph_3_cf73189604.png"
                 imageType="absolute"
             />
-            <ReaderView
-                leftSidebar={<LeftSidebarContent />}
-                title="posthog-context-warehouse.md"
-                hideTitle={true}
-                {...({
-                    header: (
-                        <>
-                            <CloudinaryImage
-                                src="https://res.cloudinary.com/dmukukwp6/image/upload/data_factory_aed2d31fbf.png"
-                                alt="Hedgehogs taking data to the data factory"
-                                className="mt-4 px-4"
-                                imgClassName="max-w-[542px] w-full mx-auto"
-                            />
-                            <h2 className="text-xl @md/reader-content-container:text-2xl font-bold m-4 text-center pb-4">
-                                Your data is the context layer for your AI
-                            </h2>
-                        </>
-                    ),
-                } as { header?: React.ReactNode })}
-            >
-                <h3>There are a million data companies. What makes PostHog different?</h3>
+            <ReaderView leftSidebar={<LeftSidebarContent />} title="Introducing the Context Warehouse">
+                <h2>Agents need more than a data warehouse</h2>
                 <p>
-                    PostHog ingests <em>all</em> of your customer data – all the usual stuff like CRM records, support
-                    tickets, payment info – <em>plus</em> product usage activity (this is our special sauce) – and uses
-                    it all to improve your product or website.
+                    Data warehouses were built for reporting. They typically ingest CRM records, Stripe charges,
+                    database records, and ad spend data. While they can contain vast amounts of customer data, they
+                    aren't natively built to handle first-party data generated inside your product.
                 </p>
                 <p>
-                    This is useful because the more data we can feed into our AI models, the better product intelligence
-                    we can offer you. Not just insights and dashboards, but also automated bug fixes and experiments to
-                    improve things like conversion rate – without you having to get involved.
+                    <strong>
+                        A context warehouse is a more complete system, built for agents, to give them context they need
+                        to analyze data and take action on it.
+                    </strong>{' '}
+                    It covers the gamut of pipelines, first-party activity, transformation, and data exports.
                 </p>
 
-                <CallToAction to="https://app.posthog.com/signup" size="sm">
-                    Get started - free
-                </CallToAction>
-
-                <h3>What is product usage activity?</h3>
-                <p>
-                    It’s not just pageviews and conversion events like you’d track to Google Analytics. It’s{' '}
-                    <em>everything</em> that happens inside your product or website.
-                </p>
-                <p>This includes user actions like:</p>
+                <h2>The missing context layers</h2>
+                <p>The richest signals don't come from Salesforce or Stripe – they come from:</p>
                 <ul>
-                    <li>how far someone scrolled on a page</li>
-                    <li>mouse movement</li>
-                    <li>clicks on photos, links, text selection, etc</li>
-                    <li>what they type into a form</li>
-                    <li>if someone rapidly clicks on something like they’re frustrated (known as rage clicks)</li>
+                    <li>
+                        <strong>Behavioral data</strong> – What your users are doing (or not doing) inside your product
+                        (Things like sessions, clicks, form interactions, errors, and rage clicks are examples of
+                        behavioral data that no third-party tool generates)
+                    </li>
+                    <li>
+                        <strong>Business context</strong> – Internal planning and communication with your team
+                    </li>
                 </ul>
                 <p>
-                    (Note: you can limit what kind of data gets collected depending on your specific needs or privacy
-                    concerns.)
-                </p>
-                <p>
-                    But product usage activity goes beyond what people see. It also includes what’s happening{' '}
-                    <em>behind</em> the scenes like:
-                </p>
-                <ul>
-                    <li>browser or network errors</li>
-                    <li>page speed and performance logging</li>
-                </ul>
-                <p>It also extends into things you’re testing or building:</p>
-                <ul>
-                    <li>who saw which version of an experiment or A/B test and if it affected their usage</li>
-                    <li>survey responses and user feedback</li>
-                    <li>AI features and interactions users had with them</li>
-                </ul>
-
-                <h3>Operating from the full lot of data</h3>
-                <p>
-                    Normally teams operate from siloed data, even after doing loads of transformations to normalize it.
-                    But you can get better results when you have the <em>full set of data</em>.
-                </p>
-                <p>
-                    Product teams can cross reference adoption and stickiness with experiments or product launches.
-                    Marketing teams can understand which channels led to the best retention based on feature usage. App
-                    developers and designers can understand the impact of bug fixes or UI changes. Revenue ops can
-                    factor in how feature usage impacts the bottom line.
-                </p>
-                <p>
-                    AI makes it possible to analyze loads more data than humans were ever able to – even with the most
-                    talented of data teams and analysts.
-                </p>
-                <p>
-                    Usage data is generated in so many different places, and finally there’s a place to put it all to
-                    work.
+                    These are the gaps a context warehouse fills. It's not a different kind of data warehouse – it's a
+                    more complete one. One where usage signals and business context are supplied to agents so they're
+                    not coding in context silos.
                 </p>
 
-                <h3>How PostHog is different from Claude Code and AI code editors</h3>
-                <p>
-                    It’s not just about insights and dashboards. PostHog automatically analyzes usage activity and ships
-                    code fixes and product improvements on your behalf. This frees you up to work on more high leverage
-                    projects.
-                </p>
-                <p>
-                    Gone are the days of having to triage bugs. For example, when a user hits an error, PostHog is
-                    capable of watching the session recording, understanding intent, checking for other instances of the
-                    same issue or related issues, and creating a pull request to solve it – all without you needing to
-                    tell AI to do it.
-                </p>
-                <p>
-                    That’s the biggest difference. See, Claude Code, Codex, and other AI code editors have access to
-                    your code – and using MCPs they may have access to analytics, error tracking, and a CRM, but they
-                    mostly just write code and <em>ignore</em> all the context that you’re likely thinking about as a
-                    human. And they don’t just run themselves.
-                </p>
-                <p>
-                    And that’s where PostHog comes in. PostHog helps you run a{' '}
-                    <Link to="/data-stack/self-driving">self-driving product</Link> so you can focus on what matters,
-                    not all the busywork that usually gets in the way.
-                </p>
+                <OSTable columns={columns} rows={rows} rowAlignment="top" editable={false} />
             </ReaderView>
         </>
     )

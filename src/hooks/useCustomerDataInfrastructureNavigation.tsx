@@ -1,11 +1,11 @@
 import { navigate } from 'gatsby'
 
 export const customerDataInfrastructureNav = {
-    name: 'Context warehouse',
+    name: 'Context Warehouse',
     url: '/data-stack',
     children: [
         {
-            name: 'Context warehouse',
+            name: 'Context Warehouse',
             url: '/data-stack',
         },
         {
