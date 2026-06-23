@@ -30,7 +30,7 @@ const createStandardMenuItems = (url: string, state?: any, isExternal = false): 
             children: isExternal ? (
                 <span>Open in side by side view</span>
             ) : (
-                <Link to={url} state={{ ...state, newWindow: true, sideBySide: true }} contextMenu={false}>
+                <Link to={url} state={{ ...state, newWindow: true, sideBySide: 'right' }} contextMenu={false}>
                     Open in side by side view
                 </Link>
             ),

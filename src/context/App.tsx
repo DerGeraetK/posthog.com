@@ -1605,17 +1605,29 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         }, 0)
     }, [])
 
-    const bringToFront = useCallback((item: AppWindow, location?: Location, position?: { x: number; y: number }) => {
-        setWindows((windows) =>
-            windows.map((el) => ({
-                ...el,
-                zIndex: el === item ? windows.length : el.zIndex < item.zIndex ? el.zIndex : el.zIndex - 1,
-                minimized: item === el ? false : el.minimized,
-                location: item === el ? location || el.location : el.location,
-                position: item === el ? position || el.position : el.position,
-            }))
-        )
-    }, [])
+    const bringToFront = useCallback(
+        (
+            item: AppWindow,
+            location?: Location,
+            additional: {
+                expanded?: boolean
+                snapped?: boolean
+                size?: { width: number; height: number }
+                position?: { x: number; y: number }
+            } = {}
+        ) => {
+            setWindows((windows) =>
+                windows.map((el) => ({
+                    ...el,
+                    zIndex: el === item ? windows.length : el.zIndex < item.zIndex ? el.zIndex : el.zIndex - 1,
+                    minimized: item === el ? false : el.minimized,
+                    location: item === el ? location || el.location : el.location,
+                    ...additional,
+                }))
+            )
+        },
+        []
+    )
 
     const replaceFocusedWindow = useCallback(
         (newWindow: AppWindow) => {
@@ -1639,6 +1651,10 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                                   props: newWindow.props,
                                   location: newWindow.location,
                                   appSettings: newWindow.appSettings,
+                                  expanded: newWindow.expanded,
+                                  snapped: newWindow.snapped,
+                                  size: newWindow.size,
+                                  position: newWindow.position,
                               }
                             : w
                     )
@@ -1895,11 +1911,19 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         const isSideBySide = location?.state?.sideBySide && focusedWindow && !isSSR
 
         if (isSideBySide) {
-            const rightSnap = getSnapDimensions('right')
-            newWindow.size = rightSnap.size
-            newWindow.position = rightSnap.position
-            newWindow.snapped = 'right'
+            const sideSnap = getSnapDimensions(location?.state?.sideBySide)
+            newWindow.size = sideSnap.size
+            newWindow.position = sideSnap.position
+            newWindow.snapped = location?.state?.sideBySide
             newWindow.expanded = false
+        }
+
+        if (newWindow.key !== '/' && !isSideBySide && !newWindow.appSettings?.size?.fixed) {
+            const expandedDimensions = getExpandedDimensions()
+            newWindow.size = expandedDimensions.size
+            newWindow.position = expandedDimensions.position
+            newWindow.expanded = true
+            newWindow.snapped = false
         }
 
         if (siteSettings.experience === 'boring') {
@@ -1911,26 +1935,27 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         }
 
         if (existingWindow) {
-            bringToFront(existingWindow, element.props.location)
-        } else if (
-            (element.props.newWindow || location?.state?.newWindow) &&
-            !windows.some((w) => w.key === newWindow.key)
-        ) {
-            if (isSideBySide) {
-                const leftSnap = getSnapDimensions('left')
-                const snappedFocused = {
-                    ...focusedWindow,
-                    previousSize: focusedWindow.size,
-                    previousPosition: focusedWindow.position,
-                    size: leftSnap.size,
-                    position: leftSnap.position,
-                    snapped: 'left' as const,
-                    expanded: false,
-                }
-                setWindows([...windows.map((w) => (w === focusedWindow ? snappedFocused : w)), newWindow])
-            } else {
-                setWindows([...windows, newWindow])
+            bringToFront(existingWindow, element.props.location, {
+                expanded: newWindow.expanded,
+                snapped: newWindow.snapped,
+                size: newWindow.size,
+                position: newWindow.position,
+            })
+        } else if (isSideBySide && !windows.some((w) => w.key === newWindow.key)) {
+            const focusedSide = location?.state?.sideBySide === 'left' ? 'right' : 'left'
+            const sideSnap = getSnapDimensions(focusedSide)
+            const snappedFocused = {
+                ...focusedWindow,
+                previousSize: focusedWindow.size,
+                previousPosition: focusedWindow.position,
+                size: sideSnap.size,
+                position: sideSnap.position,
+                snapped: focusedSide as const,
+                expanded: false,
             }
+            setWindows([...windows.map((w) => (w === focusedWindow ? snappedFocused : w)), newWindow])
+        } else if (newWindow.appSettings?.size?.fixed) {
+            setWindows([...windows, newWindow])
         } else {
             replaceFocusedWindow(newWindow)
         }

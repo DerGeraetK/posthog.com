@@ -110,12 +110,11 @@ export default function GlassIcon({
                 style={{ backgroundColor: glowColorDark }}
             />
 
-            {/* Layer A frost: real backdrop blur, clipped to the silhouette. Lives outside
-                the SVG because backdrop-filter does not render inside an SVG <foreignObject>.
-                The objectBoundingBox clip scales with the box. */}
+            {/* Layer A frost: real backdrop blur, clipped to the silhouette. Hidden until
+                hover so the expensive backdrop-filter doesn't tank idle perf. */}
             <span
                 aria-hidden
-                className="pointer-events-none absolute inset-0 transition-transform duration-200 ease-out group-hover:scale-[1.03]"
+                className="pointer-events-none absolute inset-0 hidden group-hover:block scale-[1.03]"
                 style={{
                     backdropFilter: `blur(${blur}px)`,
                     WebkitBackdropFilter: `blur(${blur}px)`,
