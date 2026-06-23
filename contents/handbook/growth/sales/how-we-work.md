@@ -135,7 +135,8 @@ These standards are likely to change as the TAE role evolves. Any changes will b
 
 **How we calculate**
 - Quota is calculated annually, and is paid out quarterly
-- Quota is retired on cash collected by PostHog in the quarter, both for annual credits purchases or monthly payments on named accounts in the TAM's book
+- A deal counts toward quota in the quarter of its **effective date**. For annual deals, the effective date is the contract start date or the signature date, whichever is later. For monthly accounts, each payment counts toward the quarter it falls in.
+- Because the signature date sets the floor, a deal can never be credited to a quarter that has already closed, even if its contract start was backdated to align with the customer's current billing period.
 - The Commission rate is 10% flat and uncapped, regardless of whether it is monthly or annual
 	- There is an additional 6.7% incentive on net-new annual contracts 
 	- There is also an additional 6.7% incentive on growth in annual renewals
@@ -154,6 +155,9 @@ Ator has (yet) another book account coming up for renewal. Last year, that accou
 - $12,000 in quota from the 10% on the cash paid
 - $1,340 in quota from the 6.7% incentive on the increase over last year
 Ator is paid a total of $13,340 for this account.
+
+**Effective date example**
+A customer's billing period runs June 23 to July 23. The TAM signs the annual deal on July 20 and the contract start is set to June 23. The effective date is July 20, the later of the two, so the deal counts toward Q3 rather than the already-closed Q2.
 
 Situations where PostHog credits a customer due to circumstances outside of the TAM's control will be handled on a case by case basis.
 
