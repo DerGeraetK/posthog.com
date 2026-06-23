@@ -8,17 +8,25 @@ availability:
   enterprise: full
 ---
 
-import { ProductScreenshot } from 'components/ProductScreenshot'
-export const CreateExperimentLight = "https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/wizard_step_1_light_c7e16a15d1.png"
-export const CreateExperimentDark = "https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/wizard_step_1_dark_ddc4372ce6.png"
-export const ExperimentGoalWarningLight = "https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/features/experiments/experiment-goal-warning-light-mode.png"
-export const ExperimentGoalWarningDark = "https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/features/experiments/experiment-goal-warning-dark-mode.png"
+import { ProductScreenshot } from "components/ProductScreenshot";
+export const CreateExperimentLight =
+  "https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/wizard_step_1_light_c7e16a15d1.png";
+export const CreateExperimentDark =
+  "https://res.cloudinary.com/dmukukwp6/image/upload/q_auto,f_auto/wizard_step_1_dark_ddc4372ce6.png";
+export const ExperimentGoalWarningLight =
+  "https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/features/experiments/experiment-goal-warning-light-mode.png";
+export const ExperimentGoalWarningDark =
+  "https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/features/experiments/experiment-goal-warning-dark-mode.png";
 
-import { ProductVideo} from 'components/ProductVideo'
-export const SetExperimentLight = "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/set-experiment-rollout-light-mode.mp4"
-export const SetExperimentDark = "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/set-experiment-rollout-dark-mode.mp4"
-export const ImprovementCalculatorLight = "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/improvement-calculator-light-mode.mp4"
-export const ImprovementCalculatorDark = "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/improvement-calculator-dark-mode.mp4"
+import { ProductVideo } from "components/ProductVideo";
+export const SetExperimentLight =
+  "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/set-experiment-rollout-light-mode.mp4";
+export const SetExperimentDark =
+  "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/set-experiment-rollout-dark-mode.mp4";
+export const ImprovementCalculatorLight =
+  "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/improvement-calculator-light-mode.mp4";
+export const ImprovementCalculatorDark =
+  "https://res.cloudinary.com/dmukukwp6/video/upload/posthog.com/contents/images/features/experiments/improvement-calculator-dark-mode.mp4";
 
 To create a new experiment, go to the [Experiments](https://app.posthog.com/experiments) section in the PostHog app, and click on the **New experiment** button in the top right.
 
@@ -33,10 +41,10 @@ A Guide panel on the right provides contextual tips for each step.
 When you're done, click **Save as draft** on the final step. You can launch the experiment from its detail page after saving.
 
 <ProductScreenshot
-    imageLight={CreateExperimentLight}
-    imageDark={CreateExperimentDark}
-    alt="How to create an experiment in PostHog"
-    classes="rounded"
+  imageLight={CreateExperimentLight}
+  imageDark={CreateExperimentDark}
+  alt="How to create an experiment in PostHog"
+  classes="rounded"
 />
 
 ## Step 1: Description
@@ -63,6 +71,8 @@ Experiments require at least 2 variants: a `control` and one or more test varian
 
 By default, all experiments have a `control` and `test` variant. You can add more variants in this step. Participants are automatically split equally between variants.
 
+Each variant also has a **Notes** field where you can document details like what the variant does or its reroute URL. Click the field to edit inline and save by clicking the check button or clicking away.
+
 If you link an existing feature flag, this step becomes read-only. You can adjust the flag's variants from the feature flag page after saving the experiment.
 
 The **Traffic preview** shows a visual bar chart of how traffic is distributed across your variants based on your split and rollout percentage. The visualization displays the actual bucketing logic of how users are distributed in a rollout. Increasing the rollout percentage does not reassign users to other variants; however, changing the split or adding variants might lead to inconsistent experiences for users. Learn more about [what happens when you change distribution after rollout](/docs/experiments/changing-distribution-after-rollout).
@@ -80,9 +90,11 @@ For more advanced release conditions – such as targeting specific user propert
 > **Note:** If you select a server-side event, you may see a warning that no feature flag information can be detected with the event. To resolve this issue, see [step 2 of adding your experiment code and how to submit feature flag information with your events](/docs/experiments/adding-experiment-code#step-2-server-side-only-add-the-feature-flag-property-to-your-events).
 >
 > <ProductScreenshot
+
     imageLight={ExperimentGoalWarningLight}
     imageDark={ExperimentGoalWarningDark}
     alt="Experiment goal warning" classes="rounded"
+
 />
 
 ## Step 3: Analytics
