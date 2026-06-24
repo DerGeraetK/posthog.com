@@ -507,6 +507,33 @@ const CUSTOMER_DATA: Record<string, BaseCustomer> = {
             },
         },
     },
+    'legit-media': {
+        name: 'Legit Media',
+        toolsUsed: ['endpoints', 'product_analytics', 'session_replay', 'feature_flags'],
+        industries: ['News and Media'],
+        users: ['Engineering', 'Marketing'],
+        notes: 'Network of news websites across Africa',
+        featured: false,
+        logo: {
+            light: 'https://res.cloudinary.com/dmukukwp6/image/upload/FASTR_Logo_full_color_a8db0d8cb5.png', // placeholder — replace with Legit Media logo
+            dark: 'https://res.cloudinary.com/dmukukwp6/image/upload/FASTR_Logo_white_3c093b166c.png', // placeholder — replace with Legit Media logo
+        },
+        height: 8,
+        quotes: {
+            andrey_tovstonog: {
+                name: 'Andrey Tovstonog',
+                role: 'CTO',
+                image: {
+                    thumb: 'https://res.cloudinary.com/dmukukwp6/image/upload/Ryan_Breen_456ba746db.jpg', // placeholder — replace with Andrey Tovstonog photo
+                },
+                quotes: [
+                    "About 1 out of 7 requests was successful. Before switching to Endpoints, during the last few weeks we weren't able to get any reports at all — the API was constantly responding that it was too busy and couldn't process our requests.",
+                    'The requests started to be processed much faster, and the response stability improved significantly.',
+                    'Previously, marketers had to manually gather all this information from different PostHog dashboards. After automation, everything is now consolidated and available in a single place, and they spend their time analyzing the results instead of searching for the right data.',
+                ],
+            },
+        },
+    },
     greptile: {
         name: 'Greptile',
         // toolsUsed: ['product_analytics'],
