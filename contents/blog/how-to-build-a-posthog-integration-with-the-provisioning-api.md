@@ -22,7 +22,7 @@ I recently built a [website](https://creeksidefields.com/) to sell shares of hog
 
 One of the most important aspects of distributing product from a farm is knowing who you're selling to. So, naturally, wiring up PostHog for product analytics, session replay, and error reporting was a no brainer. However, farmers are trying to farm not sign up for accounts and copy paste API keys into their farm builder apps. So, my farm website builder needed to provision PostHog accounts behind the scenes and surface insights directly to farmers. 
 
-The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how it works, from the [provisioning API](/docs/integrate/provisioning) call that creates the account to the query that reads it back.
+The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how I built it.
 
 ## Registering your OAuth client via CIMD
 
@@ -133,14 +133,12 @@ That one builds the seven-day trend chart. A couple more get unique visitors and
 
 Access tokens last an hour, so for anything long-lived you're storing the refresh token. Encrypt it. I keep them in Postgres with AES-256-GCM and a key that only lives in the environment, never in the database.
 
-A brand-new farm has no traffic, so on day one the dashboard would be empty. To make the demo show something, I seed a week of pageviews into the project when it's created, using the capture API with `historical_migration: true` (that's what lets you backdate timestamps). Real visits stack on top of those.
-
 ## The stuff that bit me
 
 These are the things that weren't obvious until I hit them:
 
 - **Your CIMD URL has to be reachable.** I deployed behind Vercel's default deployment protection and the first call just failed. PostHog couldn't fetch the metadata document through the SSO gate. If registration never finishes, open the `.well-known` URL in an incognito window and make sure it loads.
-- **Backdated events get dropped unless you ask for them.** My seeded pageviews silently vanished until I set `historical_migration: true`. Current-timestamp events were fine; the old ones needed the flag.
+- **Backdated events get dropped unless you ask for them.** I seed a week of demo pageviews so a new farm's dashboard isn't empty on day one, and they silently vanished until I set `historical_migration: true`. Current-timestamp events were fine; the old ones needed the flag.
 
 ## Try it
 
