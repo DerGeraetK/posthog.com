@@ -72,7 +72,7 @@ await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
 })
 ```
 
-What comes back depends on the email, and I had to handle each case:
+There are a few cases to handle for this response:
 
 - **A new email** comes back as `{ type: "oauth", code }`. The account gets created and linked quietly, I get a code on the spot, and the farmer gets a welcome email to set their password.
 - **An email that's already a PostHog user** comes back as `{ type: "requires_auth", url }`. They have to consent in the browser first, so I send them to `url` and PostHog redirects back to my `redirect_uri` with a code.
@@ -80,7 +80,7 @@ What comes back depends on the email, and I had to handle each case:
 
 ## Getting the project key
 
-With a code in hand, I swap it for tokens:
+I swap the code for tokens:
 
 ```ts
 await fetch(`${HOST}/api/agentic/oauth/token`, {
@@ -142,7 +142,7 @@ These are the things that weren't obvious until I hit them:
 
 ## Try it
 
-Checkout the HogFarm repo and the provisioning docs to give your users insights about their users. It's user data all the way down.
+Check out the HogFarm repo and the provisioning docs to give your users insights about their users. It's user data all the way down.
 
 - Code: [github.com/Brooker-Fam/hogfarm](https://github.com/Brooker-Fam/hogfarm)
 - Docs: [Provisioning API](/docs/integrate/provisioning) and [OAuth + CIMD](/docs/api/oauth)
