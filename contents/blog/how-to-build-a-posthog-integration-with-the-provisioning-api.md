@@ -15,62 +15,48 @@ tags:
   - Integrations
 seo:
   metaTitle: "How to build a PostHog integration with the provisioning API"
-  metaDescription: "A walkthrough of building a partner integration on PostHog's provisioning API: spin up a real PostHog account for your users in three API calls, no signup page."
+  metaDescription: "I built a fake farm-website company on PostHog's provisioning API. Here's how it creates accounts for its users and reads their analytics back, with the gotchas I hit."
 ---
 
-If you build a platform that other people ship apps on, your users eventually ask for analytics. The annoying part is the handoff: they leave your product, sign up for PostHog, copy an API key, paste it back, and wire it up. Every step there is a place to drop off.
+I recently built a [website](https://creeksidefields.com/) to sell shares of hogs. I realized it's too difficult for my fellow farmers, who are better versed in the subtle arts of managing soil, plants, and animals than the [latest coding tool](https://posthog.com/code), to build similar sites with current tech. So, I threw together a website builder for farmers.
 
-The [provisioning API](/docs/integrate/provisioning) removes the handoff. Your app creates a real PostHog account for your user, gets back a project key, and wires it up. The user never sees a signup page. This is how partners like Insforge provision PostHog for their users today.
+One of the most important aspects of distributing product from a farm is knowing who you're selling to. So, naturally, wiring up PostHog for product analytics, session replay, and error reporting was a no brainer. However, farmers are trying to farm not sign up for accounts and copy paste API keys into their farm builder apps. So, my farm website builder needed to provision PostHog accounts behind the scenes and surface insights directly to farmers. 
 
-To show exactly how it works, I built a small reference app called HogFarm: a toy farm-website builder where you type in a farm name and email, click one button, and get a live site with PostHog analytics already attached. The code is on [GitHub](https://github.com/Brooker-Fam/hogfarm) and it's deployed [here](https://hogfarm-guava-tri.vercel.app). This post walks through what's actually involved.
+The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how it works, from the [provisioning API](/docs/integrate/provisioning) call that creates the account to the query that reads it back.
 
-## The whole thing is three API calls
+## Registering your OAuth client via CIMD
 
-```
-1. POST /api/agentic/provisioning/account_requests   → authorization code
-2. POST /api/agentic/oauth/token                      → access + refresh tokens
-3. POST /api/agentic/provisioning/resources           → project API key (phc_…)
-```
+To register my OAuth client, I added a small JSON file. The first time I called the API, PostHog fetched the file and registered my OAuth app. It's called a [Client ID Metadata Document](/docs/api/oauth#client-id-metadata-document-cimd), or CIMD.
 
-Call one creates or finds the account. Call two trades the resulting code for tokens. Call three provisions a project and hands back the `phc_` key your user's app sends events with. Everything else is the plumbing that makes those three calls safe to run from a client that holds no secret.
-
-## How your app identifies itself: CIMD
-
-There's no partner signup form. You host a small JSON document at a stable HTTPS URL, and that URL *is* your `client_id`. The first time you call the API, PostHog fetches the document, validates it, and registers your OAuth app automatically. This is a Client ID Metadata Document (CIMD).
-
-In HogFarm it's served straight from the app:
+It looks like this:
 
 ```json
 {
-  "client_id": "https://hogfarm.example.com/.well-known/posthog-client.json",
+  "client_id": "https://hogfarm-guava-tri.vercel.app/.well-known/posthog-client.json",
   "client_name": "HogFarm",
-  "redirect_uris": ["https://hogfarm.example.com/api/oauth/callback"],
+  "redirect_uris": ["https://hogfarm-guava-tri.vercel.app/api/oauth/callback"],
   "token_endpoint_auth_method": "none",
   "grant_types": ["authorization_code"],
   "response_types": ["code"],
   "com.posthog": {
-    "scopes": ["insight:read", "project:read", "person:read"]
+    "scopes": ["query:read", "insight:read", "project:read", "person:read"]
   }
 }
 ```
 
-The one rule that trips people up: `client_id` has to be the exact URL the document is served from. The `com.posthog.scopes` array is an optional ceiling. Tokens issued to your app can never exceed it, no matter what an individual request asks for.
+The `client_id` has to be the exact URL the file is served from, or it won't register. The `com.posthog.scopes` list is a ceiling: tokens can never go above it, whatever an individual request asks for. I ask for `query:read` because I need to run queries later to build the dashboard. More on that below.
 
-## How the token exchange stays safe: PKCE
-
-HogFarm is a public client. It holds no secret, so it proves the token exchange with PKCE: generate a random verifier, send only its SHA-256 hash with the account request, then replay the verifier at token exchange.
+Because HogFarm holds no secret (`token_endpoint_auth_method` is `"none"`), I use PKCE to prove the token exchange. I generate a random verifier and send only its SHA-256 hash with the first call. The verifier gets replayed at token exchange.
 
 ```ts
 const verifier = base64url(randomBytes(32))
 const challenge = base64url(sha256(verifier))
 ```
 
-The challenge travels with call one. The verifier stays on your server until call two.
-
 ## Creating the account
 
 ```ts
-const res = await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
+await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
   method: "POST",
   headers: { "API-Version": "0.1d", "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -80,38 +66,34 @@ const res = await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
     client_id: clientId,
     code_challenge: challenge,
     code_challenge_method: "S256",
-    scopes: ["insight:read", "project:read", "person:read"],
+    scopes: ["query:read", "insight:read", "project:read", "person:read"],
     configuration: { region: "US", organization_name: farmName },
   }),
 })
 ```
 
-The response comes back as one of a few shapes, and a real integration has to handle each:
+What comes back depends on the email, and I had to handle each case:
 
-- **New email** → `{ type: "oauth", code }`. The account is created and linked silently. You get an authorization code right away and finish the flow server-side. The user gets a welcome email to set their password.
-- **Existing PostHog user** → `{ type: "requires_auth", url }`. That person already has an account, so they consent in the browser first. You send them to `url`, and PostHog redirects back to your `redirect_uri` with a code.
-- **First call from a brand-new CIMD client** → HTTP 202 `{ type: "registering" }`. PostHog is fetching your metadata document in the background. Wait the returned `retry_after` seconds and call again. You hit this exactly once per deployment.
+- **A new email** comes back as `{ type: "oauth", code }`. The account gets created and linked quietly, I get a code on the spot, and the farmer gets a welcome email to set their password.
+- **An email that's already a PostHog user** comes back as `{ type: "requires_auth", url }`. They have to consent in the browser first, so I send them to `url` and PostHog redirects back to my `redirect_uri` with a code.
+- **The very first call from a new CIMD client** comes back as a `202` with `{ type: "registering" }`. PostHog fetches the metadata document in the background, so I wait the `retry_after` seconds and call again. This happens once per deployment, and it caught me off guard the first time (see below).
 
-## Trading the code for tokens, then provisioning
+## Getting the project key
 
-Once you have a code, the rest is mechanical. Exchange it:
+With a code in hand, I swap it for tokens:
 
 ```ts
 await fetch(`${HOST}/api/agentic/oauth/token`, {
   method: "POST",
   headers: { "API-Version": "0.1d", "Content-Type": "application/x-www-form-urlencoded" },
-  body: new URLSearchParams({
-    grant_type: "authorization_code",
-    code,
-    code_verifier: verifier,
-  }),
+  body: new URLSearchParams({ grant_type: "authorization_code", code, code_verifier: verifier }),
 })
 ```
 
-Then provision a project with the access token:
+The next call provisions a project:
 
 ```ts
-const res = await fetch(`${HOST}/api/agentic/provisioning/resources`, {
+await fetch(`${HOST}/api/agentic/provisioning/resources`, {
   method: "POST",
   headers: {
     "API-Version": "0.1d",
@@ -126,33 +108,43 @@ const res = await fetch(`${HOST}/api/agentic/provisioning/resources`, {
 })
 ```
 
-The response carries `complete.access_configuration.api_key` (the `phc_` project token) and `host`. That's the key your user's site initializes the PostHog SDK with. `service_id: "free"` provisions a free-tier project and needs no payment details, which is the right default for "just give my user analytics." When they outgrow it, `pay_as_you_go` takes a Stripe shared payment token so they can upgrade without leaving your product.
+The response carries `complete.access_configuration.api_key` (the `phc_` token) and `host`. That key goes into the farm site HogFarm generates, so visits start landing in PostHog right away. `service_id: "free"` gives a free-tier project with no card required, which is all HogFarm needs.
 
-At this point HogFarm drops the `phc_` key into the generated farm site and the user is sending events. No signup page, no copy-paste.
+## Reading the data back
 
-## "Open in PostHog"
+Now for the fun part, giving critical business insights directly to the farmers. The OAuth access token can query the farmer's project directly. So the dashboard is just a few HogQL queries:
 
-The last touch is a button that takes the user into their PostHog project. The simplest version is a direct link to `{host}/project/{teamId}` (PostHog prompts login if they aren't signed in). HogFarm uses that.
+```ts
+await fetch(`${HOST}/api/projects/${teamId}/query/`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+  body: JSON.stringify({
+    query: {
+      kind: "HogQLQuery",
+      query: `SELECT toDate(timestamp), count() FROM events
+              WHERE event = '$pageview' AND timestamp > now() - INTERVAL 7 DAY
+              GROUP BY 1 ORDER BY 1`,
+    },
+  }),
+})
+```
 
-If you want a fully seamless no-login deep link, there are two richer options, and it's worth knowing neither is on by default for a freshly self-registered partner:
+That one builds the seven-day trend chart. A couple more get unique visitors and top pages. The access token gets cached and refreshed with the rotating refresh token when it expires, so the reads keep going without bothering the farmer.
 
-- The privileged `/deep_links` endpoint mints a single-use magic login. PostHog enables it per partner, so it returns `deep_links_not_enabled` until then.
-- The `requires_auth` handshake (re-run `account_requests` for the user's email, send them to the returned consent URL) lands them in their project after a quick login.
+Access tokens last an hour, so for anything long-lived you're storing the refresh token. Encrypt it. I keep them in Postgres with AES-256-GCM and a key that only lives in the environment, never in the database.
 
-## What I learned building it
+A brand-new farm has no traffic, so on day one the dashboard would be empty. To make the demo show something, I seed a week of pageviews into the project when it's created, using the capture API with `historical_migration: true` (that's what lets you backdate timestamps). Real visits stack on top of those.
 
-A few things that aren't obvious from the docs until you hit them:
+## The stuff that bit me
 
-- **Your CIMD URL has to be publicly fetchable.** I deployed behind Vercel's default deployment protection and the very first call failed, because PostHog couldn't reach the metadata document behind the SSO gate. If registration never completes, check that the `.well-known` URL is reachable without auth.
-- **The first call always 202s.** A brand-new CIMD client triggers a background registration. Build the retry in from the start rather than treating the 202 as an error.
-- **`label_prefix` is capped at 25 characters.** A long enough name will 400 the resources call. Trim it before you send it.
-- **Don't store tokens you don't need to.** A production integration persists the access and refresh tokens (encrypted) so it can keep calling PostHog for that user. If you don't need ongoing calls, store just the project key and team id and skip the secret entirely.
+These are the things that weren't obvious until I hit them:
+
+- **Your CIMD URL has to be reachable.** I deployed behind Vercel's default deployment protection and the first call just failed. PostHog couldn't fetch the metadata document through the SSO gate. If registration never finishes, open the `.well-known` URL in an incognito window and make sure it loads.
+- **Backdated events get dropped unless you ask for them.** My seeded pageviews silently vanished until I set `historical_migration: true`. Current-timestamp events were fine; the old ones needed the flag.
 
 ## Try it
 
-The full app is about 200 lines of TypeScript. Clone it, point the CIMD URL at your own deployment, and you have a working provisioning integration:
+Checkout the HogFarm repo and the provisioning docs to give your users insights about their users. It's user data all the way down.
 
 - Code: [github.com/Brooker-Fam/hogfarm](https://github.com/Brooker-Fam/hogfarm)
 - Docs: [Provisioning API](/docs/integrate/provisioning) and [OAuth + CIMD](/docs/api/oauth)
-
-If you're building a platform and want to give your users PostHog without the handoff, this is the path.
