@@ -18,9 +18,9 @@ seo:
   metaDescription: "I built a fake farm-website company on PostHog's provisioning API. Here's how it creates accounts for its users and reads their analytics back, with the gotchas I hit."
 ---
 
-I recently built a [website](https://creeksidefields.com/) to sell shares of hogs. I realized it's too difficult for my fellow farmers, who are better versed in the subtle arts of managing soil, plants, and animals than the [latest coding tool](https://posthog.com/code), to build similar sites with current tech. So, I threw together a website builder for farmers.
+I live on a little farm and recently built a [website](https://creeksidefields.com/) to sell shares of hogs. I realized it's too difficult for my fellow farmers, who are better versed in the subtle arts of managing soil, plants, and animals than the [latest coding tool](https://posthog.com/code), to build similar sites with current tech. So, I threw together a website builder for farmers.
 
-One of the most important aspects of distributing product from a farm is knowing who you're selling to. So, naturally, wiring up PostHog for product analytics, session replay, and error reporting was a no brainer. However, farmers are trying to farm not sign up for accounts and copy paste API keys into their farm builder apps. So, my farm website builder needed to provision PostHog accounts behind the scenes and surface insights directly to farmers. 
+One of the most important aspects of distributing product from a farm is knowing who you're selling to. So, naturally, wiring up PostHog for product analytics, session replay, and error reporting was a no brainer. However, farmers are trying to spend their time farming not signing up for accounts and copy pasting API keys into their farm website builder apps. So, I needed to provision PostHog accounts behind the scenes and surface insights directly to farmers. 
 
 The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how I built it.
 
