@@ -15,7 +15,7 @@ The API that cried busy
 
 Legit's weekly marketing reports pull PostHog data alongside Facebook ads data, sliced by advertising channel, geographic market, and individual marketing specialist. The queries aren't light, including week-over-week breakdowns with multiple joins and filters running across a full volume of subscription events.
 
-They were calling the PostHog API directly. And it kept telling them it was busy.
+They were calling the PostHog API directly, but the size of the queries was causing the API to time out, and it kept telling them it was busy.
 
 <OSQuote
   customer="legit-media"
@@ -30,7 +30,7 @@ Found Endpoints, fixed in a few hours
 
 Legit's CTO went back to the PostHog documentation and found [Endpoints](/endpoints). The idea clicked immediately: instead of raw API calls that had to fight for availability each time, Endpoints wrap SQL queries into stable, callable URLs that are purpose-built for this kind of programmatic access.
 
-They tried it. It worked. The first report was cut over in a few hours. Today Legit runs 7 PostHog Endpoints. They sit inside an n8n automation workflow that pulls data from both PostHog and Facebook Ads, then consolidates everything into a single report table.
+They tried it. It worked. The first report was live in a few hours. Today Legit runs 7 PostHog Endpoints. They sit inside an n8n automation workflow that pulls data from both PostHog and Facebook Ads, then consolidates everything into a single report table.
 
 The underlying queries filter by UTM campaign, UTM term, GEO, and group results by person. This kind of multi-layered breakdown previously caused the raw API to buckle.
 
