@@ -711,7 +711,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                 : ''
                         } ${
                             item.appSettings?.size?.fixed
-                                ? '!absolute top-2 left-1/2 z-50'
+                                ? '!absolute top-2 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)]'
                                 : item.windowed
                                 ? 'h-[95%] w-[85%]'
                                 : 'size-full'
@@ -735,8 +735,8 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                         style={
                             item.appSettings?.size?.fixed
                                 ? {
-                                      width: item.sizeConstraints.min.width,
-                                      height: item.appSettings.size.autoHeight
+                                      maxWidth: item.sizeConstraints.min.width,
+                                      maxHeight: item.appSettings.size.autoHeight
                                           ? undefined
                                           : item.sizeConstraints.min.height,
                                   }
