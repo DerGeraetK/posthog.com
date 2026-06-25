@@ -41,6 +41,16 @@ tableOfContents: [
         depth: 1,
     },
     {
+        url: 'capture-server-side-request-errors',
+        value: 'Capture server-side request errors',
+        depth: 1,
+    },
+    {
+        url: 'configure-advanced-options',
+        value: 'Configure advanced options',
+        depth: 1,
+    },
+    {
         url: 'further-reading',
         value: 'Further reading',
         depth: 1,
@@ -59,20 +69,13 @@ features:
 ---
 
 import { Steps, Step } from 'components/Docs/Steps'
-import { CalloutBox } from 'components/Docs/CalloutBox'
 import Tab from "components/Tab"
 import AppProviderSetup from "./_snippets/posthog-next-app-provider.mdx"
 import PagesProviderSetup from "./_snippets/posthog-next-pages-provider.mdx"
 import AppServerSetup from "./_snippets/posthog-next-app-server-setup.mdx"
 import PagesServerSetup from "./_snippets/posthog-next-pages-server-setup.mdx"
 
-<CalloutBox icon="IconInfo" type="fyi" title="Pre-release">
-
-`@posthog/next` is currently in pre-release. The API may change before the stable release. For production apps, see the [standard Next.js setup guide](/docs/libraries/next-js).
-
-</CalloutBox>
-
-`@posthog/next` is a unified package for integrating PostHog into your Next.js app. It provides a simplified interface that handles common patterns out of the box:
+`@posthog/next` is the recommended package for integrating PostHog into your Next.js app. It provides a simplified interface that handles common patterns out of the box:
 
 - **Synchronized identity across client and server**, so both sides share the same user automatically
 - **Server-side feature flag bootstrapping** so hooks return real values immediately with no flicker
@@ -209,7 +212,7 @@ export function NewBanner() {
 }
 ```
 
-You can also read [the full `posthog-js` documentation](/docs/libraries/js/features) for all the usable functions.
+`@posthog/next` re-exports the PostHog React hooks, backed by the Next.js-aware provider above.
 
 </Step>
 
@@ -256,6 +259,18 @@ See our guide on [identifying users](/docs/getting-started/identify-users) for m
         </Tab.Panel>
     </Tab.Panels>
 </Tab.Group>
+
+</Step>
+
+<Step title="Capture server-side request errors" badge="recommended">
+
+`@posthog/next` enables client-side exception capture by default through `PostHogProvider`. To capture server-side request errors handled by Next.js, export `onRequestError` from your `instrumentation.ts` file:
+
+```ts file=instrumentation.ts
+export { onRequestError } from '@posthog/next'
+```
+
+Next.js calls this hook when a server render, route handler, or server action throws during a request. See the [Next.js error tracking guide](/docs/error-tracking/installation/nextjs) for filtering and source map setup.
 
 </Step>
 
@@ -328,8 +343,9 @@ When you change the proxy path, use the same path in `clientOptions.api_host`:
 
 <Step title="Further reading" badge="recommended">
 
-- [How to set up Next.js analytics, Feature Flags, and more](/tutorials/nextjs-analytics)
+- [How to set up Next.js analytics, feature flags, and more](/tutorials/nextjs-analytics)
 - [How to set up Next.js A/B tests](/tutorials/nextjs-ab-tests)
+- [Upload source maps for Next.js error tracking](/docs/error-tracking/upload-source-maps/nextjs)
 
 </Step>
 

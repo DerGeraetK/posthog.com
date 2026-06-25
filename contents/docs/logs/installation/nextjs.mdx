@@ -19,11 +19,11 @@ npm install @opentelemetry/sdk-logs @opentelemetry/exporter-logs-otlp-http @open
 
 <Step title="Get your project token" badge="required">
 
-You'll need your PostHog project token to authenticate log requests. This is the same key you use for capturing events and exceptions with the PostHog SDK.
+You'll need your PostHog project token to authenticate log requests. This is the same key you use for capturing events and exceptions with `@posthog/next`.
 
 > **Important:** Use your **project token** which starts with `phc_`. Do **not** use a personal API key (which starts with `phx_`).
 
-You can find your project token in [Project Settings](https://app.posthog.com/settings/project).
+If your app already uses `@posthog/next`, reuse `NEXT_PUBLIC_POSTHOG_KEY` for the token and `NEXT_PUBLIC_POSTHOG_HOST` for the host. You can find your project token in [Project Settings](https://app.posthog.com/settings/project).
 
 </Step>
 
@@ -62,9 +62,9 @@ export const loggerProvider = new LoggerProvider({
   processors: [
     new BatchLogRecordProcessor(
       new OTLPLogExporter({
-        url: '<ph_client_api_host>/i/v1/logs',
+        url: `${process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com'}/i/v1/logs`,
         headers: {
-          Authorization: 'Bearer <ph_project_token>',
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_POSTHOG_KEY}`,
           'Content-Type': 'application/json',
         },
       })
@@ -87,7 +87,7 @@ Alternatively, you can pass the API key as a query parameter:
 
 ```typescript
 new OTLPLogExporter({
-  url: '<ph_client_api_host>/i/v1/logs?token=<ph_project_token>',
+  url: `${process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com'}/i/v1/logs?token=${process.env.NEXT_PUBLIC_POSTHOG_KEY}`,
   headers: {
     'Content-Type': 'application/json',
   },
