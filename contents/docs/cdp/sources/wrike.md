@@ -9,37 +9,40 @@ availability:
 sourceId: Wrike
 ---
 
-<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+import SourceSetupIntro from "../_snippets/source-setup-intro.mdx"
+import SyncModes from "../_snippets/sync-modes.mdx"
+import TroubleshootingLink from "../_snippets/dw-troubleshooting-link.mdx"
+import AlphaRelease from "../_snippets/alpha-release.mdx"
 
-This source is currently in **alpha**. The interface and available tables may change.
+<AlphaRelease />
 
-</CalloutBox>
+The Wrike connector syncs your project management data into PostHog, so you can analyze work and team activity alongside your product data.
 
-Enter your Wrike permanent access token to pull your Wrike data into the PostHog data warehouse.
+## Prerequisites
+
+You need a Wrike account with access to create a permanent access token. The token needs read access to the resources you want to sync.
 
 ## Adding a data source
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-2. Click **+ New source** and then click **Link** next to Wrike.
-3. In Wrike, create a permanent access token under **Apps & Integrations > API**. The default scope grants sufficient read access for all available tables.
-4. Back in PostHog, paste the token in the `Permanent access token` field. Set **Host** to the domain shown in your browser when logged into Wrike (for example `www.wrike.com`, `app-us2.wrike.com`, or `app-eu.wrike.com`). Click **Next**.
-5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+<SourceSetupIntro />
 
-Once the syncs are complete, you can start using Wrike data in PostHog.
+When linking Wrike, you'll need:
 
-## Available tables
+- **Permanent access token** – create one under **Apps & Integrations → API** in Wrike. The token needs read access (the default `Default` scope is sufficient) to the resources you want to sync.
+- **Host** – the domain shown in your browser when you're logged into Wrike, for example `www.wrike.com`, `app-us2.wrike.com`, or `app-eu.wrike.com`.
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `tasks` | Tasks | Full refresh |
-| `folders` | Folders | Full refresh |
-| `contacts` | Contacts | Full refresh |
-| `workflows` | Workflows | Full refresh |
-| `custom_fields` | Custom fields | Full refresh |
-| `spaces` | Spaces | Full refresh |
+## Sync modes
 
-**Full refresh** tables reload all data on each sync.
+<SyncModes />
 
 ## Configuration
 
 <SourceParameters />
+
+## Supported tables
+
+<SourceTables />
+
+## Troubleshooting
+
+<TroubleshootingLink />

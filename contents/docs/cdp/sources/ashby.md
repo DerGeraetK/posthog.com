@@ -9,47 +9,39 @@ availability:
 sourceId: Ashby
 ---
 
-<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+import SourceSetupIntro from "../_snippets/source-setup-intro.mdx"
+import SyncModes from "../_snippets/sync-modes.mdx"
+import TroubleshootingLink from "../_snippets/dw-troubleshooting-link.mdx"
+import AlphaRelease from "../_snippets/alpha-release.mdx"
 
-This source is currently in **alpha**. The interface and available tables may change.
+<AlphaRelease />
 
-</CalloutBox>
+The Ashby connector syncs your applicant tracking system (ATS) data – candidates, applications, jobs, offers, interviews, and users – into PostHog, so you can analyze your recruiting funnel alongside your product data.
 
-Enter your Ashby API key to pull your Ashby ATS data into the PostHog data warehouse.
+## Prerequisites
+
+You need an Ashby account with admin access so you can create an API key. The key needs read permissions for the data you want to sync.
 
 ## Adding a data source
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-2. Click **+ New source** and then click **Link** next to Ashby.
-3. In Ashby, create an API key under **Admin > API Keys**. Grant read permissions for the data you want to sync — for example `candidatesRead`, `applicationsRead`, `jobsRead`, `offersRead`, `interviewsRead`, `usersRead`.
-4. Back in PostHog, paste the key into the `API key` field and click **Next**.
-5. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+<SourceSetupIntro />
 
-Once the syncs are complete, you can start using Ashby data in PostHog.
+When linking Ashby, you'll need:
 
-## Available tables
+- **API key** – create one under **Admin → API Keys** in Ashby. Grant read permissions for the data you want to sync, for example `candidatesRead`, `applicationsRead`, `jobsRead`, `offersRead`, `interviewsRead`, and `usersRead`.
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `candidates` | Candidates in your Ashby account | Full refresh |
-| `applications` | Candidate applications | Full refresh |
-| `jobs` | Jobs | Full refresh |
-| `job_postings` | Job postings | Full refresh |
-| `offers` | Offers | Full refresh |
-| `interviews` | Interviews | Full refresh |
-| `interview_schedules` | Interview schedules | Full refresh |
-| `users` | Ashby users | Full refresh |
-| `departments` | Departments | Full refresh |
-| `locations` | Locations | Full refresh |
-| `sources` | Candidate sources | Full refresh |
-| `archive_reasons` | Archive reasons | Full refresh |
-| `candidate_tags` | Candidate tags | Full refresh |
-| `custom_fields` | Custom fields | Full refresh |
-| `openings` | Job openings | Full refresh |
-| `projects` | Projects | Full refresh |
+## Sync modes
 
-**Full refresh** tables reload all data on each sync.
+<SyncModes />
 
 ## Configuration
 
 <SourceParameters />
+
+## Supported tables
+
+<SourceTables />
+
+## Troubleshooting
+
+<TroubleshootingLink />
