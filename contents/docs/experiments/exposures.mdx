@@ -158,7 +158,7 @@ PostHog automatically calculates SRM once your experiment has at least 100 total
 - **Green checkmark**: Distribution matches your split percentages. The observed difference is within normal random variation.
 - **Yellow warning**: Sample ratio mismatch detected. The distribution is significantly different from expected.
 
-PostHog uses a significance threshold of p < 0.001 to flag mismatches. The p-value is displayed alongside the status—a lower p-value indicates stronger evidence of a mismatch.
+PostHog uses a significance threshold of p < 0.001 to flag mismatches. The p-value is displayed alongside the status. A lower p-value indicates stronger evidence of a mismatch.
 
 ### What to do if SRM is detected
 
@@ -212,6 +212,6 @@ You can exclude internal team members and test accounts from your experiment by 
 ### Metrics not updating
 
 - Remember that only post-exposure events count toward metrics
-- Confirm the user has a valid exposure event (metric events are matched to a variant through the user's exposure, not through properties on the metric event itself)
+- Confirm there's a valid exposure event for the person (metric events are matched to a variant through that exposure, not through properties on the metric event itself)
 - Check that events are ordered correctly (exposure must come first)
-- Confirm metric events fall within the [conversion window](/docs/experiments/metrics#conversion-windows) after the user's first exposure
+- Confirm metric events fall within the [conversion window](/docs/experiments/metrics#conversion-windows) after the first exposure
