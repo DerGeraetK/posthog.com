@@ -8,7 +8,7 @@ date: 2026-06-24
 
 [Legit Media](https://legitmedia.africa/) runs a network of news websites across Africa reaching 50 million readers a month. On top of that audience, they sell paid online courses in copywriting and digital marketing, using their news brands as the distribution channel.
 
-Growing those course subscriptions is a performance marketing operation: paid campaigns running across multiple channels, geographies, and individual specialists at once. The marketing team's weekly reports — spend, CPA, conversion rates, upsells, broken down by channel and country — are what drives every budget decision. When those reports stopped arriving reliably, their marketing team was making decisions in the dark.
+Growing those course subscriptions is a performance marketing operation: paid campaigns running across multiple channels, geographies, and individual specialists at once. The marketing team's weekly reports (which include spend, CPA, conversion rates, upsells, broken down by channel and country) are what drives every budget decision. When those reports stopped arriving reliably, their marketing team was making decisions in the dark.
 
 The API that cried busy
 -----------------------
