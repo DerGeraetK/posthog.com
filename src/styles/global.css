@@ -2108,6 +2108,21 @@ li.squeak-left-border {
     animation: windowPopIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+@keyframes windowPopOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+}
+.animate-window-pop-out {
+    animation: windowPopOut 0.15s cubic-bezier(0.55, 0, 1, 0.45) both;
+    pointer-events: none;
+}
+
 .side-modal {
     h2 {
         @apply text-xl;

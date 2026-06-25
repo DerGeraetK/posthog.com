@@ -596,7 +596,11 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     )
 
     const handleClose = () => {
-        closeWindow(item)
+        if (siteSettings.experience === 'boring') {
+            closeWindow(item)
+        } else {
+            setClosing(true)
+        }
     }
 
     const onAnimationStart = () => {
@@ -676,7 +680,14 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                 <WindowContainer closing={closing}>
                     <div
                         onMouseDown={handleMouseDown}
-                        onAnimationEnd={onAnimationComplete}
+                        onAnimationEnd={(e) => {
+                            if (e.currentTarget !== e.target) return
+                            if (closing) {
+                                closeWindow(item)
+                            } else {
+                                onAnimationComplete()
+                            }
+                        }}
                         ref={(el) => {
                             const mutableRef = windowRef as React.MutableRefObject<HTMLDivElement | null>
                             mutableRef.current = el
@@ -686,7 +697,9 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                         }}
                         data-app="AppWindow"
                         data-scheme="tertiary"
-                        className={`@container relative ${!skipsOpenAnimation ? 'animate-window-pop-in' : ''} ${
+                        className={`@container relative ${
+                            closing ? 'animate-window-pop-out' : !skipsOpenAnimation ? 'animate-window-pop-in' : ''
+                        } ${
                             item.windowed ? 'h-[95%] w-[85%]' : 'size-full'
                         } !select-auto flex flex-col border-primary ${
                             siteSettings.heaterMode
