@@ -56,6 +56,10 @@ Connect PostHog to your AdRoll account using your API credentials.
 
 <SourceParameters />
 
+## Supported tables
+
+<SourceTables />
+
 ## Sync mode
 
 AdRoll only supports full refresh syncing. The AdRoll API doesn't provide an `updated_at` filter, so PostHog re-imports all data on every sync.
