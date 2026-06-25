@@ -9,47 +9,41 @@ availability:
 sourceId: Zuora
 ---
 
-<CalloutBox icon="IconInfo" title="Alpha release" type="fyi">
+import SourceSetupIntro from "../_snippets/source-setup-intro.mdx"
+import SyncModes from "../_snippets/sync-modes.mdx"
+import TroubleshootingLink from "../_snippets/dw-troubleshooting-link.mdx"
+import AlphaRelease from "../_snippets/alpha-release.mdx"
 
-This source is currently in **alpha**. The interface and available tables may change.
+<AlphaRelease />
 
-</CalloutBox>
+The Zuora connector syncs your subscription billing data into PostHog, so you can analyze billing activity alongside your product data.
 
-The Zuora connector syncs your subscription billing and revenue data into PostHog.
+## Prerequisites
+
+You need a Zuora tenant and an OAuth client with permission for the objects you want to sync. The OAuth client inherits the permissions of the user it's created under.
 
 ## Adding a data source
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
-2. Click **+ New source** and then click **Link** next to Zuora.
-3. Select your Zuora environment. Credentials only work with their associated environment, so choose the one that matches your Zuora tenant:
-   - **US Production** (default)
-   - **US API Sandbox**
-   - **US Cloud Production**
-   - **US Cloud Sandbox**
-   - **EU Production**
-   - **EU Sandbox**
-   - **Central Sandbox**
-4. You need OAuth client credentials from Zuora. In your Zuora dashboard, go to **Settings** > **Administration** > **Manage Users**. A Zuora admin can create an OAuth client under a user account – the client inherits that user's permissions. Copy the **Client ID** and **Client secret**.
-5. Back in PostHog, enter the **Client ID** and **Client secret** and click **Next**.
-6. Select the tables you want to sync, set the sync method and frequency, then click **Import**.
+<SourceSetupIntro />
 
-Once the syncs are complete, you can start using Zuora data in PostHog.
+When linking Zuora, you'll need:
 
-## Available tables
+- **Environment** – choose the environment that matches your tenant (US Production, US API Sandbox, US Cloud Production, US Cloud Sandbox, EU Production, EU Sandbox, or Central Sandbox). Credentials only work against their own environment.
+- **Client ID** – the OAuth client ID. A Zuora admin can create an OAuth client under **Settings → Administration → Manage Users**.
+- **Client secret** – the OAuth client secret shown when the client is created.
 
-| Table | Description | Sync method |
-| ----- | ----------- | ----------- |
-| `accounts` | Customer accounts in your Zuora tenant | Incremental |
-| `subscriptions` | Subscription records | Incremental |
-| `invoices` | Invoice records | Incremental |
-| `payments` | Payment transactions | Incremental |
-| `credit_memos` | Credit memo records | Incremental |
-| `refunds` | Refund transactions | Incremental |
-| `products` | Product catalog entries | Incremental |
-| `orders` | Order records | Incremental |
+## Sync modes
 
-All tables support **incremental** syncing, meaning only new or updated records sync on each run. Zuora tracks changes using the `updatedDate` field.
+<SyncModes />
 
 ## Configuration
 
 <SourceParameters />
+
+## Supported tables
+
+<SourceTables />
+
+## Troubleshooting
+
+<TroubleshootingLink />
