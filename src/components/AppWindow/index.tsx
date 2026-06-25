@@ -676,10 +676,17 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                 <WindowContainer closing={closing}>
                     <div
                         onMouseDown={handleMouseDown}
-                        ref={windowRef}
+                        onAnimationEnd={onAnimationComplete}
+                        ref={(el) => {
+                            const mutableRef = windowRef as React.MutableRefObject<HTMLDivElement | null>
+                            mutableRef.current = el
+                            if (el && !skipsOpenAnimation) {
+                                onAnimationStart()
+                            }
+                        }}
                         data-app="AppWindow"
                         data-scheme="tertiary"
-                        className={`@container relative ${
+                        className={`@container relative ${!skipsOpenAnimation ? 'animate-window-pop-in' : ''} ${
                             item.windowed ? 'h-[95%] w-[85%]' : 'size-full'
                         } !select-auto flex flex-col border-primary ${
                             siteSettings.heaterMode
