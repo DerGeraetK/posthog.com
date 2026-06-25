@@ -61,6 +61,10 @@ The token needs read access to the site you're syncing. Admin or Super User toke
 
 <SourceParameters />
 
+## Supported tables
+
+<SourceTables />
+
 ## Sync behavior
 
 - The first sync backfills up to 365 days of history for all tables.
