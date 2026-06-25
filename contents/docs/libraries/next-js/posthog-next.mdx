@@ -270,15 +270,15 @@ See our guide on [identifying users](/docs/getting-started/identify-users) for m
 export { onRequestError } from '@posthog/next'
 ```
 
-Next.js calls this hook when a server render, route handler, or server action throws during a request. See the [Next.js error tracking guide](/docs/error-tracking/installation/nextjs) for filtering and source map setup.
+Next.js calls this hook when a server render, route handler, or server action throws during a request. See the [Next.js Error Tracking guide](/docs/error-tracking/installation/nextjs) for filtering and source map setup.
 
 </Step>
 
 <Step title="Configure advanced options" badge="optional">
 
-### Feature flag bootstrap
+### Feature Flags bootstrapping
 
-Set `bootstrapFlags` to evaluate feature flags on the server and pass the results to the client, which avoids flag flicker on first render:
+Set `bootstrapFlags` to evaluate Feature Flags on the server and pass the results to the client, which avoids flag flicker on first render:
 
 ```tsx
 <PostHogProvider bootstrapFlags>{children}</PostHogProvider>
@@ -314,7 +314,7 @@ export default postHogMiddleware({
 })
 ```
 
-Then initialize the client with capture disabled until the user opts in:
+Then initialize the client with capture disabled until consent is granted:
 
 ```tsx
 <PostHogProvider clientOptions={{ opt_out_capturing_by_default: true }}>{children}</PostHogProvider>
@@ -343,9 +343,9 @@ When you change the proxy path, use the same path in `clientOptions.api_host`:
 
 <Step title="Further reading" badge="recommended">
 
-- [How to set up Next.js analytics, feature flags, and more](/tutorials/nextjs-analytics)
+- [How to set up Next.js analytics, Feature Flags, and more](/tutorials/nextjs-analytics)
 - [How to set up Next.js A/B tests](/tutorials/nextjs-ab-tests)
-- [Upload source maps for Next.js error tracking](/docs/error-tracking/upload-source-maps/nextjs)
+- [Upload source maps for Next.js Error Tracking](/docs/error-tracking/upload-source-maps/nextjs)
 
 </Step>
 
