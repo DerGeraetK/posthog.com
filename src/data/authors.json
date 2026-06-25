@@ -660,7 +660,7 @@
         "role": "Technical Account Manager",
         "profile_id": 34069
     },
-    {
+  {
         "handle": "liam-graham",
         "name": "Liam Graham",
         "role": "Hog Poster",
@@ -674,5 +674,13 @@
         "role": "Freelance Technical Writer",
         "link_url": "https://www.linkedin.com/in/rishi-raj-jain/",
         "profile_id": 45748
+    },
+    {
+        "handle": "rohit-rajpal",
+        "name": "Rohit Rajpal ",
+        "role": "Freelance Technical Writer",
+        "link_type": "github",
+        "link_url": "https://github.com/rajpalrohit04",
+        "profile_id": 46025
     }
 ]
