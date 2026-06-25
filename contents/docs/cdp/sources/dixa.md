@@ -71,3 +71,7 @@ The dimension tables (`agents`, `endusers`, `queues`, `tags`) sync via the main 
 
 - **Full refresh** on each sync – the entire table reloads
 - These tables typically have fewer rows and change less frequently than conversations
+
+## Supported tables
+
+<SourceTables />
