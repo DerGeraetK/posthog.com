@@ -9,36 +9,29 @@ availability:
 sourceId: Plaid
 ---
 
-The Plaid connector syncs your banking data into PostHog, including accounts and transactions. Each PostHog source connects to one Plaid Item – a single bank connection created when a user completes Plaid Link. Add one source per institution connection.
+import SourceSetupIntro from "../_snippets/source-setup-intro.mdx"
+import SyncModes from "../_snippets/sync-modes.mdx"
+import TroubleshootingLink from "../_snippets/dw-troubleshooting-link.mdx"
+import AlphaRelease from "../_snippets/alpha-release.mdx"
 
-To link Plaid:
+<AlphaRelease />
 
-1. Go to the [sources tab](https://app.posthog.com/data-management/sources) of the data pipeline section in PostHog.
+The Plaid connector syncs the accounts and transactions of a linked Plaid Item into PostHog, so you can analyze financial data alongside your product data.
 
-2. Click **+ New source** and then click **Link** next to Plaid.
+## Prerequisites
 
-3. Select your Plaid environment:
-   - **Production** - For live bank connections with real user data
-   - **Sandbox** - For testing with Plaid's sandbox credentials
+You need a Plaid account with access to the [Plaid dashboard](https://dashboard.plaid.com/developers/keys) and an access token for the Item you want to sync. The access token is obtained when a user completes Plaid Link, and each token identifies one linked Item (institution connection).
 
-4. Enter your Plaid credentials. Find these in the [Plaid dashboard](https://dashboard.plaid.com/developers/keys) under **Developers** > **Keys**:
-   - **Client ID** - Your Plaid client identifier
-   - **Secret** - The secret for your selected environment (production or sandbox)
-   - **Access token** - The token for the specific Item (bank connection) you want to sync. You get this when a user completes Plaid Link in your application.
+## Adding a data source
 
-5. Click **Next**.
+<SourceSetupIntro />
 
-6. Select the schemas to sync and configure the sync method for each:
-   - **accounts** - Full refresh only. Syncs account details like balances, names, and types.
-   - **transactions** - Supports incremental sync using the `date` field. Syncs transaction history including amounts, merchants, and categories.
+When linking Plaid, you'll need:
 
-7. Click **Import**.
-
-The data warehouse then starts syncing your Plaid data. You can see details and progress in the [sources tab](https://app.posthog.com/data-management/sources).
-
-## Configuration
-
-<SourceParameters />
+- **Environment** – choose **Production** or **Sandbox** to match the environment your credentials belong to. Credentials only work against their own environment.
+- **Client ID** – found in the [Plaid dashboard](https://dashboard.plaid.com/developers/keys).
+- **Secret** – found alongside the client ID in the Plaid dashboard. Make sure the secret matches your selected environment.
+- **Access token** – identifies one linked Item, obtained when a user completes Plaid Link. Add one source per Item.
 
 ## Understanding Plaid Items
 
@@ -46,31 +39,25 @@ Plaid uses an Item-centric model. An Item represents a single connection between
 
 Each PostHog source corresponds to one Item, so you need a separate source for each bank connection you want to sync. For example, syncing data from a user's checking account at Bank A and their savings account at Bank B requires two Plaid sources in PostHog – one for each Item.
 
-## Sync methods
+## Sync modes
 
-### Accounts
+<SyncModes />
 
-The `accounts` table syncs with full refresh only. Each sync retrieves all accounts associated with the Item, including:
+For Plaid, the `accounts` table syncs with full refresh only, retrieving all accounts associated with the Item (including IDs, names, types, masks, and current and available balances) on each sync.
 
-- Account IDs and names
-- Account types (checking, savings, credit card, etc.)
-- Current and available balances
-- Account masks and official names
+The `transactions` table supports incremental sync using the transaction `date` as the cursor, so subsequent syncs only fetch transactions from the last sync date forward. Transaction data includes IDs and dates, amounts and currencies, merchant names and categories, and payment channels and transaction types. For full history on an initial sync, PostHog queries transactions from January 1, 2000 through the current date.
 
-### Transactions
+## Configuration
 
-The `transactions` table supports incremental sync using the transaction `date` as the cursor. Subsequent syncs only fetch transactions from the last sync date forward, reducing API calls and sync time.
+<SourceParameters />
 
-Transaction data includes:
+## Supported tables
 
-- Transaction IDs and dates
-- Amounts and currencies
-- Merchant names and categories
-- Payment channels and transaction types
-
-For full history on an initial sync, PostHog queries transactions from January 1, 2000 through the current date.
+<SourceTables />
 
 ## Troubleshooting
+
+<TroubleshootingLink />
 
 ### Invalid credentials error
 
