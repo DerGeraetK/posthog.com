@@ -1,7 +1,7 @@
 ---
 date: "2026-06-24"
 title: "How to build a PostHog integration with the provisioning API"
-featuredImage: https://res.cloudinary.com/dmukukwp6/image/upload/Template_cover_14_0da4d45933.jpg
+featuredImage: https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/blog/posthog-engineering-blog.png
 featuredImageType: full
 author:
   - matt-brooker
