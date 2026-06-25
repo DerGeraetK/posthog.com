@@ -24,6 +24,8 @@ One of the most important aspects of distributing product from a farm is knowing
 
 The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how I built it.
 
+![The HogFarm builder: a farmer enters their farm name and what they grow](https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/blog/how-to-build-a-posthog-integration-with-the-provisioning-api/builder-landing.png)
+
 ## Registering your OAuth client via CIMD
 
 To register my OAuth client, I added a small JSON file. The first time I called the API, PostHog fetched the file and registered my OAuth app. It's called a [Client ID Metadata Document](/docs/api/oauth#client-id-metadata-document-cimd), or CIMD.
@@ -110,6 +112,8 @@ await fetch(`${HOST}/api/agentic/provisioning/resources`, {
 
 The response carries `complete.access_configuration.api_key` (the `phc_` token) and `host`. That key goes into the farm site HogFarm generates, so visits start landing in PostHog right away. `service_id: "free"` gives a free-tier project with no card required, which is all HogFarm needs.
 
+![The generated farm site, with the PostHog snippet already wired in](https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/blog/how-to-build-a-posthog-integration-with-the-provisioning-api/generated-farm-site.png)
+
 ## Reading the data back
 
 Now for the fun part, giving critical business insights directly to the farmers. The dashboard reads straight from the project with HogQL over the query API, using the `query:read` scope:
@@ -164,6 +168,8 @@ const embedUrl = `https://us.posthog.com/embedded/${access_token}`
 ```
 
 I drop that URL in an iframe and the farmer watches real visitors move through their site. The recording lives in their own project; HogFarm just borrows a public view of the latest one. (A shared recording is viewable by anyone with the link, which is fine for a demo, but a real builder would gate or expire it.)
+
+![The farmer's dashboard: pageview KPIs, a seven-day trend, an inline session replay, and top pages, all read live from their own PostHog project](https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/blog/how-to-build-a-posthog-integration-with-the-provisioning-api/analytics-dashboard.png)
 
 ## The stuff that bit me
 
