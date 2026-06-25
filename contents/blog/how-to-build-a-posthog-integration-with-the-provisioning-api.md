@@ -39,7 +39,7 @@ It looks like this:
   "grant_types": ["authorization_code"],
   "response_types": ["code"],
   "com.posthog": {
-    "scopes": ["query:read", "endpoint:write", "session_recording:read", "sharing_configuration:write", "insight:read", "project:read", "project:write", "person:read"]
+    "scopes": ["query:read", "insight:read", "project:read", "person:read", "session_recording:read", "sharing_configuration:write", "project:write"]
   }
 }
 ```
@@ -66,7 +66,7 @@ await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
     client_id: clientId,
     code_challenge: challenge,
     code_challenge_method: "S256",
-    scopes: ["query:read", "endpoint:write", "session_recording:read", "sharing_configuration:write", "insight:read", "project:read", "project:write", "person:read"],
+    scopes: ["query:read", "insight:read", "project:read", "person:read", "session_recording:read", "sharing_configuration:write", "project:write"],
     configuration: { region: "US", organization_name: farmName },
   }),
 })
@@ -112,36 +112,26 @@ The response carries `complete.access_configuration.api_key` (the `phc_` token) 
 
 ## Reading the data back
 
-Now for the fun part, giving critical business insights directly to the farmers. I could fire ad-hoc HogQL at the project on every dashboard load, but PostHog points you at [Endpoints](/docs/endpoints) instead: named, saved queries the project owns and you call by name. So when a project is provisioned I publish the dashboard's queries once, with `endpoint:write`:
+Now for the fun part, giving critical business insights directly to the farmers. The dashboard reads straight from the project with HogQL over the query API, using the `query:read` scope:
 
 ```ts
-await fetch(`${HOST}/api/projects/${teamId}/endpoints/`, {
+await fetch(`${HOST}/api/projects/${teamId}/query/`, {
   method: "POST",
   headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
   body: JSON.stringify({
-    name: "hogfarm_pageview_trend",
     query: {
       kind: "HogQLQuery",
-      query: `SELECT toDate(timestamp), count() FROM events
+      query: `SELECT toDate(timestamp) AS d, count() AS c FROM events
               WHERE event = '$pageview' AND timestamp > now() - INTERVAL 7 DAY
-              GROUP BY 1 ORDER BY 1`,
+              GROUP BY d ORDER BY d`,
     },
-    data_freshness_seconds: 3600,
   }),
 })
 ```
 
-Then the dashboard runs them by name:
+That one builds the seven-day trend chart; two more get unique visitors and top pages.
 
-```ts
-await fetch(`${HOST}/api/projects/${teamId}/endpoints/hogfarm_pageview_trend/run/?version=1`, {
-  method: "POST",
-  headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-  body: "{}",
-})
-```
-
-That one builds the seven-day trend chart, two more get unique visitors and top pages. I pin `?version=1` so editing a query later can't quietly change a live farm's numbers. I leave them unmaterialized and read live: a freshly materialized endpoint serves empty until its first background refresh, which is the wrong default for a dashboard that has to look right the moment it loads.
+I went back and forth on this. PostHog has [Endpoints](/docs/endpoints), named saved queries you publish once and call by name, and they're the right tool when the same query runs over and over. I tried them first. But an Endpoint serves a cached result, and on a project I'd provisioned seconds ago that meant the dashboard froze on its first empty read until the cache expired, which is exactly the moment it needs to look alive. Each farm's dashboard gets viewed a handful of times right after setup, so the caching bought me nothing and cost me the cold-start. Reading inline always reflects what's actually in the project, so that's what I shipped.
 
 Access tokens last an hour, so for anything long-lived you're storing the refresh token. Encrypt it. I keep them in Postgres with AES-256-GCM and a key that only lives in the environment, never in the database.
 
@@ -180,7 +170,7 @@ I drop that URL in an iframe and the farmer watches real visitors move through t
 These are the things that weren't obvious until I hit them:
 
 - **Your CIMD URL has to be reachable.** I deployed behind Vercel's default deployment protection and the first call just failed. PostHog couldn't fetch the metadata document through the SSO gate. If registration never finishes, open the `.well-known` URL in an incognito window and make sure it loads.
-- **Backdated events get dropped unless you ask for them.** I seed a week of demo pageviews so a new farm's dashboard isn't empty on day one, and they silently vanished until I set `historical_migration: true`. Current-timestamp events were fine; the old ones needed the flag.
+- **Don't reach for `historical_migration` to seed backdated events.** I seed a week of demo pageviews so a new farm's dashboard isn't empty on day one, and my first instinct was the `historical_migration` flag since the timestamps are in the past. That flag routes the batch to a throttled ingestion pipeline that can take many minutes to become queryable, so the dashboard sat empty right after provisioning, the opposite of what I wanted. The regular capture pipeline takes backdated timestamps fine (it stores the event timestamp, not arrival time) and they show up in seconds. For a week-old seed, skip the flag.
 
 ## Try it
 
