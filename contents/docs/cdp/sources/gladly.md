@@ -94,3 +94,7 @@ Verify that:
 - The agent email matches an active agent in your Gladly account
 - The API token is correct and hasn't been revoked
 - The agent has the **API User** permission enabled
+
+## Supported tables
+
+<SourceTables />
