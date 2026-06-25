@@ -361,7 +361,7 @@ export default function ProductsTest(): JSX.Element {
                     <RenderInClient
                         placeholder={<></>}
                         render={() =>
-                            posthog?.getFeatureFlag?.('homepage-slack-test', { fresh: true }) === 'test' ? (
+                            posthog?.getFeatureFlag?.('self-driving-mode-test', { fresh: true }) === 'test' ? (
                                 <HeroCarousel tabs={productUsageTabs} />
                             ) : (
                                 <></>
