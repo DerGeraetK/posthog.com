@@ -697,10 +697,24 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                         }}
                         data-app="AppWindow"
                         data-scheme="tertiary"
-                        className={`@container relative ${
-                            closing ? 'animate-window-pop-out' : !skipsOpenAnimation ? 'animate-window-pop-in' : ''
+                        className={`@container relative overflow-hidden ${
+                            item.appSettings?.size?.fixed
+                                ? closing
+                                    ? 'animate-window-slide-up'
+                                    : !skipsOpenAnimation
+                                    ? 'animate-window-slide-down'
+                                    : ''
+                                : closing
+                                ? 'animate-window-pop-out'
+                                : !skipsOpenAnimation
+                                ? 'animate-window-pop-in'
+                                : ''
                         } ${
-                            item.windowed ? 'h-[95%] w-[85%]' : 'size-full'
+                            item.appSettings?.size?.fixed
+                                ? '!absolute top-2 left-1/2 z-50'
+                                : item.windowed
+                                ? 'h-[95%] w-[85%]'
+                                : 'size-full'
                         } !select-auto flex flex-col border-primary ${
                             siteSettings.heaterMode
                                 ? 'bg-primary/75 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu'
@@ -708,7 +722,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                         } flex flex-col ${
                             siteSettings.experience === 'boring'
                                 ? ''
-                                : `border-t rounded-lg ${
+                                : `${item.appSettings?.size?.fixed ? 'border' : 'border-t'} rounded-lg ${
                                       item.expanded
                                           ? 'rounded-tr-none rounded-tl-none'
                                           : item.snapped === 'left'
@@ -718,20 +732,19 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                                           : ''
                                   }`
                         }`}
+                        style={
+                            item.appSettings?.size?.fixed
+                                ? {
+                                      width: item.sizeConstraints.min.width,
+                                      height: item.appSettings.size.autoHeight
+                                          ? undefined
+                                          : item.sizeConstraints.min.height,
+                                  }
+                                : undefined
+                        }
                     >
                         <div className={`${hasToolbar ? 'bg-primary flex items-center py-0.5 px-1' : ''}`}>
                             {hasToolbar && <div className="flex-1" />}
-                            {item.appSettings?.size?.fixed && (
-                                <div
-                                    className={`group cursor-move touch-none z-50 ${
-                                        hasToolbar ? '' : 'absolute top-2 left-1/2 -translate-x-1/2'
-                                    }`}
-                                    onPointerDown={(e) => controls.start(e)}
-                                    onDoubleClick={toggleMaximize}
-                                >
-                                    <IconDrag className="size-5 rotate-90 opacity-25 group-hover:opacity-50 text-primary" />
-                                </div>
-                            )}
                             <div
                                 data-scheme="tertiary"
                                 onDoubleClick={handleDoubleClick}

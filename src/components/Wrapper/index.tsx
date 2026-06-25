@@ -32,7 +32,7 @@ export default function Wrapper() {
     return (
         <div data-scheme="primary" className="h-screen flex flex-col p-2" id="app-container">
             {!compact && <TaskBarMenu />}
-            <div ref={constraintsRef} className={`flex-grow relative min-h-0`}>
+            <div ref={constraintsRef} className={`flex-grow relative min-h-0 overflow-clip`}>
                 <Desktop />
                 <div className="flex size-full justify-center items-center">
                     <AnimatePresence>

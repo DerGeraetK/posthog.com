@@ -650,7 +650,6 @@ const appSettings: AppSettings = {
         },
     },
     '/talk-to-a-human': {
-        toolbar: true,
         size: {
             min: {
                 width: 500,
@@ -660,7 +659,7 @@ const appSettings: AppSettings = {
                 width: 700,
                 height: 552,
             },
-            fixed: false,
+            fixed: true,
             autoHeight: true,
         },
         position: {
@@ -1747,8 +1746,12 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     }
 
     function getInitialSize(key: string) {
+        const settings = appSettings[key]
+        if (settings?.size?.fixed) {
+            return settings.size.min
+        }
         const defaultSize =
-            appSettings[key]?.size?.max ||
+            settings?.size?.max ||
             (key?.startsWith('ask-max')
                 ? appSettings['ask-max']?.size?.max
                 : {
@@ -1940,7 +1943,10 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             if (!newWindow.appSettings?.size?.fixed && !newWindow.appSettings?.modal) {
                 return replaceFocusedWindow(newWindow)
             } else {
-                return setWindows([...windows?.filter((w) => w.key !== newWindow.key), newWindow])
+                return setWindows([
+                    ...windows?.filter((w) => !w.appSettings?.size?.fixed && w.key !== newWindow.key),
+                    newWindow,
+                ])
             }
         }
 
@@ -1969,7 +1975,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             }
             setWindows([...windows.map((w) => (w === focusedWindow ? snappedFocused : w)), newWindow])
         } else if (newWindow.appSettings?.size?.fixed) {
-            setWindows([...windows, newWindow])
+            setWindows([...windows.filter((w) => !w.appSettings?.size?.fixed), newWindow])
         } else {
             replaceFocusedWindow(newWindow)
         }
