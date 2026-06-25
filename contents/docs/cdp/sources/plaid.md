@@ -9,46 +9,43 @@ availability:
 sourceId: Plaid
 ---
 
-import { CalloutBox } from "components/Docs/CalloutBox";
+import SourceSetupIntro from "../_snippets/source-setup-intro.mdx"
+import SyncModes from "../_snippets/sync-modes.mdx"
+import TroubleshootingLink from "../_snippets/dw-troubleshooting-link.mdx"
+import AlphaRelease from "../_snippets/alpha-release.mdx"
 
-<CalloutBox icon="IconFlask" title="Alpha" type="info">
+<AlphaRelease />
 
-Plaid is currently in alpha. We'd love feedback on your experience.
+The Plaid connector syncs the accounts and transactions of a linked Plaid Item into PostHog, so you can analyze financial data alongside your product data. Each source connects to one Plaid Item (a single institution connection), so add a separate source for each institution your users have linked.
 
-</CalloutBox>
+## Prerequisites
 
-The Plaid connector syncs banking data from a linked financial institution into PostHog, including accounts and transactions. Each source connects to one Plaid Item (a single institution connection), so add a separate source for each institution your users have linked.
-
-## Requirements
-
-You need:
-
-1. A Plaid account with API access
-2. Your client ID and secret from the [Plaid dashboard](https://dashboard.plaid.com/developers/keys)
-3. An access token for the Item you want to sync (obtained when a user completes Plaid Link in your app)
+You need a Plaid account with access to the [Plaid dashboard](https://dashboard.plaid.com/developers/keys) and an access token for the Item you want to sync. The access token is obtained when a user completes Plaid Link, and each token identifies one linked Item (institution connection).
 
 ## Adding a data source
 
-1. In PostHog, go to the [Data pipeline page](https://app.posthog.com/data-management/sources) and select the **Sources** tab.
-2. Click **+ New source** and select Plaid by clicking the **Link** button.
-3. Select an **Environment**: **Production** or **Sandbox**. Use sandbox for testing with Plaid's test credentials.
-4. Enter your **Client ID** from the Plaid dashboard.
-5. Enter your **Secret** for the selected environment. Production and sandbox use different secrets.
-6. Enter your **Access token**. This is the token for the Plaid Item you want to sync, obtained after a user completes Plaid Link. Each access token represents one linked institution.
-7. Click **Next**, select the tables you want to sync, and then press **Import**.
+<SourceSetupIntro />
+
+When linking Plaid, you'll need:
+
+- **Environment** – choose **Production** or **Sandbox** to match the environment your credentials belong to. Credentials only work against their own environment, and sandbox uses Plaid's test credentials.
+- **Client ID** – found in the [Plaid dashboard](https://dashboard.plaid.com/developers/keys).
+- **Secret** – found alongside the client ID in the Plaid dashboard. Production and sandbox use different secrets.
+- **Access token** – identifies one linked Item, obtained when a user completes Plaid Link. Add one source per Item.
 
 PostHog validates the credentials by calling Plaid's `/item/get` endpoint before creating the source.
+
+## Sync modes
+
+<SyncModes />
 
 ## Configuration
 
 <SourceParameters />
 
-## Synced tables
+## Supported tables
 
-| Table        | Primary key      | Sync method           | Description                               |
-| ------------ | ---------------- | --------------------- | ----------------------------------------- |
-| Accounts     | `account_id`     | Full refresh          | Bank accounts linked to the Item          |
-| Transactions | `transaction_id` | Incremental (by date) | Transactions from the linked accounts     |
+<SourceTables />
 
 ### Accounts
 
@@ -88,3 +85,5 @@ If validation fails with an invalid credentials error:
 3. Confirm the access token hasn't been revoked or expired
 
 Plaid access tokens can expire or require re-authentication depending on the institution. If an Item enters an error state, your users may need to re-link through Plaid Link, which generates a new access token.
+
+<TroubleshootingLink />
