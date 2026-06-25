@@ -140,6 +140,8 @@ export const config = {
 
 Setting `proxy: true` routes PostHog API calls through your domain at `/ingest`, which helps avoid ad blockers. You can customize the path prefix by passing `proxy: { pathPrefix: '/analytics' }` instead.
 
+> **Consent-sensitive apps:** The default middleware seeds an anonymous identity cookie before client-side consent code runs. If your GDPR/ePrivacy posture requires opt-in before setting analytics identifiers, use `postHogMiddleware({ proxy: true, seedAnonymousCookie: false })` and initialize the provider with `clientOptions={{ opt_out_capturing_by_default: true }}` until consent is granted. With this setting, anonymous server-side flag bootstrapping and server captures won't be linked to a PostHog identity until after consent.
+
 > **Note:** Middleware requires a server runtime and is not available with `output: 'export'` (fully static sites). If you can't use middleware, you can set up a [reverse proxy](/docs/advanced/proxy) separately to route traffic through your domain.
 
 </Step>
