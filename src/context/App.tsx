@@ -1601,7 +1601,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             } else {
                 navigate('/', { state: { skipPageUpdate: true } })
             }
-            setWindows(windowsFiltered)
+            setWindows(windowsFiltered.map((w) => (w.appSettings?.size?.fixed ? w : { ...w, snapped: false })))
         }, 0)
     }, [])
 
@@ -1655,6 +1655,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                                   snapped: newWindow.snapped,
                                   size: newWindow.size,
                                   position: newWindow.position,
+                                  windowed: false,
                               }
                             : w
                     )
@@ -1846,7 +1847,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                 !settings?.size?.fixed &&
                 !element.props.minimal &&
                 !settings?.modal &&
-                element.props.location.pathname !== '/')
+                !element.props.location.state?.windowed)
 
         const newWindow: AppWindow = {
             element,
@@ -1884,6 +1885,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             location,
             expanded: shouldExpand,
             snapped: element.props.location.state?.snapped || false,
+            windowed: element.props.location.state?.windowed || false,
         }
 
         if (!newWindow.expanded) {

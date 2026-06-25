@@ -378,12 +378,9 @@ export default function Desktop() {
                                     duration: 0.1,
                                     onComplete: () => {
                                         if (zoomHoverEl) zoomHoverEl.style.top = ''
-                                        const homeLink = homeIconEl?.querySelector<HTMLElement>('a[href="/"]')
-                                        if (homeLink) {
-                                            homeLink.click()
-                                        } else {
-                                            navigate('/')
-                                        }
+
+                                        navigate('/', { state: { windowed: true } })
+
                                         // Brief pause then exit
                                         setTimeout(() => {
                                             animate(cursorX, window.innerWidth + 40, {

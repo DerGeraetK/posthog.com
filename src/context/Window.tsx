@@ -62,6 +62,7 @@ export interface AppWindow {
     }
     expanded: boolean
     snapped: 'left' | 'right' | false
+    windowed?: boolean
 }
 
 interface WindowProviderProps {

@@ -679,18 +679,20 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                         ref={windowRef}
                         data-app="AppWindow"
                         data-scheme="tertiary"
-                        className={`@container relative size-full !select-auto flex flex-col border-primary ${
+                        className={`@container relative ${
+                            item.windowed ? 'h-[95%] w-[85%]' : 'size-full'
+                        } !select-auto flex flex-col border-primary ${
                             siteSettings.heaterMode
                                 ? 'bg-primary/75 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu'
                                 : `bg-primary ${meshVariant}`
                         } flex flex-col ${
                             siteSettings.experience === 'boring'
                                 ? ''
-                                : `border rounded-lg ${
+                                : `border-t rounded-lg ${
                                       item.expanded
                                           ? 'rounded-tr-none rounded-tl-none'
                                           : item.snapped === 'left'
-                                          ? 'rounded-tl-none rounded-tr-none rounded-br-none'
+                                          ? 'rounded-tl-none rounded-tr-none rounded-br-none border-r'
                                           : item.snapped === 'right'
                                           ? 'rounded-tl-none rounded-tr-none rounded-bl-none'
                                           : ''

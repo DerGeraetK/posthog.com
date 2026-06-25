@@ -34,7 +34,7 @@ export default function Wrapper() {
             {!compact && <TaskBarMenu />}
             <div ref={constraintsRef} className={`flex-grow relative min-h-0`}>
                 <Desktop />
-                <div className="flex size-full">
+                <div className="flex size-full justify-center items-center">
                     <AnimatePresence>
                         {windows.map((item) => (
                             <AppWindow item={item} key={item.key} chrome={item.key !== 'search'} />
