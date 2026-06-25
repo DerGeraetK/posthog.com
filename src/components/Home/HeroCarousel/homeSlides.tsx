@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 import { IconArrowRight, IconAtSign, IconCheck, IconCoffee, IconSparkles } from '@posthog/icons'
 import OSButton from 'components/OSButton'
@@ -5,8 +7,12 @@ import CloudinaryImage from 'components/CloudinaryImage'
 import useProduct from 'hooks/useProduct'
 import { useApp } from '../../../context/App'
 import { ToggleGroup } from 'components/RadixUI/ToggleGroup'
+import { Typecaast } from '@typecaast/react'
+import slackBrokenLink from '../../../data/typecaast/slack-broken-link.json'
+import cursorBrokenLink from '../../../data/typecaast/cursor-broken-link.json'
 
-export const SlackSlide = () => {
+export const PullRequestSlide = () => {
+    const [view, setView] = useState<'slack' | 'web'>('slack')
     const allProducts = useProduct() as any[]
     const product = Array.isArray(allProducts) ? allProducts.find((p: any) => p.handle === 'posthog_slack') : undefined
     const { siteSettings } = useApp()
@@ -14,34 +20,62 @@ export const SlackSlide = () => {
     const screenshot = product?.screenshots?.home
 
     return (
-        <div data-scheme="primary" className="@container rounded p-4 @md:p-6 h-full bg-[#F3F4F0] dark:bg-[#131316]">
-            <div className="grid grid-cols-1 @2xl:grid-cols-[1.4fr_1fr] gap-6 @2xl:gap-8 items-center h-full">
-                {screenshot ? (
-                    <div className={`flex ${screenshot.classes || ''}`}>
-                        <CloudinaryImage
-                            src={(isDark && screenshot.srcDark ? screenshot.srcDark : screenshot.src) as any}
-                            alt={screenshot.alt}
-                            imgClassName={screenshot.imgClasses}
-                        />
+        <div className="@container rounded p-4 @md:p-6 h-full">
+            <div className="flex justify-center -mt-4 mb-4">
+                <ToggleGroup
+                    title="View"
+                    hideTitle
+                    options={[
+                        { label: <span className="whitespace-nowrap">Slack</span>, value: 'slack' },
+                        { label: <span className="whitespace-nowrap">Web</span>, value: 'web' },
+                    ]}
+                    value={view}
+                    onValueChange={(v) => v && setView(v as 'slack' | 'web')}
+                />
+            </div>
+            <div className="grid grid-cols-1 @2xl:grid-cols-[1.4fr_1fr] gap-6 @2xl:gap-8 items-center">
+                <div className={`flex ${screenshot.classes || ''}`}>
+                    <Typecaast
+                        config={slackBrokenLink}
+                        autoplay
+                        isolate
+                        theme={isDark ? 'dark' : 'light'}
+                        className="overflow-hidden rounded h-60"
+                    />
+                </div>
+                {view === 'slack' ? (
+                    <div className="flex flex-col gap-3">
+                        <div className="space-y-2">
+                            <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
+                                <IconAtSign className="size-4" /> Slack
+                            </p>
+                            <h2 className="text-2xl font-bold m-0">Work on pull requests together</h2>
+                        </div>
+                        <p className="text-secondary m-0">
+                            Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all
+                            without ever leaving Slack. Triage and build with your team in your existing tools.
+                        </p>
+                        <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" size="md" asLink>
+                            Learn more
+                        </OSButton>
                     </div>
                 ) : (
-                    <div />
-                )}
-                <div className="flex flex-col gap-3">
-                    <div className="space-y-2">
-                        <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
-                            <IconAtSign className="size-4" /> PostHog Slackbot
+                    <div className="flex flex-col gap-3">
+                        <div className="space-y-2">
+                            <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
+                                <IconAtSign className="size-4" /> PostHog Slackbot
+                            </p>
+                            <h2 className="text-2xl font-bold m-0">Create pull requests in Slack</h2>
+                        </div>
+                        <p className="text-secondary m-0">
+                            Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all
+                            without ever leaving Slack. Triage and build with your team in your existing tools.
                         </p>
-                        <h2 className="text-2xl font-bold m-0">Create pull requests in Slack</h2>
+                        <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" asLink>
+                            Explore PostHog Slackbot
+                        </OSButton>
                     </div>
-                    <p className="text-secondary m-0">
-                        Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all without
-                        ever leaving Slack. Triage and build with your team in your existing tools.
-                    </p>
-                    <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" asLink>
-                        Explore PostHog Slackbot
-                    </OSButton>
-                </div>
+                )}
             </div>
         </div>
     )
