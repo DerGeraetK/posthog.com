@@ -48,14 +48,6 @@ Once linked, your Mollie data starts syncing. You can see details and progress i
 
 <SourceParameters />
 
-## Available tables
+## Supported tables
 
-| Table | Description |
-|-------|-------------|
-| payments | All payment transactions |
-| refunds | Refunds issued against payments |
-| chargebacks | Chargebacks filed against payments |
-| customers | Customer records |
-| subscriptions | Recurring payment subscriptions |
-| settlements | Payout settlements |
-| payment_links | Payment links created in Mollie |
+<SourceTables />

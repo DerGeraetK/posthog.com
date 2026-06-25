@@ -97,7 +97,7 @@ function AIModelBadge({ innerRef }: { innerRef: React.RefObject<HTMLSpanElement>
             className="inline-flex items-center gap-1.5 border border-primary rounded px-2 py-1 text-xs bg-accent align-middle ml-6 mt-0 mb-2"
         >
             <span className="font-semibold">Supports</span>
-            <span className="text-secondary">Haiku, Opus, Sonnet, GPT 5.4, GPT 5.5</span>
+            <span className="text-secondary">Fable, Haiku, Opus, Sonnet, GPT 5.4, GPT 5.5</span>
         </span>
     )
 }
@@ -1194,6 +1194,9 @@ const TableStakes = () => {
                             </p>
                             <ul className="m-0 mt-1 list-none p-0 space-y-2">
                                 <li className="text-sm font-bold text-primary">
+                                    <code>Claude Fable 5</code>
+                                </li>
+                                <li className="text-sm font-bold text-primary">
                                     <code>Claude Sonnet 4.6</code>
                                 </li>
                                 <li className="text-sm font-bold text-primary">
@@ -1454,16 +1457,16 @@ const FAQ_ITEMS = [
             <div className="space-y-3">
                 <p>
                     PostHog Code's{' '}
-                    <a href="/docs/posthog-code/inbox" className="underline">
+                    <a href="/docs/self-driving/inbox" className="underline">
                         Inbox
                     </a>{' '}
                     connects to{' '}
-                    <a href="/docs/posthog-code/inbox/sources" className="underline">
+                    <a href="/docs/self-driving/inbox/sources" className="underline">
                         signal sources
                     </a>{' '}
                     you choose – Error Tracking, support tickets, Session Replay, GitHub Issues, Linear, and Zendesk –
                     and{' '}
-                    <a href="/docs/posthog-code/inbox/research" className="underline">
+                    <a href="/docs/self-driving/inbox/research" className="underline">
                         ranks issues
                     </a>{' '}
                     by code importance (hot paths like checkout or billing), user impact (how many users are affected,
