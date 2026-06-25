@@ -41,7 +41,7 @@ It looks like this:
   "grant_types": ["authorization_code"],
   "response_types": ["code"],
   "com.posthog": {
-    "scopes": ["query:read", "insight:read", "project:read", "person:read", "session_recording:read", "sharing_configuration:write", "project:write"]
+    "scopes": ["endpoint:read", "endpoint:write", "insight:read", "project:read", "person:read", "session_recording:read", "sharing_configuration:write", "project:write"]
   }
 }
 ```
@@ -68,7 +68,7 @@ await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
     client_id: clientId,
     code_challenge: challenge,
     code_challenge_method: "S256",
-    scopes: ["query:read", "insight:read", "project:read", "person:read", "session_recording:read", "sharing_configuration:write", "project:write"],
+    scopes: ["endpoint:read", "endpoint:write", "insight:read", "project:read", "person:read", "session_recording:read", "sharing_configuration:write", "project:write"],
     configuration: { region: "US", organization_name: farmName },
   }),
 })
@@ -116,13 +116,14 @@ The response carries `complete.access_configuration.api_key` (the `phc_` token) 
 
 ## Reading the data back
 
-Now for the fun part, giving farmers access to useful info about their users. The dashboard reads straight from the project with HogQL over the query API, using the `query:read` scope:
+Now for the fun part, giving farmers access to useful info about their users. The dashboard reads through [Endpoints](/docs/endpoints): named saved queries you publish once and call by name, versioned and rate-limited as a first-class API. That's the right tool when the same query runs over and over, which is exactly what a dashboard does. At provision time I publish each read once with `endpoint:write`:
 
 ```ts
-await fetch(`${HOST}/api/projects/${teamId}/query/`, {
+await fetch(`${HOST}/api/projects/${teamId}/endpoints/`, {
   method: "POST",
   headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
   body: JSON.stringify({
+    name: "dashboard_trend",
     query: {
       kind: "HogQLQuery",
       query: `SELECT toDate(timestamp) AS d, count() AS c FROM events
@@ -133,9 +134,21 @@ await fetch(`${HOST}/api/projects/${teamId}/query/`, {
 })
 ```
 
-That one builds the seven-day trend chart; two more get unique visitors and top pages.
+That publishes the seven-day trend; two more cover unique visitors and top pages. Endpoints live in the project, so I create all three in each farm's project right after I provision it. From then on the dashboard just calls them by name with `endpoint:read`:
 
-I went back and forth on this. PostHog has [Endpoints](/docs/endpoints), named saved queries you publish once and call by name, and they're the right tool when the same query runs over and over. I tried them first. But an Endpoint serves a cached result, and on a project I'd provisioned seconds ago that meant the dashboard froze on its first empty read until the cache expired, which is exactly the moment it needs to look alive. Each farm's dashboard gets viewed a handful of times right after setup, so the caching bought me nothing and cost me the cold-start. Reading inline always reflects what's actually in the project, so that's what I shipped.
+```ts
+const res = await fetch(
+  `${HOST}/api/projects/${teamId}/endpoints/dashboard_trend/run`,
+  {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh: "force" }),
+  },
+)
+const { results } = await res.json()
+```
+
+The `refresh: "force"` is the part worth dwelling on. By default an Endpoint serves a cached result, which is what makes it cheap when a query runs constantly. But a just-provisioned dashboard gets viewed seconds after setup, and a cached empty first read would leave it frozen at the exact moment it needs to look alive. `force` recomputes on every call, so the dashboard always reflects what's actually in the project, the same liveness a raw query gives you, but behind a named, versioned API instead of shipping HogQL from my server on every load. A higher-traffic dashboard would drop the `force` and let the cache do its job.
 
 Access tokens last an hour, so for anything long-lived you're storing the refresh token. Encrypt it. I keep them in Postgres with AES-256-GCM and a key that only lives in the environment, never in the database.
 
