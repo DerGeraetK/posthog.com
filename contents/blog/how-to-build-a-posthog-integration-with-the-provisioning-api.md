@@ -18,9 +18,9 @@ seo:
   metaDescription: "I built a fake farm-website company on PostHog's provisioning API. Here's how it creates accounts for its users and reads their analytics back, with the gotchas I hit."
 ---
 
-I live on a little farm and recently built a [website](https://creeksidefields.com/) to sell shares of hogs. I realized it's too difficult for my fellow farmers, who are better versed in the subtle arts of managing soil, plants, and animals than the [latest coding tool](https://posthog.com/code), to build similar sites with current tech. So, I threw together a website builder for farmers.
+I live on a little farm and recently built a [website](https://creeksidefields.com/) to sell shares of hogs. My fellow farmers are better versed in the subtle arts of soil, plants, and animals than the [latest coding tool](https://posthog.com/code), so I threw together a website builder for them.
 
-One of the most important aspects of distributing product from a farm is knowing who you're selling to. So, naturally, wiring up PostHog for product analytics, session replay, and error reporting was a no brainer. However, farmers are trying to spend their time farming not signing up for accounts and copy pasting API keys into their farm website builder apps. So, I needed to provision PostHog accounts behind the scenes and surface insights directly to farmers. 
+Knowing who you're selling to is critical to generating demand, so wiring up PostHog for product analytics, session replay, and error reporting was a no-brainer. But farmers want to farm, not sign up for accounts and copy-paste API keys. So HogFarm provisions a PostHog account for each farm behind the scenes, then reads the analytics back into a dashboard the farmer never leaves to see.
 
 The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how I built it.
 
