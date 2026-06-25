@@ -1,21 +1,21 @@
-export const langsmith = {
-    name: 'Langsmith',
+export const arize_phoenix = {
+    name: 'Arize Phoenix',
     products: {
         ai_observability: {
             available: true,
             features: {
                 generation_tracking: true,
                 latency_tracking: true,
-                cost_tracking: false,
+                cost_tracking: true,
                 trace_visualization: true,
                 token_tracking: true,
                 prompt_playground: true,
                 prompt_evaluations: true,
-                alerting: true,
+                alerting: false,
+                system_prompts: true,
                 error_tracking: true,
                 clustering: false,
-                system_prompts: true,
-                trace_summarization: true,
+                trace_summarization: false,
                 llm_translation: false,
                 sentiment_classification: false,
                 privacy_mode: true,
