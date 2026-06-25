@@ -116,7 +116,7 @@ The response carries `complete.access_configuration.api_key` (the `phc_` token) 
 
 ## Reading the data back
 
-Now for the fun part, giving critical business insights directly to the farmers. The dashboard reads straight from the project with HogQL over the query API, using the `query:read` scope:
+Now for the fun part, giving farmers access to useful info about their users. The dashboard reads straight from the project with HogQL over the query API, using the `query:read` scope:
 
 ```ts
 await fetch(`${HOST}/api/projects/${teamId}/query/`, {
@@ -178,9 +178,9 @@ These are the things that weren't obvious until I hit them:
 - **Your CIMD URL has to be reachable.** I deployed behind Vercel's default deployment protection and the first call just failed. PostHog couldn't fetch the metadata document through the SSO gate. If registration never finishes, open the `.well-known` URL in an incognito window and make sure it loads.
 - **Don't reach for `historical_migration` to seed backdated events.** I seed a week of demo pageviews so a new farm's dashboard isn't empty on day one, and my first instinct was the `historical_migration` flag since the timestamps are in the past. That flag routes the batch to a throttled ingestion pipeline that can take many minutes to become queryable, so the dashboard sat empty right after provisioning, the opposite of what I wanted. The regular capture pipeline takes backdated timestamps fine (it stores the event timestamp, not arrival time) and they show up in seconds. For a week-old seed, skip the flag.
 
-## Try it
+## Give the gift of PostHog to your users
 
-Check out the HogFarm repo and the provisioning docs to give your users insights about their users. It's user data all the way down.
+Check out the HogFarm repo and the provisioning docs to give your users access to data about their users.
 
 - Code: [github.com/Brooker-Fam/hogfarm](https://github.com/Brooker-Fam/hogfarm)
 - Docs: [Provisioning API](/docs/integrate/provisioning) and [OAuth + CIMD](/docs/api/oauth)
