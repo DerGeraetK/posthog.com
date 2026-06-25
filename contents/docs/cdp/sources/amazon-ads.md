@@ -62,6 +62,10 @@ Performance metrics (impressions, clicks, spend) require Amazon's async reportin
 
 <SourceParameters />
 
+## Supported tables
+
+<SourceTables />
+
 ## Troubleshooting
 
 ### Invalid credentials error
