@@ -4,8 +4,8 @@ platformLogo: go
 showStepsToc: true
 ---
 
-import { Steps, Step } from 'components/Docs/Steps'
-import { CalloutBox } from 'components/Docs/CalloutBox'
+import { Steps, Step } from "components/Docs/Steps";
+import { CalloutBox } from "components/Docs/CalloutBox";
 
 <Steps>
 
@@ -17,9 +17,15 @@ Install the [PostHog Go SDK](/docs/libraries/go):
 go get github.com/posthog/posthog-go
 ```
 
-<CalloutBox icon="IconInfo" title="Source context not yet supported" type="fyi">
+<CalloutBox icon="IconInfo" title="Build with a GNU build ID for full symbolication" type="fyi">
 
-The Go SDK captures stack traces with file names, line numbers, and function names, but does not yet support source context (displaying the surrounding lines of code in the error tracking UI). Symbol set uploads for Go are not currently available.
+Go binaries don't include a GNU build ID by default. Without one, PostHog can't match uploaded debug symbols to crash events. To enable native symbolication, compile with `-ldflags "-B gobuildid"`:
+
+```bash
+go build -ldflags "-B gobuildid" -o myapp .
+```
+
+Then [upload your debug symbols](/docs/error-tracking/stack-traces#uploading-source-maps) using the `posthog-cli symbol-sets upload` command.
 
 </CalloutBox>
 
@@ -143,14 +149,14 @@ logger.Warn("Something broke",
 
 The handler supports several configuration options:
 
-| Option | Description | Default |
-|---|---|---|
-| `WithMinCaptureLevel(level)` | Minimum log level to capture | `slog.LevelWarn` |
-| `WithDistinctIDFn(fn)` | Function to extract distinct ID from context/record | Returns `""` (skips capture) |
-| `WithFingerprintFn(fn)` | Custom fingerprint for error grouping | `nil` (PostHog assigns) |
-| `WithSkip(n)` | Stack frames to skip | `5` |
-| `WithStackTraceExtractor(e)` | Custom stack trace extractor | `DefaultStackTraceExtractor` |
-| `WithDescriptionExtractor(e)` | Custom description extractor | `ErrorExtractor` |
+| Option                        | Description                                         | Default                      |
+| ----------------------------- | --------------------------------------------------- | ---------------------------- |
+| `WithMinCaptureLevel(level)`  | Minimum log level to capture                        | `slog.LevelWarn`             |
+| `WithDistinctIDFn(fn)`        | Function to extract distinct ID from context/record | Returns `""` (skips capture) |
+| `WithFingerprintFn(fn)`       | Custom fingerprint for error grouping               | `nil` (PostHog assigns)      |
+| `WithSkip(n)`                 | Stack frames to skip                                | `5`                          |
+| `WithStackTraceExtractor(e)`  | Custom stack trace extractor                        | `DefaultStackTraceExtractor` |
+| `WithDescriptionExtractor(e)` | Custom description extractor                        | `ErrorExtractor`             |
 
 <CalloutBox icon="IconInfo" title="Error extraction" type="fyi">
 
