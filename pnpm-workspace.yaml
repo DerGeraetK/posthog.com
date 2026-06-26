@@ -6,7 +6,11 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
     - '@posthog/icons'
     - '@posthog/hedgehog-mode'
-    - '@typecaast/*'
+    - '@typecaast/react'
+    - '@typecaast/core'
+    - '@typecaast/schema'
+    - '@typecaast/skin-kit'
+    - '@typecaast/skins'
 
 # Hoist Gatsby's internal dependencies for webpack compatibility
 publicHoistPattern:

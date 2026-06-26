@@ -1,26 +1,60 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IconArrowRight, IconAtSign, IconCheck, IconCoffee, IconSparkles } from '@posthog/icons'
+import { IconSlack } from 'components/OSIcons'
 import OSButton from 'components/OSButton'
 import CloudinaryImage from 'components/CloudinaryImage'
 import useProduct from 'hooks/useProduct'
 import { useApp } from '../../../context/App'
 import { ToggleGroup } from 'components/RadixUI/ToggleGroup'
-import { Typecaast } from '@typecaast/react'
+import TypecaastPlayer, { type TypecaastPlayerProps } from 'components/TypecaastPlayer'
+import { usePrefersReducedMotion } from 'components/Code/usePrefersReducedMotion'
+import { usePauseAutoAdvance } from './autoAdvanceGate'
 import slackBrokenLink from '../../../data/typecaast/slack-broken-link.json'
 import cursorBrokenLink from '../../../data/typecaast/cursor-broken-link.json'
 
+// A Typecaast embed for use inside the hero carousel. While its animation plays it holds
+// the carousel's auto-advance (the animations run longer than the ~5s dwell), then releases
+// on `onEnded` so a slide isn't cut off mid-animation. Bypassed under reduced motion
+// (Typecaast renders the final state immediately), with a safety timeout so a missed
+// `onEnded` can never leave the carousel frozen.
+const MAX_CAROUSEL_HOLD_MS = 30000
+
+const CarouselTypecaast = ({ onEnded, ...props }: TypecaastPlayerProps): JSX.Element => {
+    const [ended, setEnded] = useState(false)
+    const reducedMotion = usePrefersReducedMotion()
+
+    usePauseAutoAdvance(!ended && !reducedMotion)
+
+    useEffect(() => {
+        if (ended || reducedMotion) return
+        const timer = setTimeout(() => setEnded(true), MAX_CAROUSEL_HOLD_MS)
+        return () => clearTimeout(timer)
+    }, [ended, reducedMotion])
+
+    return (
+        <TypecaastPlayer
+            {...props}
+            onEnded={() => {
+                setEnded(true)
+                onEnded?.()
+            }}
+        />
+    )
+}
+
 export const PullRequestSlide = () => {
-    const [view, setView] = useState<'slack' | 'web'>('slack')
+    // Slack | Web toggle removed for now — multi-player is only supported in Slack.
+    // Re-add this `view` state (plus the toggle and Web branch in the JSX below) when web lands.
+    // const [view, setView] = useState<'slack' | 'web'>('slack')
     const allProducts = useProduct() as any[]
     const product = Array.isArray(allProducts) ? allProducts.find((p: any) => p.handle === 'posthog_slack') : undefined
-    const { siteSettings } = useApp()
-    const isDark = siteSettings.theme === 'dark'
     const screenshot = product?.screenshots?.home
 
     return (
-        <div className="@container rounded p-4 @md:p-6 h-full">
+        <div className="@container rounded p-4 @md:p-6 h-full bg-accent/20">
+            {/* Slack | Web view toggle — hidden for now (multi-player is Slack-only). Re-add when web lands.
             <div className="flex justify-center -mt-4 mb-4">
                 <ToggleGroup
                     title="View"
@@ -33,49 +67,41 @@ export const PullRequestSlide = () => {
                     onValueChange={(v) => v && setView(v as 'slack' | 'web')}
                 />
             </div>
+            */}
             <div className="grid grid-cols-1 @2xl:grid-cols-[1.4fr_1fr] gap-6 @2xl:gap-8 items-center">
-                <div className={`flex ${screenshot.classes || ''}`}>
-                    <Typecaast
-                        config={slackBrokenLink}
-                        autoplay
-                        isolate
-                        theme={isDark ? 'dark' : 'light'}
-                        className="overflow-hidden rounded h-60"
-                    />
+                <CarouselTypecaast config={slackBrokenLink} height="h-96" className="border border-primary" />
+                <div className="flex flex-col gap-3">
+                    <div className="space-y-2">
+                        <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
+                            PostHog in <IconSlack className="size-4" /> Slack
+                        </p>
+                        <h2 className="text-2xl font-bold m-0">Work on pull requests together</h2>
+                    </div>
+                    <p className="text-secondary m-0">
+                        Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all without
+                        ever leaving Slack. Triage and build with your team in the tools you already use.
+                    </p>
+                    <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" size="md" asLink>
+                        Learn more
+                    </OSButton>
                 </div>
-                {view === 'slack' ? (
-                    <div className="flex flex-col gap-3">
-                        <div className="space-y-2">
-                            <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
-                                <IconAtSign className="size-4" /> Slack
-                            </p>
-                            <h2 className="text-2xl font-bold m-0">Work on pull requests together</h2>
-                        </div>
-                        <p className="text-secondary m-0">
-                            Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all
-                            without ever leaving Slack. Triage and build with your team in your existing tools.
+                {/* Web view — re-add alongside the toggle when multi-player supports web:
+                <div className="flex flex-col gap-3">
+                    <div className="space-y-2">
+                        <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
+                            <IconAtSign className="size-4" /> PostHog Slackbot
                         </p>
-                        <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" size="md" asLink>
-                            Learn more
-                        </OSButton>
+                        <h2 className="text-2xl font-bold m-0">Create pull requests in Slack</h2>
                     </div>
-                ) : (
-                    <div className="flex flex-col gap-3">
-                        <div className="space-y-2">
-                            <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
-                                <IconAtSign className="size-4" /> PostHog Slackbot
-                            </p>
-                            <h2 className="text-2xl font-bold m-0">Create pull requests in Slack</h2>
-                        </div>
-                        <p className="text-secondary m-0">
-                            Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all
-                            without ever leaving Slack. Triage and build with your team in your existing tools.
-                        </p>
-                        <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" asLink>
-                            Explore PostHog Slackbot
-                        </OSButton>
-                    </div>
-                )}
+                    <p className="text-secondary m-0">
+                        Tag <code>@PostHog</code> in a thread to analyze customer behavior or create a PR – all without
+                        ever leaving Slack. Triage and build with your team in your existing tools.
+                    </p>
+                    <OSButton to="/slack" state={{ newWindow: true }} variant="secondary" asLink>
+                        Explore PostHog Slackbot
+                    </OSButton>
+                </div>
+                */}
             </div>
         </div>
     )
@@ -126,7 +152,7 @@ export const FixBugsSlide = () => {
                     <div className="flex flex-col gap-3">
                         <div className="space-y-2">
                             <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
-                                <IconAtSign className="size-4" /> PostHog Slackbot
+                                PostHog in <IconSlack className="size-4" /> Slack
                             </p>
                             <h2 className="text-2xl font-bold m-0">Fix bugs automatically</h2>
                         </div>
@@ -162,7 +188,7 @@ export const FixBugsSlide = () => {
                                 <IconCheck className="size-5 text-green shrink-0" /> Creates pull requests automatically
                             </li>
                         </ul>
-                        <OSButton to="/code" state={{ newWindow: true }} variant="secondary" asLink>
+                        <OSButton to="/code" state={{ newWindow: true }} size="md" variant="secondary" asLink>
                             Explore PostHog Code
                         </OSButton>
                     </div>
@@ -215,7 +241,7 @@ export const AskAnythingSlide = () => {
                     <div className="flex flex-col gap-3">
                         <div className="space-y-2">
                             <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
-                                <IconSparkles className="size-4" /> PostHog AI
+                                PostHog in <IconSlack className="size-4" /> Slack
                             </p>
                             <h2 className="text-2xl font-bold m-0">Ask PostHog anything</h2>
                         </div>
@@ -227,7 +253,7 @@ export const AskAnythingSlide = () => {
                             Pipe in third party data to analyze alongside customer usage data for a more complete
                             picture of product usage.
                         </p>
-                        <OSButton to="/ai" state={{ newWindow: true }} variant="secondary" asLink>
+                        <OSButton to="/ai" state={{ newWindow: true }} size="md" variant="secondary" asLink>
                             Explore PostHog AI
                         </OSButton>
                     </div>
@@ -247,7 +273,7 @@ export const AskAnythingSlide = () => {
                             Pipe in third party data to analyze alongside customer usage data for a more complete
                             picture of product usage.
                         </p>
-                        <OSButton to="/ai" state={{ newWindow: true }} variant="secondary" asLink>
+                        <OSButton to="/ai" state={{ newWindow: true }} size="md" variant="secondary" asLink>
                             Explore PostHog AI
                         </OSButton>
                     </div>

@@ -394,7 +394,7 @@ function TestHero(): JSX.Element {
                 </div>
             </div>
 
-            <HeroCarousel tabs={buildTabs} />
+            <HeroCarousel tabs={buildTabs} className="mb-8" />
         </>
     )
 }
