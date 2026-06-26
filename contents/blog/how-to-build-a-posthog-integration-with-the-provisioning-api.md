@@ -1,6 +1,6 @@
 ---
-date: "2026-06-24"
-title: "How to build a PostHog integration with the provisioning API"
+date: "2026-06-26"
+title: "How I set up PostHog for my users without even making them sign up"
 featuredImage: https://res.cloudinary.com/dmukukwp6/image/upload/posthog.com/contents/images/blog/posthog-engineering-blog.png
 featuredImageType: full
 author:
@@ -14,21 +14,27 @@ tags:
   - Engineering
   - AI
 seo:
-  metaTitle: "How to build a PostHog integration with the provisioning API"
+  metaTitle: "How to set up embedded analytics with the PostHog provisioning API"
   metaDescription: "I built a fake farm-website company on PostHog's provisioning API. Here's how it creates accounts for its users and reads their analytics back, with the gotchas I hit."
 ---
 
-I live on a little farm and recently built a [website](https://creeksidefields.com/) to sell shares of hogs. My fellow farmers are better versed in the subtle arts of soil, plants, and animals than the [latest coding tool](https://posthog.com/code), so I threw together a website builder for them.
+I live on a little farm and recently built a [website](https://creeksidefields.com/) to sell shares of hogs. Other farmers saw it and wanted one too – but they're better versed in the subtle arts of soil, plants, and animals than the [latest coding tool](https://posthog.com/code). So I threw together a website builder called HogFarm that they could run themselves.
 
-Knowing who you're selling to is critical to generating demand, so wiring up PostHog for product analytics, session replay, and error reporting was a no-brainer. But farmers want to farm, not sign up for accounts and copy-paste API keys. So HogFarm provisions a PostHog account for each farm behind the scenes, then reads the analytics back into a dashboard the farmer never leaves to see.
+HogFarm asks a farmer for the basics like their farm name, what they grow, what they're selling, and spins up a simple storefront site for them. But a site that just sits there doesn't move product. Farmers need to know if anyone's visiting, what they're looking at, and why they leave without buying.
 
-The code is [on GitHub](https://github.com/Brooker-Fam/hogfarm) and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around. Here's how I built it.
+Those are the exact reasons why people use PostHog tools like product analytics, session replay, and error tracking, but farmers want to _farm_, not sign up for accounts and copy-paste API keys.
+
+That's what PostHog's provisioning API lets me do. I can set up a PostHog project for each farm website behind the scenes without them even needing to do anything. From there, I can configure it to automatically read analytics back into a user-friendly dashboard that they never have to leave. No signup, no setup, no idea PostHog is even there.
+
+If you've built software before, you might know this pattern as embedded analytics, multi-tenant analytics, or white-labeling. They all mean pretty much the same thing: your users get their own instance with their own data, and you provision it for them behind the scenes.
+
+The code for HogFarm is [on GitHub](https://github.com/Brooker-Fam/hogfarm), and there's a [live version](https://hogfarm-guava-tri.vercel.app) you can click around and explore. Here's an in-depth guide on how I built it with PostHog's [provisioning API](/docs/integrate/provisioning).
 
 ![The HogFarm builder: a farmer enters their farm name and what they grow](https://res.cloudinary.com/dmukukwp6/image/upload/w_1600,c_limit,q_auto,f_auto/builder_landing_8dd50079e6.png)
 
-## Registering your OAuth client via CIMD
+## Registering your builder app
 
-To register my OAuth client, I added a small JSON file. The first time I called the API, PostHog fetched the file and registered my OAuth app. It's called a [Client ID Metadata Document](/docs/api/oauth#client-id-metadata-document-cimd), or CIMD.
+The first step is to register HogFarm as an OAuth client. Instead of registering through a UI, I host a small JSON file describing the app, and PostHog reads it to register HogFarm automatically. This is called a [Client ID Metadata Document](/docs/api/oauth#client-id-metadata-document-cimd), or CIMD.
 
 It looks like this:
 
@@ -46,7 +52,15 @@ It looks like this:
 }
 ```
 
-The `client_id` has to be the exact URL the file is served from, or it won't register. The `com.posthog.scopes` list is a ceiling: tokens can never go above it, whatever an individual request asks for. These scopes are everything the dashboard needs later: reading the analytics back and embedding a session recording. More on both below.
+The `client_id` has to be the exact URL the file is served from, or it won't register, and it needs to be publicly reachable.
+
+> **⚠️ Your CIMD URL has to be publicly reachable**
+>
+> PostHog registers your app by fetching that JSON file itself – an anonymous, server-to-server request with no login, no cookies, no session. So anything that gates the URL will block it. I deployed behind Vercel's default deployment protection, and the very first call just failed: PostHog hit the SSO gate instead of the file and had nothing to register.
+>
+> The catch is that it works fine in your own browser, because *you're* logged in – so the file looks reachable when it isn't. To test it the way PostHog sees it, open the `.well-known` URL in an incognito window. If it doesn't load there, registration will never finish.
+
+The `com.posthog.scopes` list is a ceiling: tokens can never go above it, whatever an individual request asks for. These scopes are everything the dashboard needs later: reading the analytics back and embedding a session recording. More on both below.
 
 Because HogFarm holds no secret (`token_endpoint_auth_method` is `"none"`), I use PKCE to prove the token exchange. I generate a random verifier and send only its SHA-256 hash with the first call. The verifier gets replayed at token exchange.
 
@@ -55,7 +69,9 @@ const verifier = base64url(randomBytes(32))
 const challenge = base64url(sha256(verifier))
 ```
 
-## Creating the account
+## Creating an account the farmer never sees
+
+With HogFarm registered, the first provisioning step is to create a PostHog account for the farmer. This is the call that makes "no signup" for farmers possible: instead of sending the farmer to a signup page, HogFarm requests an account for them and PostHog creates it in the background.
 
 ```ts
 await fetch(`${HOST}/api/agentic/provisioning/account_requests`, {
@@ -78,11 +94,13 @@ There are a few cases to handle for this response:
 
 - **A new email** comes back as `{ type: "oauth", oauth: { code } }`. The account gets created and linked quietly, I get a code on the spot, and the farmer gets a welcome email to set their password.
 - **An email that's already a PostHog user** comes back as `{ type: "requires_auth", requires_auth: { url } }`. They have to consent in the browser first, so I send them to `url` and PostHog redirects back to my `redirect_uri` with a code.
-- **The very first call from a new CIMD client** comes back as a `202` with `{ type: "registering" }`. PostHog fetches the metadata document in the background, so I wait the `retry_after` seconds and call again. This happens once per deployment, and it caught me off guard the first time (see below).
+- **The very first call from a new CIMD client** comes back as a `202` with `{ type: "registering" }`. PostHog fetches the metadata document in the background, so I wait the `retry_after` seconds and call again. This happens once per deployment, and it caught me off guard the first time.
 
-## Getting the project key
+## Getting the farmer's project key
 
-I swap the code for tokens:
+The farmer's account exists now, but it's empty at the moment. So, next is to create a project and its API key. That takes two calls: one to trade the code for an access token (replaying the PKCE verifier to prove it's me), then another to use that token to provision the project. The response hands back the `phc_` key that goes into the farm site, which is what actually starts the data flowing.
+
+Here's how I swap the code for tokens:
 
 ```ts
 await fetch(`${HOST}/api/agentic/oauth/token`, {
@@ -92,7 +110,7 @@ await fetch(`${HOST}/api/agentic/oauth/token`, {
 })
 ```
 
-The next call provisions a project:
+And the next call provisions a project:
 
 ```ts
 await fetch(`${HOST}/api/agentic/provisioning/resources`, {
@@ -114,9 +132,9 @@ The response carries `complete.access_configuration.api_key` (the `phc_` token) 
 
 ![The generated farm site, with the PostHog snippet already wired in](https://res.cloudinary.com/dmukukwp6/image/upload/w_1600,c_limit,q_auto,f_auto/generated_farm_site_af6902b4a8.png)
 
-## Reading the data back
+## Reading the data back to the farmer
 
-Now for the fun part, giving farmers access to useful info about their users. The dashboard reads through [Endpoints](/docs/endpoints): named saved queries you publish once and call by name, versioned and rate-limited as a first-class API. That's the right tool when the same query runs over and over, which is exactly what a dashboard does. At provision time I publish each read once with `endpoint:write`:
+Now for the fun part: giving farmers access to useful info about their users. The dashboard reads through [Endpoints](/docs/endpoints): named saved queries you publish once and call by name, versioned and rate-limited as a first-class API. That's the right tool when the same query runs over and over, which is exactly what a dashboard does. At provision time I publish each read once with `endpoint:write`:
 
 ```ts
 await fetch(`${HOST}/api/projects/${teamId}/endpoints/`, {
@@ -150,11 +168,17 @@ const { results } = await res.json()
 
 I didn't have the `refresh` in there at first, and the dashboard froze on an empty read for the first minute after provisioning. An Endpoint caches its result by default, so my very first call, fired before any events had landed, cached an empty answer and kept handing it back, at the moment the dashboard needs to look alive. Adding `refresh: "force"` fixed it: it recomputes on every call, so the dashboard always reflects what's actually in the project. That default caching is the whole point of an Endpoint when a query runs constantly, but for a fresh project viewed a handful of times right after setup it was working against me. A busier dashboard would drop the `force` and let the cache do its job.
 
+> **⚠️ Don't use `historical_migration` to seed backdated events**
+>
+> I seed a week of demo pageviews so a new farm's dashboard isn't empty on day one, and my first instinct was the `historical_migration` flag, since the timestamps are in the past. Don't. That flag routes the batch to a throttled ingestion pipeline that can take many minutes to become queryable, so the dashboard sat empty right after provisioning – the opposite of what I wanted.
+>
+> The regular capture pipeline takes backdated timestamps fine. It stores the event timestamp, not the arrival time, so a week-old seed shows up in seconds. Skip the flag.
+
 Access tokens last an hour, so for anything long-lived you're storing the refresh token. Encrypt it. I keep them in Postgres with AES-256-GCM and a key that only lives in the environment, never in the database.
 
-## Session replay, mostly for free
+## Kicking off session replays
 
-The farm site loads the PostHog snippet with session recording turned on, but that alone records nothing: a brand-new project is opted out at the project level, and the client-side switch can't override it. So at provision time I flip it on with `project:write`:
+Even though the farm site already loads the PostHog snippet with session recording turned on, I have to turn on a second switch on the project itself since new projects have it off by default. So, at provision time, I turn it on from the server with `project:write`:
 
 ```ts
 await fetch(`${HOST}/api/projects/${teamId}/`, {
@@ -183,13 +207,6 @@ const embedUrl = `https://us.posthog.com/embedded/${access_token}`
 I drop that URL in an iframe and the farmer watches real visitors move through their site. The recording lives in their own project; HogFarm just borrows a public view of the latest one. (A shared recording is viewable by anyone with the link, which is fine for a demo, but a real builder would gate or expire it.)
 
 ![The farmer's dashboard: pageview KPIs, a seven-day trend, an inline session replay, and top pages, all read live from their own PostHog project](https://res.cloudinary.com/dmukukwp6/image/upload/w_1600,c_limit,q_auto,f_auto/analytics_dashboard_61b7b99cc4.png)
-
-## The stuff that bit me
-
-These are the things that weren't obvious until I hit them:
-
-- **Your CIMD URL has to be reachable.** I deployed behind Vercel's default deployment protection and the first call just failed. PostHog couldn't fetch the metadata document through the SSO gate. If registration never finishes, open the `.well-known` URL in an incognito window and make sure it loads.
-- **Don't reach for `historical_migration` to seed backdated events.** I seed a week of demo pageviews so a new farm's dashboard isn't empty on day one, and my first instinct was the `historical_migration` flag since the timestamps are in the past. That flag routes the batch to a throttled ingestion pipeline that can take many minutes to become queryable, so the dashboard sat empty right after provisioning, the opposite of what I wanted. The regular capture pipeline takes backdated timestamps fine (it stores the event timestamp, not arrival time) and they show up in seconds. For a week-old seed, skip the flag.
 
 ## Give the gift of PostHog to your users
 
