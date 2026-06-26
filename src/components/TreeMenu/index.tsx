@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { IconChevronRight } from '@posthog/icons'
 import { motion } from 'framer-motion'
@@ -131,15 +131,23 @@ function TreeMenuItem({
     onClick: (item: MenuItem) => void
 }) {
     const [open, setOpen] = useState(false)
+    // Marks a user-driven toggle so the pathname effect below doesn't immediately re-open a section
+    // the user just collapsed (the trigger is also a Link, so a click both toggles and navigates).
+    const userToggledRef = useRef(false)
     const hasChildren = item.children && item.children.length > 0
     const location = useLocation()
     const pathname = replacePath(location?.pathname)
 
     const handleOpenChange = (open: boolean) => {
+        userToggledRef.current = true
         setOpen(open)
     }
 
     useEffect(() => {
+        if (userToggledRef.current) {
+            userToggledRef.current = false
+            return
+        }
         if (item.children && !open && activeItem) {
             setOpen(isOpen(item.children, activeItem))
         }
