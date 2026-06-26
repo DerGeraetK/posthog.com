@@ -114,6 +114,15 @@ const SecondaryActions = () => (
     </p>
 )
 
+// PostHog.com-side glue (see note above): the install UI + secondary links, used by the
+// homepage hero (inlined) and the /products page (via this export).
+export const GetStarted = () => (
+    <div className="mt-6 flex flex-col items-center @xl:items-start">
+        <PlatformInstall schema={wizardInstallSchema} />
+        <SecondaryActions />
+    </div>
+)
+
 export const CTAs = () => {
     const [showIntegrationPrompt, setShowIntegrationPrompt] = useState(false)
     return (

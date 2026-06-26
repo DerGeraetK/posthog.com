@@ -38,7 +38,8 @@
             "type": "message",
             "id": "m1",
             "from": "ian",
-            "text": "there's a broken link on https://posthog.com/handbook/brand/tone that points to localhost"
+            "text": "there's a broken link on https://posthog.com/handbook/brand/tone that points to localhost",
+            "instant": true
         },
         {
             "type": "delay",
