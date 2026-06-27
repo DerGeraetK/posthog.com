@@ -155,7 +155,6 @@ interface AppContextType {
     searchOpen: boolean
     setSearchOpen: (isOpen: boolean) => void
     updateTaskbarHeight: () => void
-    initialHomepage: boolean
 }
 
 interface AppProviderProps {
@@ -322,7 +321,6 @@ export const Context = createContext<AppContextType>({
     searchOpen: false,
     setSearchOpen: () => {},
     updateTaskbarHeight: () => {},
-    initialHomepage: false,
 })
 
 export interface AppSetting {
@@ -1440,21 +1438,23 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const [windowsInView, setWindowsInView] = useState<AppWindow[]>([])
     const stateWindows = element.props?.location?.state?.savedWindows
     const posthog = usePostHog()
-    const initialHomepage = location.key === 'initial' && location.pathname === '/' && !isMobile
+    const introSeen = useMemo(() => {
+        if (isSSR) return true
+        try {
+            return !!localStorage.getItem('intro-seen')
+        } catch {
+            return true
+        }
+    }, [location.pathname])
 
     const [windows, setWindows] = useState<AppWindow[]>(() => {
         if (isSSR) {
-            if (location.pathname === '/') return []
             return [createNewWindow(element, [], location, true, taskbarHeight)]
         }
-        const compactInit = window !== window.parent
-        const isMobileInit = window.innerWidth < 768
-        const initialHomeInit = location.key === 'initial' && location.pathname === '/' && !isMobileInit
         const urlObj = new URL(location.href)
         const queryString = urlObj?.search.substring(1)
         const parsed = qs.parse(queryString)
-        const paramsWindows = parsed?.windows
-        if (initialHomeInit || !!paramsWindows) return []
+        if (parsed?.windows) return []
         return getInitialWindows(element)
     })
     const windowsRef = useRef(windows)
@@ -1770,7 +1770,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
     function getInitialWindows(element: any) {
         if (isSSR) {
-            if (location.pathname === '/') return []
             return [createNewWindow(element, [], location, isSSR, taskbarHeight)]
         }
         const urlObj = new URL(location.href)
@@ -1844,13 +1843,15 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         const settings = appSettings[keyToUse]
         const lastClickedElementRect = getLastClickedElementRect()
 
+        const isWindowed =
+            element.props.location.state?.windowed || (element.props.location.pathname === '/' && !introSeen)
         const shouldExpand =
             element.props.location.state?.expanded ??
             (!keyToUse?.startsWith('ask-max') &&
                 !settings?.size?.fixed &&
                 !element.props.minimal &&
                 !settings?.modal &&
-                !element.props.location.state?.windowed)
+                !isWindowed)
 
         const newWindow: AppWindow = {
             element,
@@ -1888,7 +1889,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             location,
             expanded: shouldExpand,
             snapped: element.props.location.state?.snapped || false,
-            windowed: element.props.location.state?.windowed || false,
+            windowed: isWindowed,
         }
 
         if (!newWindow.expanded) {
@@ -2229,7 +2230,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         const urlObj = new URL(location.href)
         const queryString = urlObj?.search.substring(1)
         const parsed = qs.parse(queryString)
-        if (initialHomepage || parsed?.windows || location.state?.skipPageUpdate) {
+        if ((location.pathname === '/' && !introSeen) || parsed?.windows || location.state?.skipPageUpdate) {
             return
         }
         updatePages(element)
@@ -2802,7 +2803,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                 searchOpen,
                 setSearchOpen,
                 updateTaskbarHeight,
-                initialHomepage,
             }}
         >
             {children}

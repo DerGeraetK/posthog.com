@@ -202,7 +202,6 @@ export default function Desktop() {
         websiteMode,
         posthogInstance,
         updateSiteSettings,
-        initialHomepage,
     } = useApp()
     const [iconPositions, setIconPositions] = useState<IconPositions>({})
     const { isInactive, dismiss } = useInactivityDetection({
@@ -330,7 +329,7 @@ export default function Desktop() {
     }, [posthogInstance])
 
     const runFakeCursorAnimation = useCallback(() => {
-        if (!initialHomepage || !rendered) return
+        if (!rendered || window.location.pathname !== '/' || localStorage.getItem('intro-seen')) return
 
         const startX = window.innerWidth * 0.85
         const startY = window.innerHeight * 0.8
@@ -379,7 +378,8 @@ export default function Desktop() {
                                     onComplete: () => {
                                         if (zoomHoverEl) zoomHoverEl.style.top = ''
 
-                                        navigate('/', { state: { windowed: true } })
+                                        delete document.documentElement.dataset.intro
+                                        localStorage.setItem('intro-seen', '1')
 
                                         // Brief pause then exit
                                         setTimeout(() => {
@@ -413,14 +413,14 @@ export default function Desktop() {
                 })
             },
         })
-    }, [initialHomepage, rendered])
+    }, [rendered])
 
     useEffect(() => {
-        if (initialHomepage && rendered) {
+        if (rendered) {
             const timeout = setTimeout(runFakeCursorAnimation, 500)
             return () => clearTimeout(timeout)
         }
-    }, [initialHomepage, rendered, runFakeCursorAnimation])
+    }, [rendered, runFakeCursorAnimation])
 
     useEffect(() => {
         document.documentElement.style.cursor = fakeCursorActive ? 'none' : ''
