@@ -1438,14 +1438,14 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const [windowsInView, setWindowsInView] = useState<AppWindow[]>([])
     const stateWindows = element.props?.location?.state?.savedWindows
     const posthog = usePostHog()
-    const introSeen = useMemo(() => {
+    const introSeen = () => {
         if (isSSR) return true
         try {
             return !!localStorage.getItem('intro-seen')
         } catch {
             return true
         }
-    }, [location.pathname])
+    }
 
     const [windows, setWindows] = useState<AppWindow[]>(() => {
         if (isSSR) {
@@ -1844,7 +1844,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         const lastClickedElementRect = getLastClickedElementRect()
 
         const isWindowed =
-            element.props.location.state?.windowed || (element.props.location.pathname === '/' && !introSeen)
+            element.props.location.state?.windowed || (element.props.location.pathname === '/' && !introSeen())
         const shouldExpand =
             element.props.location.state?.expanded ??
             (!keyToUse?.startsWith('ask-max') &&
@@ -2230,7 +2230,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         const urlObj = new URL(location.href)
         const queryString = urlObj?.search.substring(1)
         const parsed = qs.parse(queryString)
-        if ((location.pathname === '/' && !introSeen) || parsed?.windows || location.state?.skipPageUpdate) {
+        if ((location.pathname === '/' && !introSeen()) || parsed?.windows || location.state?.skipPageUpdate) {
             return
         }
         updatePages(element)
