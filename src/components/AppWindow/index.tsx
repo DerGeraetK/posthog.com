@@ -678,6 +678,18 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                 </div>
             ) : (
                 <WindowContainer closing={closing}>
+                    {item.appSettings?.size?.fixed && (
+                        <div
+                            onClick={handleClose}
+                            className={`fixed inset-0 z-50 bg-black/50 ${
+                                closing
+                                    ? 'animate-overlay-fade-out'
+                                    : !skipsOpenAnimation
+                                    ? 'animate-overlay-fade-in'
+                                    : ''
+                            }`}
+                        />
+                    )}
                     <div
                         onMouseDown={handleMouseDown}
                         onAnimationEnd={(e) => {
