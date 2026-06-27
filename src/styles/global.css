@@ -577,6 +577,16 @@ hr {
     }
 }
 
+/* App window scroll viewports — native scrolling with a thicker, themed thumb
+   and no track channel (replaces Radix ScrollArea's JS-driven scrollbar). */
+.app-scroll-viewport {
+    scrollbar-width: thin;
+}
+
+.app-scroll-viewport::-webkit-scrollbar-track {
+    @apply bg-transparent shadow-none;
+}
+
 /* links and text */
 
 *,
