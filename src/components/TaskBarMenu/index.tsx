@@ -14,6 +14,7 @@ import {
     IconFeatures,
     IconPlay,
     IconPeople,
+    IconBadge,
 } from '@posthog/icons'
 import { useApp } from '../../context/App'
 
@@ -189,6 +190,12 @@ export default function TaskBarMenu() {
                                     type: 'item' as const,
                                     label: 'Moderator tools',
                                     disabled: true,
+                                },
+                                {
+                                    type: 'item' as const,
+                                    label: 'Achievements',
+                                    link: '/achievements/manage',
+                                    icon: <IconBadge className="opacity-50 group-hover/item:opacity-75 size-4" />,
                                 },
                                 {
                                     type: 'item' as const,
