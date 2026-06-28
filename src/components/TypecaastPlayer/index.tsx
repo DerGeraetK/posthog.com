@@ -1,7 +1,7 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { Typecaast, type TypecaastConfig, type TypecaastProps } from '@typecaast/react'
+import { useInView } from 'react-intersection-observer'
 import { useApp } from '../../context/App'
-import { useInViewWithinWindow } from './useInViewWithinWindow'
 
 export interface TypecaastPlayerProps extends Omit<TypecaastProps, 'config' | 'theme' | 'className'> {
     /** The exported `typecaast.json` script to play. */
@@ -15,8 +15,7 @@ export interface TypecaastPlayerProps extends Omit<TypecaastProps, 'config' | 't
     /** Override the theme; defaults to the site's light/dark setting. */
     theme?: TypecaastProps['theme']
     /**
-     * Hold playback at the first frame until the player is fully scrolled into view *within
-     * its window panel* (not the browser viewport — see `useInViewWithinWindow`). Defaults to
+     * Hold playback at the first frame until the player is scrolled into view. Defaults to
      * true so an embed never plays out of sight. Set false to play immediately on mount.
      */
     playWhenInView?: boolean
@@ -57,9 +56,7 @@ export default function TypecaastPlayer({
     const { siteSettings } = useApp()
     const resolvedTheme = theme ?? (siteSettings.theme === 'dark' ? 'dark' : 'light')
 
-    const containerRef = useRef<HTMLDivElement>(null)
-    const inView = useInViewWithinWindow(containerRef, inViewThreshold)
-    // Controlled pause: hold at frame 0 until in view (when gated), and honor any caller-supplied pause.
+    const { ref: containerRef, inView } = useInView({ threshold: inViewThreshold, triggerOnce: true })
     const isPaused = (playWhenInView && !inView) || !!paused
 
     return (
