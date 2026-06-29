@@ -515,8 +515,8 @@ const CUSTOMER_DATA: Record<string, BaseCustomer> = {
         notes: 'Network of news websites across Africa',
         featured: false,
         logo: {
-            light: 'https://res.cloudinary.com/dmukukwp6/image/upload/FASTR_Logo_full_color_a8db0d8cb5.png', // placeholder — replace with Legit Media logo
-            dark: 'https://res.cloudinary.com/dmukukwp6/image/upload/FASTR_Logo_white_3c093b166c.png', // placeholder — replace with Legit Media logo
+            light: 'https://res.cloudinary.com/dmukukwp6/image/upload/legit_logo_ad1569a0cd.png',
+            dark: 'https://res.cloudinary.com/dmukukwp6/image/upload/legit_logo_ad1569a0cd.png',
         },
         height: 8,
         quotes: {
@@ -524,7 +524,7 @@ const CUSTOMER_DATA: Record<string, BaseCustomer> = {
                 name: 'Andrey Tovstonog',
                 role: 'CTO',
                 image: {
-                    thumb: 'https://res.cloudinary.com/dmukukwp6/image/upload/Ryan_Breen_456ba746db.jpg', // placeholder — replace with Andrey Tovstonog photo
+                    thumb: 'https://res.cloudinary.com/dmukukwp6/image/upload/andrey_headshot_b9a99442ec.png',
                 },
                 quotes: [
                     "About 1 out of 7 requests was successful. Before switching to Endpoints, during the last few weeks we weren't able to get any reports at all — the API was constantly responding that it was too busy and couldn't process our requests.",

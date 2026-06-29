@@ -10,6 +10,8 @@ date: 2026-06-24
 
 Growing those course subscriptions is a performance marketing operation: paid campaigns running across multiple channels, geographies, and individual specialists at once. The marketing team's weekly reports (which include spend, CPA, conversion rates, upsells, broken down by channel and country) are what drives every budget decision. When those reports stopped arriving reliably, their marketing team was making decisions in the dark.
 
+![Legit Marketing Report](https://res.cloudinary.com/dmukukwp6/image/upload/legit_marketing_report_5432bb4be7.png)
+
 The API that cried busy
 -----------------------
 
@@ -27,6 +29,8 @@ The marketing team was waiting for reports that never arrived, and trying to pie
 
 Found Endpoints, fixed in a few hours
 --------------------------------------
+
+![Legit Endpoints Setup](https://res.cloudinary.com/dmukukwp6/image/upload/legit_endpoints_setup_bf7f1203f7.png)
 
 Legit's CTO went back to the PostHog documentation and found [Endpoints](/endpoints). The idea clicked immediately: instead of raw API calls that had to fight for availability each time, Endpoints wrap SQL queries into stable, callable URLs that are purpose-built for this kind of programmatic access.
 
