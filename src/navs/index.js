@@ -1475,6 +1475,16 @@ export const handbookSidebar = [
                 ],
             },
             {
+                name: 'Guides',
+                url: '',
+                children: [
+                    {
+                        name: 'Using AI to analyze customer issues',
+                        url: '/handbook/cs-and-onboarding/guides/using-ai-to-analyze-customer-issues',
+                    },
+                ],
+            },
+            {
                 name: 'Onboarding',
                 url: '',
                 children: [
