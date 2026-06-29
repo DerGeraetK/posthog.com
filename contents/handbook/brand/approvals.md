@@ -32,7 +32,7 @@ When in doubt, ask in the `#design-review` Slack channel. Lottie and Cory are, f
 - **Marketing team** – Email copy, external partnerships, influencers.
 - **YouTube team** – Video production, editing.
 - **Events team** – In-person events, PostHog speaking engagements, meetups.
-- **Docs & Wizard team** – Docs, obviously. 
+- **Wizard & Docs team** – Docs, obviously. 
 - **Everyone** – Handbook updates. 
 
 ### Graphics team responsibilities
