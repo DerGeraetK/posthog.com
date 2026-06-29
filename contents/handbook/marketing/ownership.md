@@ -20,7 +20,7 @@ We generally only have product marketers on teams that _already_ have a product 
 | *PostHog Slack* | Annika | Cleo | James H |
 | *AI Gateway* | Marco |  | Ben W |
 | *Inbox* | Annika | Sara | James H |
-| *Agents* |  | Joe | Ben W |
+| *Agents* |  | Danilo | Ben W |
 | *MCP* | | Joe | |
 
 <details>
