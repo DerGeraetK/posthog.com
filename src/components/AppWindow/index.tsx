@@ -464,7 +464,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
         setActiveInternalMenu(getActiveInternalMenu())
     }, [item?.path])
 
-    const goBack = () => {
+    const goBack = useCallback(() => {
         if (canGoBack) {
             setActiveHistoryIndex(activeHistoryIndex - 1)
             navigate(history[activeHistoryIndex - 1], {
@@ -473,9 +473,9 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                 },
             })
         }
-    }
+    }, [canGoBack, activeHistoryIndex, history])
 
-    const goForward = () => {
+    const goForward = useCallback(() => {
         if (canGoForward) {
             setActiveHistoryIndex(activeHistoryIndex + 1)
             navigate(history[activeHistoryIndex + 1], {
@@ -484,7 +484,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                 },
             })
         }
-    }
+    }, [canGoForward, activeHistoryIndex, history])
 
     const handleMouseDown = () => {
         if (focusedWindow === item) return

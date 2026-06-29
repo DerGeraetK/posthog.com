@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'components/Link'
-import { useApp } from '../../context/App'
+import { useAppActions, useAppSettings, useAppUIState } from '../../context/App'
 import { GlassIcon, PricingIcon, DemoIcon } from 'components/OSIcons'
 import {
     HOME_SILHOUETTE,
@@ -39,63 +39,68 @@ interface Product {
 }
 
 export const useProductLinks = () => {
-    return [
-        {
-            label: 'Home',
-            Icon: <GlassIcon path={HOME_SILHOUETTE} />,
-            url: '/',
-            source: 'desktop',
-        },
-        {
-            label: 'Self-driving products',
-            Icon: <GlassIcon path={SELF_DRIVING_SILHOUETTE} />,
-            url: '/self-driving',
-            source: 'desktop',
-        },
-        {
-            label: 'Agent skills',
-            Icon: <GlassIcon path={SKILLS_SILHOUETTE} fillRule="evenodd" />,
-            url: '/skills',
-            source: 'desktop',
-        },
-        {
-            label: 'Context warehouse',
-            Icon: <GlassIcon path={CONTEXT_WAREHOUSE_SILHOUETTE} />,
-            url: '/context-warehouse',
-            source: 'desktop',
-        },
-        {
-            label: 'Pricing',
-            Icon: <PricingIcon />,
-            url: '/pricing',
-            source: 'desktop',
-        },
-        {
-            label: 'Docs',
-            Icon: <GlassIcon path={DOCS_SILHOUETTE} fillRule="evenodd" />,
-            url: '/docs',
-            source: 'desktop',
-        },
-        {
-            // Not a glass glyph — a baked light/dark isometric image (see DemoIcon).
-            label: 'demo.mov',
-            Icon: <DemoIcon />,
-            url: '/demo',
-            source: 'desktop',
-        },
-        {
-            label: 'Talk to a human',
-            Icon: <GlassIcon path={TALK_TO_A_HUMAN_SILHOUETTE} />,
-            url: '/talk-to-a-human',
-            source: 'desktop',
-        },
-        {
-            label: 'Download',
-            Icon: <GlassIcon path={DOWNLOAD_SILHOUETTE} fillRule="evenodd" />,
-            url: '/download',
-            source: 'desktop',
-        },
-    ]
+    // Memoized: the list is static, so this avoids rebuilding the array and all the
+    // icon JSX elements on every render (which also gave consumers a new identity each time).
+    return React.useMemo(
+        () => [
+            {
+                label: 'Home',
+                Icon: <GlassIcon path={HOME_SILHOUETTE} />,
+                url: '/',
+                source: 'desktop',
+            },
+            {
+                label: 'Self-driving products',
+                Icon: <GlassIcon path={SELF_DRIVING_SILHOUETTE} />,
+                url: '/self-driving',
+                source: 'desktop',
+            },
+            {
+                label: 'Agent skills',
+                Icon: <GlassIcon path={SKILLS_SILHOUETTE} fillRule="evenodd" />,
+                url: '/skills',
+                source: 'desktop',
+            },
+            {
+                label: 'Context warehouse',
+                Icon: <GlassIcon path={CONTEXT_WAREHOUSE_SILHOUETTE} />,
+                url: '/context-warehouse',
+                source: 'desktop',
+            },
+            {
+                label: 'Pricing',
+                Icon: <PricingIcon />,
+                url: '/pricing',
+                source: 'desktop',
+            },
+            {
+                label: 'Docs',
+                Icon: <GlassIcon path={DOCS_SILHOUETTE} fillRule="evenodd" />,
+                url: '/docs',
+                source: 'desktop',
+            },
+            {
+                // Not a glass glyph — a baked light/dark isometric image (see DemoIcon).
+                label: 'demo.mov',
+                Icon: <DemoIcon />,
+                url: '/demo',
+                source: 'desktop',
+            },
+            {
+                label: 'Talk to a human',
+                Icon: <GlassIcon path={TALK_TO_A_HUMAN_SILHOUETTE} />,
+                url: '/talk-to-a-human',
+                source: 'desktop',
+            },
+            {
+                label: 'Download',
+                Icon: <GlassIcon path={DOWNLOAD_SILHOUETTE} fillRule="evenodd" />,
+                url: '/download',
+                source: 'desktop',
+            },
+        ],
+        []
+    )
 }
 
 export const apps: AppItem[] = [
@@ -189,20 +194,12 @@ const validateIconPositions = (
     return true
 }
 
-export default function Desktop() {
+function Desktop() {
     const productLinks = useProductLinks()
-    const {
-        constraintsRef,
-        siteSettings,
-        screensaverPreviewActive,
-        setScreensaverPreviewActive,
-        setConfetti,
-        confetti,
-        compact,
-        websiteMode,
-        posthogInstance,
-        updateSiteSettings,
-    } = useApp()
+    const { constraintsRef, setScreensaverPreviewActive, setConfetti, updateSiteSettings } = useAppActions()
+    const { siteSettings, compact, websiteMode, posthogInstance } = useAppSettings()
+    const { screensaverPreviewActive, confetti } = useAppUIState()
+
     const [iconPositions, setIconPositions] = useState<IconPositions>({})
     const { isInactive, dismiss } = useInactivityDetection({
         enabled: !siteSettings.screensaverDisabled,
@@ -621,3 +618,8 @@ export default function Desktop() {
         </>
     )
 }
+
+// Memoized so the static desktop chrome doesn't re-render when Wrapper re-renders
+// (e.g. on the navigate() that every window open/close triggers). It takes no
+// props, so it only re-renders on its own state/context changes.
+export default React.memo(Desktop)

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Dialog as RadixDialog } from 'radix-ui'
 import { IconX } from '@posthog/icons'
-import { useApp } from '../../context/App'
+import { useAppSettings } from '../../context/App'
 import { useWindow } from '../../context/Window'
 import OSButton from 'components/OSButton'
 
@@ -30,7 +30,7 @@ const Modal = ({
     showCloseButton = true,
     autoHeight = false,
 }: ModalProps): JSX.Element => {
-    const { websiteMode } = useApp()
+    const { websiteMode } = useAppSettings()
     const { appWindow, activeInternalMenu } = useWindow()
     const title = appWindow?.meta?.title || activeInternalMenu?.name
     return (

@@ -26,7 +26,7 @@ import {
     IconDictator,
     IconSparksJoy,
 } from 'components/OSIcons'
-import { useApp } from '../../context/App'
+import { useAppActions, useAppSettings, useAppWindows } from '../../context/App'
 import { IconChevronDown } from '@posthog/icons'
 import { useHedgehogMode } from 'components/HedgehogMode'
 import { navigate } from 'gatsby'
@@ -335,15 +335,9 @@ const buildProductOSMenuItems = (allProducts: any[]) => {
 export function useMenuData(): MenuType[] {
     const smallTeamsMenuItems = useSmallTeamsMenuItems()
     const allProducts = useProduct() as any[]
-    const {
-        animateClosingAllWindows,
-        windows,
-        setScreensaverPreviewActive,
-        isMobile,
-        websiteMode,
-        siteSettings,
-        updateSiteSettings,
-    } = useApp()
+    const { windows } = useAppWindows()
+    const { animateClosingAllWindows, setScreensaverPreviewActive, updateSiteSettings } = useAppActions()
+    const { isMobile, websiteMode, siteSettings } = useAppSettings()
     const { addToast } = useToast()
     const posthog = usePostHog()
     const [hedgehogModeEnabled, setHedgehogModeEnabled] = useHedgehogMode()

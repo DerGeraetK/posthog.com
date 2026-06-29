@@ -5,7 +5,7 @@ import React, { useMemo } from 'react'
 import usePostHog from '../../hooks/usePostHog'
 import { IconArrowUpRight } from '@posthog/icons'
 import ContextMenu, { ContextMenuItemProps } from 'components/RadixUI/ContextMenu'
-import { useApp } from '../../context/App'
+import { useAppSettings } from '../../context/App'
 import { useWindow } from '../../context/Window'
 
 // Helper function to create standard context menu items
@@ -122,7 +122,7 @@ export default function Link({
     ...other
 }: Props): JSX.Element {
     const { appWindow } = useWindow()
-    const { posthogInstance, compact } = useApp()
+    const { posthogInstance, compact } = useAppSettings()
     const posthog = usePostHog()
     const locationHref = appWindow?.element?.props?.location?.href
     const initialUrl = to || href

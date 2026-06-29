@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Tabs } from 'radix-ui'
 import ScrollArea from 'components/RadixUI/ScrollArea'
 import { useLocation } from '@reach/router'
-import { useApp } from '../../context/App'
+import { useAppSettings } from '../../context/App'
 import { useWindow } from '../../context/Window'
 
 interface TabItem {
@@ -69,7 +69,7 @@ export default function OSTabs({
         orientation === 'horizontal' ? (initialOrderedTabs?.length > 0 ? initialOrderedTabs : [tabs]) : [tabs]
     )
     const ref = useRef<HTMLDivElement>(null)
-    const { websiteMode } = useApp()
+    const { websiteMode } = useAppSettings()
     const { animating } = useWindow()
 
     const calculateTabRows = useCallback(

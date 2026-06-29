@@ -12,7 +12,7 @@ import { layoutLogic } from 'logic/layoutLogic'
 import Mermaid from 'components/Mermaid'
 import Tooltip from 'components/Tooltip'
 import usePostHog from 'hooks/usePostHog'
-import { useApp } from '../../context/App'
+import { useAppSettings, useAppActions } from '../../context/App'
 import { useWindow } from '../../context/Window'
 import { IconArrowUpRight, IconSparkles } from '@posthog/icons'
 import { useLocation } from '@reach/router'
@@ -193,7 +193,8 @@ export const CodeBlock = ({
     }
 
     const codeBlockId = generateRandomHtmlId()
-    const { siteSettings, openNewChat } = useApp()
+    const { siteSettings } = useAppSettings()
+    const { openNewChat } = useAppActions()
     const { appWindow } = useWindow()
     const location = useLocation()
     const [tooltipVisible, setTooltipVisible] = React.useState(false)

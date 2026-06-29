@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { motion, useDragControls } from 'framer-motion'
 import { AppLink, AppItem } from 'components/OSIcons/AppIcon'
 import ZoomHover from 'components/ZoomHover'
-import { useApp } from '../../context/App'
+import { useAppActions, useAppSettings } from '../../context/App'
 
 interface DraggableDesktopIconProps {
     app: AppItem
@@ -15,7 +15,8 @@ export default function DraggableDesktopIcon({ app, initialPosition, onPositionC
     const [isDragging, setIsDragging] = useState(false)
     const [hasDragged, setHasDragged] = useState(false)
     const controls = useDragControls()
-    const { constraintsRef, isMobile } = useApp()
+    const { constraintsRef } = useAppActions()
+    const { isMobile } = useAppSettings()
 
     useEffect(() => {
         setPosition(initialPosition)

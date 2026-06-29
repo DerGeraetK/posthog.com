@@ -157,6 +157,75 @@ interface AppContextType {
     updateTaskbarHeight: () => void
 }
 
+// Keys whose identities are stable for the provider's lifetime (callbacks, state
+// setters, refs). Split into their own context so consumers that only dispatch
+// actions don't re-render when volatile window state changes. See `useAppActions`.
+type AppActionKeys =
+    | 'closeWindow'
+    | 'bringToFront'
+    | 'setWindowTitle'
+    | 'minimizeWindow'
+    | 'addWindow'
+    | 'updateWindowRef'
+    | 'updateWindow'
+    | 'getPositionDefaults'
+    | 'getDesktopCenterPosition'
+    | 'openSearch'
+    | 'handleSnapToSide'
+    | 'constraintsRef'
+    | 'taskbarRef'
+    | 'expandWindow'
+    | 'getExpandedDimensions'
+    | 'openSignIn'
+    | 'openRegister'
+    | 'openForgotPassword'
+    | 'updateSiteSettings'
+    | 'openNewChat'
+    | 'setIsNotificationsPanelOpen'
+    | 'setIsActiveWindowsPanelOpen'
+    | 'openStart'
+    | 'animateClosingAllWindows'
+    | 'closeAllWindows'
+    | 'setClosingAllWindowsAnimation'
+    | 'setScreensaverPreviewActive'
+    | 'setConfetti'
+    | 'copyDesktopParams'
+    | 'setSearchOpen'
+    | 'updateTaskbarHeight'
+
+export type AppActionsContextType = Pick<AppContextType, AppActionKeys> & {
+    // A stable ref to the latest windowsInView, for consumers that need the value
+    // lazily without subscribing to re-renders.
+    windowsInViewRef: React.MutableRefObject<AppWindow[]>
+}
+
+// Rarely-changing global state (display settings, environment flags, nav menu).
+// Split out so consumers reading only these don't re-render when volatile window
+// state (windows, focusedWindow, panels, etc.) changes. See `useAppSettings`.
+type AppSettingsKeys = 'siteSettings' | 'websiteMode' | 'compact' | 'isMobile' | 'posthogInstance' | 'menu'
+
+export type AppSettingsContextType = Pick<AppContextType, AppSettingsKeys>
+
+// Transient global UI flags that toggle independently of window state. Split out so
+// consumers reading these (e.g. the desktop) don't re-render when windows change.
+// See `useAppUIState`.
+type AppUIStateKeys =
+    | 'isNotificationsPanelOpen'
+    | 'isActiveWindowsPanelOpen'
+    | 'closingAllWindowsAnimation'
+    | 'screensaverPreviewActive'
+    | 'confetti'
+    | 'searchOpen'
+
+export type AppUIStateContextType = Pick<AppContextType, AppUIStateKeys>
+
+// The volatile window list, isolated into its own context so consumers that only need
+// `windows` (e.g. the taskbar, the window list) re-render only when windows actually
+// change — not on every unrelated AppProvider render. See `useAppWindows`.
+type AppWindowsKeys = 'windows'
+
+export type AppWindowsContextType = Pick<AppContextType, AppWindowsKeys>
+
 interface AppProviderProps {
     children: React.ReactNode
     location: any
@@ -321,6 +390,83 @@ export const Context = createContext<AppContextType>({
     searchOpen: false,
     setSearchOpen: () => {},
     updateTaskbarHeight: () => {},
+})
+
+// Stable-identity actions context. Consumers that only dispatch actions (open/close
+// windows, toggle panels, etc.) should read from `useAppActions()` so they don't
+// re-render when volatile app state changes.
+export const ActionsContext = createContext<AppActionsContextType>({
+    closeWindow: () => {},
+    bringToFront: () => {},
+    setWindowTitle: () => null,
+    minimizeWindow: () => {},
+    addWindow: () => {},
+    updateWindowRef: () => {},
+    updateWindow: () => {},
+    getPositionDefaults: () => ({ x: 0, y: 0 }),
+    getDesktopCenterPosition: () => ({ x: 0, y: 0 }),
+    openSearch: () => {},
+    handleSnapToSide: () => {},
+    constraintsRef: { current: null },
+    taskbarRef: { current: null },
+    expandWindow: () => {},
+    getExpandedDimensions: () => ({ position: { x: 0, y: 0 }, size: { width: 0, height: 0 } }),
+    openSignIn: () => null,
+    openRegister: () => {},
+    openForgotPassword: () => {},
+    updateSiteSettings: () => {},
+    openNewChat: () => {},
+    setIsNotificationsPanelOpen: () => {},
+    setIsActiveWindowsPanelOpen: () => {},
+    openStart: () => {},
+    animateClosingAllWindows: () => {},
+    closeAllWindows: () => {},
+    setClosingAllWindowsAnimation: () => {},
+    setScreensaverPreviewActive: () => {},
+    setConfetti: () => {},
+    copyDesktopParams: () => {},
+    setSearchOpen: () => {},
+    updateTaskbarHeight: () => {},
+    windowsInViewRef: { current: [] },
+})
+
+// Rarely-changing settings context. Consumers that only read display settings /
+// environment flags / the nav menu should read from `useAppSettings()` so they
+// don't re-render when volatile window state changes.
+export const SettingsContext = createContext<AppSettingsContextType>({
+    siteSettings: {
+        theme: 'light',
+        experience: 'posthog',
+        colorMode: 'light',
+        skinMode: 'modern',
+        cursor: 'default',
+        wallpaper: 'keyboard-garden',
+        screensaverDisabled: true,
+        heaterMode: false,
+        clickBehavior: 'double',
+        performanceBoost: false,
+    },
+    websiteMode: false,
+    compact: false,
+    isMobile: false,
+    posthogInstance: undefined,
+    menu: [],
+})
+
+// Transient UI-flags context. Consumers reading only these (panels, confetti,
+// screensaver, search) should read from `useAppUIState()` so they don't re-render
+// when volatile window state changes.
+export const UIStateContext = createContext<AppUIStateContextType>({
+    isNotificationsPanelOpen: false,
+    isActiveWindowsPanelOpen: false,
+    closingAllWindowsAnimation: false,
+    screensaverPreviewActive: false,
+    confetti: false,
+    searchOpen: false,
+})
+
+export const WindowsContext = createContext<AppWindowsContextType>({
+    windows: [],
 })
 
 export interface AppSetting {
@@ -1436,6 +1582,13 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const [lastClickedElementRect, setLastClickedElementRect] = useState<{ x: number; y: number } | null>(null)
     const [desktopCopied, setDesktopCopied] = useState(false)
     const [windowsInView, setWindowsInView] = useState<AppWindow[]>([])
+    // Stable ref mirror of windowsInView so consumers that only need the latest value
+    // lazily (e.g. useInactivityDetection inside a timeout) can read it without
+    // subscribing to the volatile context and re-rendering on every provider render.
+    const windowsInViewRef = useRef(windowsInView)
+    useEffect(() => {
+        windowsInViewRef.current = windowsInView
+    }, [windowsInView])
     const stateWindows = element.props?.location?.state?.savedWindows
     const posthog = usePostHog()
     const introSeen = () => {
@@ -1581,7 +1734,9 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         })
     }, [])
 
-    const menu = injectDynamicChildren(initialMenu)
+    // Stabilize identity so the settings context (and `menu` consumers) don't churn
+    // on every provider render. `injectDynamicChildren` is referentially stable.
+    const menu = useMemo(() => injectDynamicChildren(initialMenu), [injectDynamicChildren])
 
     const closeWindow = useCallback((item: AppWindow) => {
         setTimeout(() => {
@@ -2749,64 +2904,185 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         }
     }, [windows])
 
+    // Keep the latest implementations in a ref so the stable wrappers below always
+    // call the freshest closures (no stale state) while keeping a constant identity.
+    const latestActionsRef = useRef<AppActionsContextType>()
+    latestActionsRef.current = {
+        closeWindow,
+        bringToFront,
+        setWindowTitle,
+        minimizeWindow,
+        addWindow,
+        updateWindowRef,
+        updateWindow,
+        getPositionDefaults,
+        getDesktopCenterPosition,
+        openSearch,
+        handleSnapToSide,
+        constraintsRef,
+        taskbarRef,
+        expandWindow,
+        getExpandedDimensions,
+        openSignIn,
+        openRegister,
+        openForgotPassword,
+        updateSiteSettings,
+        openNewChat,
+        setIsNotificationsPanelOpen,
+        setIsActiveWindowsPanelOpen,
+        openStart,
+        animateClosingAllWindows,
+        closeAllWindows,
+        setClosingAllWindowsAnimation,
+        setScreensaverPreviewActive,
+        setConfetti,
+        copyDesktopParams,
+        setSearchOpen,
+        updateTaskbarHeight,
+        windowsInViewRef,
+    }
+
+    // Stable-identity actions object. Refs and state setters are already stable and
+    // pass through directly; callbacks forward to the latest implementation. This
+    // object never changes identity, so `useAppActions()` consumers don't re-render
+    // when volatile app state changes.
+    const actions = useMemo<AppActionsContextType>(
+        () => ({
+            closeWindow: (...args) => latestActionsRef.current!.closeWindow(...args),
+            bringToFront: (...args) => latestActionsRef.current!.bringToFront(...args),
+            setWindowTitle: (...args) => latestActionsRef.current!.setWindowTitle(...args),
+            minimizeWindow: (...args) => latestActionsRef.current!.minimizeWindow(...args),
+            addWindow: (...args) => latestActionsRef.current!.addWindow(...args),
+            updateWindowRef: (...args) => latestActionsRef.current!.updateWindowRef(...args),
+            updateWindow: (...args) => latestActionsRef.current!.updateWindow(...args),
+            getPositionDefaults: (...args) => latestActionsRef.current!.getPositionDefaults(...args),
+            getDesktopCenterPosition: (...args) => latestActionsRef.current!.getDesktopCenterPosition(...args),
+            openSearch: (...args) => latestActionsRef.current!.openSearch(...args),
+            handleSnapToSide: (...args) => latestActionsRef.current!.handleSnapToSide(...args),
+            expandWindow: (...args) => latestActionsRef.current!.expandWindow(...args),
+            getExpandedDimensions: (...args) => latestActionsRef.current!.getExpandedDimensions(...args),
+            openSignIn: (...args) => latestActionsRef.current!.openSignIn(...args),
+            openRegister: (...args) => latestActionsRef.current!.openRegister(...args),
+            openForgotPassword: (...args) => latestActionsRef.current!.openForgotPassword(...args),
+            updateSiteSettings: (...args) => latestActionsRef.current!.updateSiteSettings(...args),
+            openNewChat: (...args) => latestActionsRef.current!.openNewChat(...args),
+            openStart: (...args) => latestActionsRef.current!.openStart(...args),
+            animateClosingAllWindows: (...args) => latestActionsRef.current!.animateClosingAllWindows(...args),
+            closeAllWindows: (...args) => latestActionsRef.current!.closeAllWindows(...args),
+            copyDesktopParams: (...args) => latestActionsRef.current!.copyDesktopParams(...args),
+            updateTaskbarHeight: (...args) => latestActionsRef.current!.updateTaskbarHeight(...args),
+            setIsNotificationsPanelOpen,
+            setIsActiveWindowsPanelOpen,
+            setClosingAllWindowsAnimation,
+            setScreensaverPreviewActive,
+            setConfetti,
+            setSearchOpen,
+            constraintsRef,
+            taskbarRef,
+            windowsInViewRef,
+        }),
+        []
+    )
+
+    const settings = useMemo<AppSettingsContextType>(
+        () => ({
+            siteSettings,
+            websiteMode,
+            compact,
+            isMobile,
+            posthogInstance,
+            menu,
+        }),
+        [siteSettings, websiteMode, compact, isMobile, posthogInstance, menu]
+    )
+
+    const uiState = useMemo<AppUIStateContextType>(
+        () => ({
+            isNotificationsPanelOpen,
+            isActiveWindowsPanelOpen,
+            closingAllWindowsAnimation,
+            screensaverPreviewActive,
+            confetti,
+            searchOpen,
+        }),
+        [
+            isNotificationsPanelOpen,
+            isActiveWindowsPanelOpen,
+            closingAllWindowsAnimation,
+            screensaverPreviewActive,
+            confetti,
+            searchOpen,
+        ]
+    )
+
+    const windowsValue = useMemo<AppWindowsContextType>(() => ({ windows }), [windows])
+
     return (
-        <Context.Provider
-            value={{
-                windows,
-                closeWindow,
-                bringToFront,
-                setWindowTitle,
-                focusedWindow,
-                location,
-                minimizeWindow,
-                taskbarHeight,
-                addWindow,
-                updateWindowRef,
-                getPositionDefaults,
-                updateWindow,
-                getDesktopCenterPosition,
-                openSearch,
-                handleSnapToSide,
-                constraintsRef,
-                taskbarRef,
-                expandWindow,
-                getExpandedDimensions,
-                openSignIn,
-                openRegister,
-                openForgotPassword,
-                siteSettings,
-                updateSiteSettings,
-                openNewChat,
-                isNotificationsPanelOpen,
-                setIsNotificationsPanelOpen,
-                isActiveWindowsPanelOpen,
-                setIsActiveWindowsPanelOpen,
-                isMobile,
-                compact,
-                menu,
-                openStart,
-                animateClosingAllWindows,
-                closingAllWindowsAnimation,
-                setClosingAllWindowsAnimation,
-                closeAllWindows,
-                screensaverPreviewActive,
-                setScreensaverPreviewActive,
-                setConfetti,
-                confetti,
-                posthogInstance,
-                websiteMode,
-                desktopParams,
-                copyDesktopParams,
-                desktopCopied,
-                shareableDesktopURL,
-                windowsInView,
-                searchOpen,
-                setSearchOpen,
-                updateTaskbarHeight,
-            }}
-        >
-            {children}
-        </Context.Provider>
+        <ActionsContext.Provider value={actions}>
+            <SettingsContext.Provider value={settings}>
+                <UIStateContext.Provider value={uiState}>
+                    <WindowsContext.Provider value={windowsValue}>
+                        <Context.Provider
+                            value={{
+                                windows,
+                                closeWindow,
+                                bringToFront,
+                                setWindowTitle,
+                                focusedWindow,
+                                location,
+                                minimizeWindow,
+                                taskbarHeight,
+                                addWindow,
+                                updateWindowRef,
+                                getPositionDefaults,
+                                updateWindow,
+                                getDesktopCenterPosition,
+                                openSearch,
+                                handleSnapToSide,
+                                constraintsRef,
+                                taskbarRef,
+                                expandWindow,
+                                getExpandedDimensions,
+                                openSignIn,
+                                openRegister,
+                                openForgotPassword,
+                                siteSettings,
+                                updateSiteSettings,
+                                openNewChat,
+                                isNotificationsPanelOpen,
+                                setIsNotificationsPanelOpen,
+                                isActiveWindowsPanelOpen,
+                                setIsActiveWindowsPanelOpen,
+                                isMobile,
+                                compact,
+                                menu,
+                                openStart,
+                                animateClosingAllWindows,
+                                closingAllWindowsAnimation,
+                                setClosingAllWindowsAnimation,
+                                closeAllWindows,
+                                screensaverPreviewActive,
+                                setScreensaverPreviewActive,
+                                setConfetti,
+                                confetti,
+                                posthogInstance,
+                                websiteMode,
+                                desktopParams,
+                                copyDesktopParams,
+                                desktopCopied,
+                                shareableDesktopURL,
+                                windowsInView,
+                                searchOpen,
+                                setSearchOpen,
+                                updateTaskbarHeight,
+                            }}
+                        >
+                            {children}
+                        </Context.Provider>
+                    </WindowsContext.Provider>
+                </UIStateContext.Provider>
+            </SettingsContext.Provider>
+        </ActionsContext.Provider>
     )
 }
 
@@ -2818,4 +3094,32 @@ export const useApp = (): AppContextType => {
     }
 
     return context
+}
+
+// Subscribe only to the stable actions (callbacks, setters, refs) without
+// re-rendering when volatile app state changes. Prefer this over `useApp()` in
+// components that only dispatch actions and don't read state.
+export const useAppActions = (): AppActionsContextType => {
+    return useContext(ActionsContext)
+}
+
+// Subscribe only to rarely-changing settings (display settings, environment flags,
+// nav menu) without re-rendering when volatile window state changes. Prefer this
+// over `useApp()` in components that only read these values.
+export const useAppSettings = (): AppSettingsContextType => {
+    return useContext(SettingsContext)
+}
+
+// Subscribe only to transient UI flags (panels, confetti, screensaver, search)
+// without re-rendering when volatile window state changes. Prefer this over
+// `useApp()` in components that only read these flags.
+export const useAppUIState = (): AppUIStateContextType => {
+    return useContext(UIStateContext)
+}
+
+// Subscribe only to the window list. Re-renders when windows change but not on
+// unrelated AppProvider renders. Prefer this over `useApp()` in components that
+// only need `windows` (e.g. taskbar, window list).
+export const useAppWindows = (): AppWindowsContextType => {
+    return useContext(WindowsContext)
 }

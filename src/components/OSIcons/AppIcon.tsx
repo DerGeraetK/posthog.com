@@ -3,7 +3,7 @@ import { BaseIcon, type IconProps } from './Icons'
 import Link from 'components/Link'
 import { useRef } from 'react'
 import useTheme from '../../hooks/useTheme'
-import { useApp } from '../../context/App'
+import { useAppSettings } from '../../context/App'
 import usePostHog from 'hooks/usePostHog'
 
 // App icon mapping for different skins
@@ -314,7 +314,7 @@ export const AppLink = ({
     external,
 }: AppItem) => {
     const posthog = usePostHog()
-    const { posthogInstance } = useApp()
+    const { posthogInstance } = useAppSettings()
     const ref = useRef<HTMLSpanElement>(null)
     const { getThemeSpecificBackgroundColors } = useTheme()
 

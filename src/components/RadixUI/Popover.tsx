@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import { Popover as RadixPopover } from 'radix-ui'
 import ScrollArea from 'components/RadixUI/ScrollArea'
 import { IconX } from '@posthog/icons'
-import { useApp } from '../../context/App'
+import { useAppSettings } from '../../context/App'
 
 interface PopoverProps {
     trigger: React.ReactNode
@@ -36,7 +36,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
         ref
     ) => {
         const scrollRef = useRef<HTMLDivElement>(null)
-        const { websiteMode } = useApp()
+        const { websiteMode } = useAppSettings()
         const [appContainer, setAppContainer] = useState<HTMLElement | null>(null)
 
         useEffect(() => {

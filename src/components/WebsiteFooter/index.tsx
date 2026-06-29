@@ -10,7 +10,7 @@ const legalLinks = [
     { label: 'HIPAA', url: '/docs/privacy/hipaa-compliance' },
 ]
 
-export default function WebsiteFooter(): React.ReactElement {
+function WebsiteFooter(): React.ReactElement {
     return (
         <footer className={`@container z-40 os:hidden`}>
             <div data-scheme="secondary" className="bg-primary border-t border-primary">
@@ -37,3 +37,7 @@ export default function WebsiteFooter(): React.ReactElement {
         </footer>
     )
 }
+
+// Static chrome with no props or app-context use; memoized so it doesn't re-render
+// when Wrapper re-renders on navigation.
+export default React.memo(WebsiteFooter)

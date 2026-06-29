@@ -15,7 +15,7 @@ import {
     IconPeople,
     IconPinFilled,
 } from '@posthog/icons'
-import { useApp } from '../../context/App'
+import { useAppActions, useAppSettings, useAppUIState, useAppWindows } from '../../context/App'
 
 import MenuBar, { MenuType } from 'components/RadixUI/MenuBar'
 import ActiveWindowsPanel from 'components/ActiveWindowsPanel'
@@ -30,9 +30,9 @@ import KeyboardShortcut from 'components/KeyboardShortcut'
 import { Popover } from 'components/RadixUI/Popover'
 import { SearchUI } from 'components/SearchUI'
 
-export default function TaskBarMenu() {
+function TaskBarMenu() {
+    const { windows } = useAppWindows()
     const {
-        windows,
         openSearch,
         openSignIn,
         openNewChat,
@@ -40,12 +40,11 @@ export default function TaskBarMenu() {
         setIsActiveWindowsPanelOpen,
         addWindow,
         taskbarRef,
-        posthogInstance,
-        websiteMode,
-        searchOpen,
         setSearchOpen,
         updateTaskbarHeight,
-    } = useApp()
+    } = useAppActions()
+    const { posthogInstance, websiteMode } = useAppSettings()
+    const { searchOpen } = useAppUIState()
     const [isAnimating, setIsAnimating] = useState(false)
     const shouldAnimate = useRef(
         typeof window !== 'undefined' && window.location.pathname === '/' && !localStorage.getItem('intro-seen')
@@ -452,3 +451,7 @@ export default function TaskBarMenu() {
         </>
     )
 }
+
+// Memoized so it survives Wrapper re-renders (e.g. the navigate() on window
+// open/close); it still updates when it reads changed context (windows, searchOpen).
+export default React.memo(TaskBarMenu)

@@ -4,7 +4,7 @@ import { IconChevronDown, IconChevronRight } from '@posthog/icons'
 import Link from 'components/Link'
 import ScrollArea from './ScrollArea'
 import KeyboardShortcut from 'components/KeyboardShortcut'
-import { useApp } from '../../context/App'
+import { useAppSettings } from '../../context/App'
 import { navigate } from 'gatsby'
 
 // Types
@@ -314,7 +314,7 @@ export interface MenuBarProps {
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({ menus, className, triggerAsChild, customTriggerClasses }) => {
-    const { isMobile, websiteMode } = useApp()
+    const { isMobile, websiteMode } = useAppSettings()
 
     const [openMenuIndex, setOpenMenuIndex] = React.useState<number | null>(null)
     const rootRef = React.useRef<HTMLDivElement | null>(null)
