@@ -10,6 +10,12 @@ const markdownLinkExtractor = require('markdown-link-extractor')
 
 const isMinimalBuild = process.env.GATSBY_MINIMAL === 'true'
 
+const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000
+const shouldDefer = (dateString: string | null | undefined): boolean => {
+    if (!dateString) return true
+    return Date.now() - new Date(dateString).getTime() > ONE_MONTH_MS
+}
+
 export const createPages: GatsbyNode['createPages'] = async ({ actions: { createPage }, graphql }) => {
     if (isMinimalBuild) {
         return createMinimalPages({ createPage, graphql })
@@ -151,6 +157,9 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                     fields {
                         slug
                     }
+                    frontmatter {
+                        date
+                    }
                 }
                 categories: group(field: frontmatter___tags) {
                     totalCount
@@ -228,6 +237,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                         slug
                     }
                     frontmatter {
+                        date
                         category
                         tags
                     }
@@ -251,6 +261,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                         slug
                     }
                     frontmatter {
+                        date
                         category
                         tags
                     }
@@ -327,6 +338,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                         slug
                     }
                     frontmatter {
+                        date
                         category
                         tags
                     }
@@ -576,7 +588,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
         }
     }
 
-    function createPosts(data, menu, template, breadcrumbBase, context) {
+    function createPosts(data, menu, template, breadcrumbBase, context?, { defer = false } = {}) {
         data.forEach((node) => {
             const links =
                 node?.rawBody &&
@@ -613,6 +625,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                     searchFilter: menu,
                     ...(context ? context(node) : {}),
                 },
+                defer,
             })
         })
     }
@@ -649,6 +662,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                 path: i === 0 ? base : `${base}/${i + 1}`,
                 component: template,
                 context,
+                defer: i > 0,
             })
         })
     }
@@ -785,6 +799,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                         article: false,
                         root: categoryFolder,
                     },
+                    defer: true,
                 })
             })
         }
@@ -807,9 +822,16 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
         url: '/product-engineer',
     })
     createPosts(result.data.docs.nodes, 'docs', HandbookTemplate, { name: 'Docs', url: '/docs' })
-    createPosts(result.data.apidocs.nodes, 'docs', ApiEndpoint, { name: 'Docs', url: '/docs' }, (node) => ({
-        regex: `$${node.url}/`,
-    }))
+    createPosts(
+        result.data.apidocs.nodes,
+        'docs',
+        ApiEndpoint,
+        { name: 'Docs', url: '/docs' },
+        (node) => ({
+            regex: `$${node.url}/`,
+        }),
+        { defer: true }
+    )
     createPosts(result.data.manual.nodes, 'docs', HandbookTemplate, { name: 'Using PostHog', url: '/using-posthog' })
 
     result.data.tutorials.nodes.forEach((node) => {
@@ -826,6 +848,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                 article: true,
                 askMax: true,
             },
+            defer: shouldDefer(node.frontmatter?.date),
         })
     })
 
@@ -842,6 +865,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                 post: true,
                 article: true,
             },
+            defer: shouldDefer(node.frontmatter?.date),
         })
     })
 
@@ -860,6 +884,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                 article: true,
                 languageAlternates: isEnglishNewsletter ? getNewsletterLanguageAlternates(slug) : undefined,
             },
+            defer: shouldDefer(node.frontmatter?.date),
         })
     })
 
@@ -883,6 +908,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                     ? getNewsletterLanguageAlternates(slug, translationOf)
                     : undefined,
             },
+            defer: true,
         })
     })
 
@@ -905,6 +931,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                 id: node.id,
                 strapiID: node.strapiID,
             },
+            defer: true,
         })
     })
 
@@ -921,6 +948,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                 post: true,
                 article: true,
             },
+            defer: true,
         })
     })
 
@@ -974,6 +1002,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
             context: {
                 id: node.id,
             },
+            defer: true,
         })
     })
 
@@ -985,6 +1014,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
             context: {
                 slug: node.fields.slug,
             },
+            defer: true,
         })
     })
 
@@ -1036,6 +1066,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
             path: `/docs/cdp/${node.type}s/${node.slug}`,
             component: DataPipeline,
             context: { id: node.id, ignoreWrapper: true },
+            defer: true,
         })
     })
 
@@ -1045,11 +1076,13 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
             path: `/docs/data-warehouse/sources/${node.slug}`,
             component: DataWarehouseSource,
             context: { id: node.id, ignoreWrapper: true },
+            defer: true,
         })
         createPage({
             path: `/docs/cdp/sources/${node.slug}`,
             component: DataWarehouseSource,
             context: { id: node.id, ignoreWrapper: true },
+            defer: true,
         })
     })
 
@@ -1123,9 +1156,9 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                     description: node.info.description,
                     fullReference: node,
                     regex: `/docs/references/${node.id}`,
-                    // Null checks, only affects type crosslinking, won't break build
                     types: sdkTypesByReference?.[node.referenceId]?.[node.version] ?? [],
                 },
+                defer: true,
             })
         }
     })
@@ -1144,6 +1177,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                             types: sdkTypesByReference?.[node.referenceId]?.[node.version] ?? [],
                             slugPrefix: node.referenceId,
                         },
+                        defer: true,
                     })
                 } else {
                     createPage({
@@ -1156,6 +1190,7 @@ export const createPages: GatsbyNode['createPages'] = async ({ actions: { create
                             types: sdkTypesByReference?.[node.referenceId]?.[node.version] ?? [],
                             slugPrefix: node.id,
                         },
+                        defer: true,
                     })
                 }
             }
