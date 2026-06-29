@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import SEO from 'components/seo'
 import Editor from 'components/Editor'
 import {
@@ -11,7 +11,6 @@ import {
     IconCheckCircle,
     IconLlmPromptEvaluation,
 } from '@posthog/icons'
-import OSButton from 'components/OSButton'
 import { WaitlistForm } from 'components/WaitlistForm'
 import CloudinaryImage from 'components/CloudinaryImage'
 
@@ -86,10 +85,8 @@ const useCaseCards = [
 ]
 
 function HeroSection() {
-    const [showForm, setShowForm] = useState(false)
-
     return (
-        <section className="my-6 @4xl/editor:mb-16 tracking-[-0.0125em] max-w-3xl mx-auto px-4 @xl:px-8">
+        <section id="waitlist" className="my-6 @4xl/editor:mb-16 tracking-[-0.0125em] max-w-3xl mx-auto px-4 @xl:px-8">
             <div className="mb-8 ">
                 <div className="mb-6 flex justify-center @2xl:hidden">
                     <CloudinaryImage
@@ -112,21 +109,12 @@ function HeroSection() {
                             findings, while <strong>Replay Vision</strong> does the homework.
                         </p>
                         <div className="@container max-w-sm">
-                            {showForm ? (
-                                <WaitlistForm
-                                    autoFocus
-                                    showDiscord={false}
-                                    productHandle="replay_vision"
-                                    productName="Replay Vision"
-                                    surveyId={SURVEY_ID}
-                                />
-                            ) : (
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <OSButton variant="primary" size="lg" onClick={() => setShowForm(true)}>
-                                        Join the waitlist
-                                    </OSButton>
-                                </div>
-                            )}
+                            <WaitlistForm
+                                showDiscord={false}
+                                productHandle="replay_vision"
+                                productName="Replay Vision"
+                                surveyId={SURVEY_ID}
+                            />
                         </div>
                     </div>
                     <CloudinaryImage
