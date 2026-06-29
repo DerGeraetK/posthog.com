@@ -146,7 +146,6 @@ interface AppContextType {
     setConfetti: (isActive: boolean) => void
     confetti: boolean
     posthogInstance?: string
-    websiteMode: boolean
     desktopParams?: string
     copyDesktopParams: () => void
     desktopCopied: boolean
@@ -202,7 +201,7 @@ export type AppActionsContextType = Pick<AppContextType, AppActionKeys> & {
 // Rarely-changing global state (display settings, environment flags, nav menu).
 // Split out so consumers reading only these don't re-render when volatile window
 // state (windows, focusedWindow, panels, etc.) changes. See `useAppSettings`.
-type AppSettingsKeys = 'siteSettings' | 'websiteMode' | 'compact' | 'isMobile' | 'posthogInstance' | 'menu'
+type AppSettingsKeys = 'siteSettings' | 'compact' | 'isMobile' | 'posthogInstance' | 'menu'
 
 export type AppSettingsContextType = Pick<AppContextType, AppSettingsKeys>
 
@@ -381,7 +380,6 @@ export const Context = createContext<AppContextType>({
     setConfetti: () => {},
     confetti: false,
     posthogInstance: undefined,
-    websiteMode: false,
     desktopParams: undefined,
     copyDesktopParams: () => {},
     desktopCopied: false,
@@ -446,7 +444,6 @@ export const SettingsContext = createContext<AppSettingsContextType>({
         clickBehavior: 'double',
         performanceBoost: false,
     },
-    websiteMode: false,
     compact: false,
     isMobile: false,
     posthogInstance: undefined,
@@ -1577,7 +1574,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         screensaverDisabled: true,
         heaterMode: false,
     })
-    const websiteMode = siteSettings.experience === 'boring'
     const [taskbarHeight, setTaskbarHeight] = useState(59)
     const [lastClickedElementRect, setLastClickedElementRect] = useState<{ x: number; y: number } | null>(null)
     const [desktopCopied, setDesktopCopied] = useState(false)
@@ -1785,13 +1781,11 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
     const replaceFocusedWindow = useCallback(
         (newWindow: AppWindow) => {
-            // Find the highest zIndex window, excluding floating modals in websiteMode
-            const windowToReplace = windows
-                .filter((w) => !websiteMode || w.appSettings?.modal?.type !== 'floating')
-                .reduce<AppWindow | undefined>(
-                    (highest, current) => (current.zIndex > (highest?.zIndex ?? -1) ? current : highest),
-                    undefined
-                )
+            // Find the highest zIndex window
+            const windowToReplace = windows.reduce<AppWindow | undefined>(
+                (highest, current) => (current.zIndex > (highest?.zIndex ?? -1) ? current : highest),
+                undefined
+            )
 
             if (windowToReplace) {
                 setWindows((windows) =>
@@ -1818,7 +1812,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                 setWindows((windows) => [...windows, newWindow])
             }
         },
-        [windows, websiteMode]
+        [windows]
     )
 
     const setWindowTitle = useCallback((appWindow: AppWindow, title: string) => {
@@ -2059,10 +2053,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             }
         }
 
-        if (websiteMode && (newWindow.appSettings?.size?.fixed || newWindow.appSettings?.modal)) {
-            newWindow.modal = { type: 'standard' as const, ...newWindow.appSettings?.modal }
-        }
-
         return { ...newWindow, ...options }
     }
 
@@ -2186,10 +2176,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     }
 
     const openSearch = (initialFilter?: string) => {
-        if (websiteMode) {
-            setSearchOpen((prev) => !prev)
-            return
-        }
         addWindow(
             <WindowSearchUI
                 location={{ pathname: `search` }}
@@ -2655,15 +2641,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         }
     }, [siteSettings])
 
-    // Sync websiteMode to HTML attribute for CSS variants
-    useEffect(() => {
-        if (websiteMode) {
-            document.documentElement.dataset.websiteMode = ''
-        } else {
-            delete document.documentElement.dataset.websiteMode
-        }
-    }, [websiteMode])
-
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768)
@@ -2673,36 +2650,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
 
         return () => window.removeEventListener('resize', handleResize)
     }, [])
-
-    // In website mode, sync window sizes to browser viewport on resize
-    useEffect(() => {
-        if (!websiteMode || isSSR) return
-
-        const handleResize = () => {
-            const newWidth = window.innerWidth
-            const newHeight = window.innerHeight - taskbarHeight
-
-            setWindows((currentWindows) =>
-                currentWindows.map((w) => ({
-                    ...w,
-                    ...(w.appSettings?.size?.fixed || w.appSettings?.modal
-                        ? {}
-                        : {
-                              size: {
-                                  width: newWidth,
-                                  height: newHeight,
-                              },
-                          }),
-                }))
-            )
-        }
-
-        // Set initial size
-        handleResize()
-
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
-    }, [websiteMode, taskbarHeight, isSSR])
 
     useEffect(() => {
         if (compact) {
@@ -2768,22 +2715,9 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     }, [])
 
     useEffect(() => {
-        if (websiteMode) {
-            const windowsSortedByZIndex = windows.sort((a, b) => b.zIndex - a.zIndex)
-            const currentWindow = windowsSortedByZIndex.find((w) => !w.appSettings?.size?.fixed)
-            const modalWindow = windowsSortedByZIndex.find((w) => w.appSettings?.size?.fixed || w.appSettings?.modal)
-            const newWindows = [
-                ...(currentWindow ? [currentWindow] : []),
-                ...(modalWindow
-                    ? [{ ...modalWindow, modal: { type: 'standard' as const, ...modalWindow.appSettings?.modal } }]
-                    : []),
-            ]
-            setWindows(newWindows)
-        } else {
-            const newWindows = windows.map((w) => ({ ...w, modal: undefined }))
-            setWindows(newWindows)
-        }
-    }, [websiteMode])
+        const newWindows = windows.map((w) => ({ ...w, modal: undefined }))
+        setWindows(newWindows)
+    }, [])
 
     const convertWindowsToPixels = (windows: any[]) => {
         const innerWidth = window.innerWidth
@@ -2898,12 +2832,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         setWindowsInView(visibleWindows)
     }, [windows])
 
-    useEffect(() => {
-        if (websiteMode && windows.length <= 0) {
-            navigate('/')
-        }
-    }, [windows])
-
     // Keep the latest implementations in a ref so the stable wrappers below always
     // call the freshest closures (no stale state) while keeping a constant identity.
     const latestActionsRef = useRef<AppActionsContextType>()
@@ -2987,13 +2915,12 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const settings = useMemo<AppSettingsContextType>(
         () => ({
             siteSettings,
-            websiteMode,
             compact,
             isMobile,
             posthogInstance,
             menu,
         }),
-        [siteSettings, websiteMode, compact, isMobile, posthogInstance, menu]
+        [siteSettings, compact, isMobile, posthogInstance, menu]
     )
 
     const uiState = useMemo<AppUIStateContextType>(
@@ -3066,7 +2993,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                                 setConfetti,
                                 confetti,
                                 posthogInstance,
-                                websiteMode,
                                 desktopParams,
                                 copyDesktopParams,
                                 desktopCopied,

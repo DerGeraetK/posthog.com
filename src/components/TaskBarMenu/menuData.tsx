@@ -337,7 +337,7 @@ export function useMenuData(): MenuType[] {
     const allProducts = useProduct() as any[]
     const { windows } = useAppWindows()
     const { animateClosingAllWindows, setScreensaverPreviewActive, updateSiteSettings } = useAppActions()
-    const { isMobile, websiteMode, siteSettings } = useAppSettings()
+    const { isMobile, siteSettings } = useAppSettings()
     const { addToast } = useToast()
     const posthog = usePostHog()
     const [hedgehogModeEnabled, setHedgehogModeEnabled] = useHedgehogMode()
@@ -816,24 +816,22 @@ export function useMenuData(): MenuType[] {
             : [
                   {
                       type: 'item' as const,
-                      label: websiteMode ? 'Switch to OS mode' : 'Switch to website mode',
+                      label: 'Switch to website mode',
                       onClick: () => {
-                          const newExperience = websiteMode ? 'posthog' : 'boring'
+                          const newExperience = 'boring'
                           updateSiteSettings({ ...siteSettings, experience: newExperience })
                           posthog?.capture('switched site mode', {
-                              value: newExperience === 'posthog' ? 'os' : 'website',
+                              value: 'website',
                               source: 'menu',
                           })
                           addToast({
-                              title: `Switched to ${websiteMode ? 'OS mode' : 'website mode'}`,
-                              description: `${websiteMode ? 'Click' : 'Hover'} the logo to return to ${
-                                  websiteMode ? 'website mode' : 'OS mode'
-                              }.`,
+                              title: 'Switched to website mode',
+                              description: 'Hover the logo to return to OS mode.',
                               duration: 5000,
                               onUndo: () => {
                                   updateSiteSettings({
                                       ...siteSettings,
-                                      experience: websiteMode ? 'posthog' : 'boring',
+                                      experience: 'boring',
                                   })
                               },
                           })
@@ -937,28 +935,24 @@ export function useMenuData(): MenuType[] {
         : [
               // Desktop: only show system items
               ...baseLogoMenuItems,
-              ...(!websiteMode
-                  ? [
-                        { type: 'separator' as const },
-                        {
-                            type: 'item' as const,
-                            label: 'Start screensaver',
-                            onClick: () => {
-                                setScreensaverPreviewActive(true)
-                            },
-                            shortcut: ['Shift', 'Z'],
-                        },
-                        {
-                            type: 'item' as const,
-                            label: 'Close all windows',
-                            disabled: windows.length < 1,
-                            onClick: () => {
-                                animateClosingAllWindows()
-                            },
-                            shortcut: ['Shift', 'X'],
-                        },
-                    ]
-                  : []),
+              { type: 'separator' as const },
+              {
+                  type: 'item' as const,
+                  label: 'Start screensaver',
+                  onClick: () => {
+                      setScreensaverPreviewActive(true)
+                  },
+                  shortcut: ['Shift', 'Z'],
+              },
+              {
+                  type: 'item' as const,
+                  label: 'Close all windows',
+                  disabled: windows.length < 1,
+                  onClick: () => {
+                      animateClosingAllWindows()
+                  },
+                  shortcut: ['Shift', 'X'],
+              },
           ]
 
     return [
@@ -970,19 +964,15 @@ export function useMenuData(): MenuType[] {
                             wordmark={false}
                             variant="mono"
                             color="primary"
-                            className="2xs:hidden md:block os:size-8 os:md:size-6 website:size-10"
+                            className="2xs:hidden md:block size-8 md:size-6"
                         />
-                        <Logo
-                            variant="mono"
-                            color="primary"
-                            className="hidden 2xs:flex md:hidden w-auto os:h-5 website:h-7"
-                        />
+                        <Logo variant="mono" color="primary" className="hidden 2xs:flex md:hidden w-auto h-5" />
                         <IconChevronDown className="size-6 inline-block md:hidden text-muted" />
                     </div>
                 </>
             ),
             items: logoMenuItems,
-            mobileLink: websiteMode ? '/' : undefined,
+            mobileLink: undefined,
             hideChevron: true,
         },
         // On desktop, show main navigation items

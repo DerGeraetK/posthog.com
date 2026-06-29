@@ -65,9 +65,7 @@ export default function TaskBarMenu() {
         addWindow,
         taskbarRef,
         posthogInstance,
-        websiteMode,
         searchOpen,
-        setSearchOpen,
     } = useApp()
     const [isAnimating, setIsAnimating] = useState(false)
     const [rendered, setRendered] = useState(false)
@@ -116,12 +114,8 @@ export default function TaskBarMenu() {
         openSignIn()
     }
 
-    const handleSearchOpenChange = (open: boolean) => {
-        if (websiteMode) {
-            setSearchOpen(open)
-        } else {
-            openSearch()
-        }
+    const handleSearchOpenChange = () => {
+        openSearch()
     }
 
     const avatarURL = getAvatarURL(user?.profile)
@@ -299,15 +293,11 @@ export default function TaskBarMenu() {
                 id="taskbar"
                 data-scheme="primary"
                 data-menu-container
-                className={`w-full bg-accent/75 skin-classic:bg-accent wallpaper-keyboard-garden:dark:bg-black/15 backdrop-blur border-b border-primary top-0 pl-0.5 pr-2 ${
-                    websiteMode ? 'sticky top-0 z-40' : 'bg-accent/75 z-50'
-                } ${rendered ? 'block' : 'hidden'}`}
+                className={`w-full bg-accent/75 skin-classic:bg-accent wallpaper-keyboard-garden:dark:bg-black/15 backdrop-blur border-b border-primary top-0 pl-0.5 pr-2 bg-accent/75 z-50 ${
+                    rendered ? 'block' : 'hidden'
+                }`}
             >
-                <div
-                    className={`mx-auto transition-all duration-300 flex justify-between items-center w-full ${
-                        websiteMode ? 'max-w-7xl' : 'max-w-full'
-                    }`}
-                >
+                <div className="mx-auto transition-all duration-300 flex justify-between items-center w-full max-w-full">
                     <MenuBar
                         menus={menuData}
                         className="[&_button]:px-2 [&_button:not(:first-child)]:hidden md:[&_button:not(:first-child)]:flex"
@@ -368,14 +358,7 @@ export default function TaskBarMenu() {
                                     <Tooltip
                                         trigger={
                                             <span>
-                                                <OSButton
-                                                    size="sm"
-                                                    className={`relative top-px ${
-                                                        websiteMode && searchOpen
-                                                            ? 'border border-primary !bg-accent'
-                                                            : ''
-                                                    }`}
-                                                >
+                                                <OSButton size="sm" className="relative top-px">
                                                     <IconSearch className="size-5" />
                                                 </OSButton>
                                             </span>

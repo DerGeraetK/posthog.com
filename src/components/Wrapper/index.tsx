@@ -4,11 +4,10 @@ import Desktop from 'components/Desktop'
 import TaskBarMenu from 'components/TaskBarMenu'
 import AppWindow from 'components/AppWindow'
 import CookieBannerToast from 'components/CookieBanner/ToastVersion'
-import WebsiteFooter from 'components/WebsiteFooter'
 
 // Isolates the `windows` subscription so that opening/closing a window only
 // re-renders this list, not the whole Wrapper (and therefore not the desktop,
-// taskbar, footer, etc.).
+// taskbar, etc.).
 const WindowList = React.memo(function WindowList() {
     const { windows } = useAppWindows()
 
@@ -32,7 +31,6 @@ export default function Wrapper() {
                 <Desktop />
                 <WindowList />
             </div>
-            <WebsiteFooter />
             {/*             
             {!compact && <Dock />}
             */}

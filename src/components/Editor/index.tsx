@@ -547,7 +547,7 @@ export function Editor({
                                 <article
                                     data-scheme="primary"
                                     className={`${getProseClasses(proseSize)} h-full mx-auto transition-all ${
-                                        fullWidthContent ? 'max-w-full' : 'website:max-w-full max-w-4xl'
+                                        fullWidthContent ? 'max-w-full' : 'max-w-4xl'
                                     }`}
                                 >
                                     {title && (
@@ -583,9 +583,7 @@ export function Editor({
                                     ref={articleRef ?? undefined}
                                     className={`${getProseClasses(proseSize)} ${
                                         hasPadding ? 'py-4 px-4 @xl:px-8' : ''
-                                    } mx-auto transition-all ${
-                                        fullWidthContent ? 'max-w-full' : 'website:max-w-full max-w-4xl'
-                                    }`}
+                                    } mx-auto transition-all ${fullWidthContent ? 'max-w-full' : 'max-w-4xl'}`}
                                 >
                                     {title && (
                                         <h1 className="text-2xl font-bold">

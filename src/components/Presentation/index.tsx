@@ -131,7 +131,7 @@ export default function Presentation({
     salesRep,
     rightActionButtons,
 }: PresentationProps) {
-    const { siteSettings, websiteMode } = useApp()
+    const { siteSettings } = useApp()
     const { appWindow } = useWindow()
     const [isMobile, setIsMobile] = useState<boolean>(false)
 
@@ -267,23 +267,16 @@ export default function Presentation({
     useEffect(() => {
         if (slides.length === 0) return
 
-        // In websiteMode, listen to window scroll; otherwise use ScrollArea
-        const useWindowScroll = websiteMode
-
         const scrollContainerSelector = slideId
             ? `[data-presentation-id="${slideId}"] [data-radix-scroll-area-viewport]`
             : '[data-app="Presentation"] [data-radix-scroll-area-viewport]'
-        const scrollContainer = useWindowScroll ? null : document.querySelector(scrollContainerSelector)
+        const scrollContainer = document.querySelector(scrollContainerSelector)
 
-        // In non-websiteMode, we need a scroll container
-        if (!useWindowScroll && !scrollContainer) return
+        if (!scrollContainer) return
 
         const handleScroll = () => {
-            // Use viewport bounds for websiteMode, container bounds otherwise
-            const containerTop = useWindowScroll ? 0 : scrollContainer!.getBoundingClientRect().top
-            const containerBottom = useWindowScroll
-                ? window.innerHeight
-                : scrollContainer!.getBoundingClientRect().bottom
+            const containerTop = scrollContainer.getBoundingClientRect().top
+            const containerBottom = scrollContainer.getBoundingClientRect().bottom
 
             let bestSlideIndex = 0
             let maxVisibleArea = 0
@@ -313,14 +306,12 @@ export default function Presentation({
         // Initial check
         handleScroll()
 
-        // Listen for scroll events on window or container
-        const scrollTarget = useWindowScroll ? window : scrollContainer!
-        scrollTarget.addEventListener('scroll', handleScroll, { passive: true })
+        scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
 
         return () => {
-            scrollTarget.removeEventListener('scroll', handleScroll)
+            scrollContainer.removeEventListener('scroll', handleScroll)
         }
-    }, [slides.length, slideId, websiteMode])
+    }, [slides.length, slideId])
 
     useEffect(() => {
         const handleResize = () => {
@@ -367,9 +358,7 @@ export default function Presentation({
             <div
                 ref={containerRef}
                 data-scheme="secondary"
-                className={`@container w-full transition-all duration-300 h-full flex flex-col min-h-1 ${
-                    websiteMode ? 'h-[calc(100vh_-_49px)] ' : 'max-w-full'
-                }`}
+                className="@container w-full transition-all duration-300 h-full flex flex-col min-h-1 max-w-full"
             >
                 <div
                     data-scheme="secondary"
@@ -387,8 +376,8 @@ export default function Presentation({
                             }
                             transition={{ duration: 0.3 }}
                             data-scheme="secondary"
-                            className={`${websiteMode ? '' : 'bg-primary border-primary @2xl:border-y-0 border-y'} ${
-                                isNavVisible && !websiteMode ? '@2xl:border-r' : 'border-b-0'
+                            className={`bg-primary border-primary @2xl:border-y-0 border-y ${
+                                isNavVisible ? '@2xl:border-r' : 'border-b-0'
                             } overflow-hidden absolute z-10 @2xl:relative @2xl:translate-y-0 translate-y-[46px]`}
                         >
                             <ScrollArea className="p-2">
@@ -410,7 +399,7 @@ export default function Presentation({
                         data-app="Presentation"
                         data-presentation-id={slideId}
                         data-scheme="secondary"
-                        className={`@container flex-1 flex flex-col relative h-full ${websiteMode ? '' : 'bg-primary'}`}
+                        className="@container flex-1 flex flex-col relative h-full bg-primary"
                     >
                         {!fullScreen && (
                             <>
@@ -445,7 +434,7 @@ export default function Presentation({
                                     data-scheme="primary"
                                     className={`bg-primary border-t border-primary overflow-hidden ${
                                         !isDragging ? 'transition-all duration-200 ease-out' : ''
-                                    } ${websiteMode ? 'sticky bottom-0 left-0 right-0 z-50' : 'flex-none relative'}`}
+                                    } flex-none relative`}
                                     style={{
                                         height: isDrawerOpen ? drawerHeight : 0,
                                         maxHeight: 300,

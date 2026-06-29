@@ -1480,7 +1480,7 @@ export default function ProfilePage({ params }: PageProps) {
     }
 
     return (
-        <div data-scheme="secondary" className="os:pt-4 h-full bg-primary text-primary flex flex-col">
+        <div data-scheme="secondary" className="pt-4 h-full bg-primary text-primary flex flex-col">
             <SEO title={`${name}'s profile - PostHog`} />
 
             <ScrollArea
@@ -1663,7 +1663,7 @@ export default function ProfilePage({ params }: PageProps) {
                     </div>
                 </div>
             </ScrollArea>
-            <div className="border-primary os:sticky website:border-b website:top-0 website:order-first os:border-t os:bottom-0">
+            <div className="border-primary sticky border-t bottom-0">
                 <HeaderBar
                     rightActionButtons={
                         <>

@@ -197,7 +197,7 @@ const validateIconPositions = (
 function Desktop() {
     const productLinks = useProductLinks()
     const { constraintsRef, setScreensaverPreviewActive, setConfetti, updateSiteSettings } = useAppActions()
-    const { siteSettings, compact, websiteMode, posthogInstance } = useAppSettings()
+    const { siteSettings, compact, posthogInstance } = useAppSettings()
     const { screensaverPreviewActive, confetti } = useAppUIState()
 
     const [iconPositions, setIconPositions] = useState<IconPositions>({})
@@ -542,13 +542,13 @@ function Desktop() {
                 <div
                     data-scheme="primary"
                     data-app="Desktop"
-                    className="fixed size-full website:-z-10 website:inset-0 os:top-0 os:pt-12"
+                    className="fixed size-full top-0 pt-12"
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 >
                     <Wallpapers wallpaper={siteSettings.wallpaper} reduceMotion={siteSettings.performanceBoost} />
 
-                    <nav className="website:hidden">
+                    <nav>
                         <motion.ul
                             initial={{ opacity: 0 }}
                             animate={{ opacity: rendered ? 1 : 0 }}
@@ -569,13 +569,13 @@ function Desktop() {
                         </motion.ul>
                     </nav>
                 </div>
-                {!compact && !websiteMode && (
+                {!compact && (
                     <Screensaver
                         isActive={isInactive || screensaverPreviewActive}
                         onDismiss={handleScreensaverDismiss}
                     />
                 )}
-                {!websiteMode && <HedgeHogModeEmbed />}
+                <HedgeHogModeEmbed />
             </ContextMenu>
             <NotificationsPanel />
             {confetti && (

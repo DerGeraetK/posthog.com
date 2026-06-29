@@ -4,8 +4,6 @@ import { IconCheck, IconChevronDown } from '@posthog/icons'
 import * as NotProductIcons from '../NotProductIcons'
 import * as NewIcons from '@posthog/icons'
 import * as OSIcons from '../OSIcons/Icons'
-import { useAppSettings } from '../../context/App'
-
 type SelectItem = {
     value: string
     label: string
@@ -99,18 +97,11 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
     ) => {
         // Use client-only rendering to prevent hydration mismatches
         const [isClient, setIsClient] = React.useState(false)
-        const { websiteMode } = useAppSettings()
-        const [appContainer, setAppContainer] = React.useState<HTMLElement | null>(null)
+        const appContainer: HTMLElement | null = null
 
         React.useEffect(() => {
             setIsClient(true)
         }, [])
-
-        React.useEffect(() => {
-            if (websiteMode) {
-                setAppContainer(document.getElementById('app-container'))
-            }
-        }, [websiteMode])
 
         // Find the selected item to get its icon
         const selectedItem = React.useMemo(() => {

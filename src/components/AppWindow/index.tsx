@@ -182,7 +182,6 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
         compact,
         menu: appMenu,
         taskbarRef,
-        websiteMode,
         closeWindow,
     } = useApp()
     const isSSR = typeof window === 'undefined'
@@ -672,137 +671,125 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
             setHasDeveloperMode={setHasDeveloperMode}
             animating={animating}
         >
-            {websiteMode ? (
-                <div className="relative">
-                    <Router {...item.props}>{item.element}</Router>
-                </div>
-            ) : (
-                <WindowContainer closing={closing}>
-                    {item.appSettings?.size?.fixed && (
-                        <div
-                            onClick={handleClose}
-                            className={`fixed inset-0 z-50 bg-black/50 ${
-                                closing
-                                    ? 'animate-overlay-fade-out'
-                                    : !skipsOpenAnimation
-                                    ? 'animate-overlay-fade-in'
-                                    : ''
-                            }`}
-                        />
-                    )}
+            <WindowContainer closing={closing}>
+                {item.appSettings?.size?.fixed && (
                     <div
-                        onMouseDown={handleMouseDown}
-                        onAnimationEnd={(e) => {
-                            if (e.currentTarget !== e.target) return
-                            if (closing) {
-                                closeWindow(item)
-                            } else {
-                                onAnimationComplete()
-                            }
-                        }}
-                        ref={(el) => {
-                            const mutableRef = windowRef as React.MutableRefObject<HTMLDivElement | null>
-                            mutableRef.current = el
-                            if (el && !skipsOpenAnimation) {
-                                onAnimationStart()
-                            }
-                        }}
-                        data-app="AppWindow"
-                        data-scheme="tertiary"
-                        className={`@container relative overflow-hidden ${
-                            item.appSettings?.size?.fixed
-                                ? closing
-                                    ? 'animate-window-slide-up'
-                                    : !skipsOpenAnimation
-                                    ? 'animate-window-slide-down'
-                                    : ''
-                                : closing
-                                ? 'animate-window-pop-out'
+                        onClick={handleClose}
+                        className={`fixed inset-0 z-50 bg-black/50 ${
+                            closing ? 'animate-overlay-fade-out' : !skipsOpenAnimation ? 'animate-overlay-fade-in' : ''
+                        }`}
+                    />
+                )}
+                <div
+                    onMouseDown={handleMouseDown}
+                    onAnimationEnd={(e) => {
+                        if (e.currentTarget !== e.target) return
+                        if (closing) {
+                            closeWindow(item)
+                        } else {
+                            onAnimationComplete()
+                        }
+                    }}
+                    ref={(el) => {
+                        const mutableRef = windowRef as React.MutableRefObject<HTMLDivElement | null>
+                        mutableRef.current = el
+                        if (el && !skipsOpenAnimation) {
+                            onAnimationStart()
+                        }
+                    }}
+                    data-app="AppWindow"
+                    data-scheme="tertiary"
+                    className={`@container relative overflow-hidden ${
+                        item.appSettings?.size?.fixed
+                            ? closing
+                                ? 'animate-window-slide-up'
                                 : !skipsOpenAnimation
-                                ? 'animate-window-pop-in'
+                                ? 'animate-window-slide-down'
                                 : ''
-                        } ${
-                            item.appSettings?.size?.fixed
-                                ? '!absolute top-2 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)]'
-                                : item.windowed
-                                ? 'h-[95%] w-[85%]'
-                                : 'size-full'
-                        } !select-auto flex flex-col border-primary ${
-                            siteSettings.heaterMode
-                                ? 'bg-primary/75 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu'
-                                : `bg-primary ${meshVariant}`
-                        } flex flex-col ${
-                            siteSettings.experience === 'boring'
-                                ? ''
-                                : `${item.appSettings?.size?.fixed ? 'border' : 'border-t'} rounded-lg ${
+                            : closing
+                            ? 'animate-window-pop-out'
+                            : !skipsOpenAnimation
+                            ? 'animate-window-pop-in'
+                            : ''
+                    } ${
+                        item.appSettings?.size?.fixed
+                            ? '!absolute top-2 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)]'
+                            : item.windowed
+                            ? 'h-[95%] w-[85%]'
+                            : 'size-full'
+                    } !select-auto flex flex-col border-primary ${
+                        siteSettings.heaterMode
+                            ? 'bg-primary/75 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu'
+                            : `bg-primary ${meshVariant}`
+                    } flex flex-col ${
+                        siteSettings.experience === 'boring'
+                            ? ''
+                            : `${item.appSettings?.size?.fixed ? 'border' : 'border-t'} rounded-lg ${
+                                  item.expanded
+                                      ? 'rounded-tr-none rounded-tl-none'
+                                      : item.snapped === 'left'
+                                      ? 'rounded-tl-none rounded-tr-none rounded-br-none border-r'
+                                      : item.snapped === 'right'
+                                      ? 'rounded-tl-none rounded-tr-none rounded-bl-none'
+                                      : ''
+                              }`
+                    }`}
+                    style={
+                        item.appSettings?.size?.fixed
+                            ? {
+                                  maxWidth: item.sizeConstraints.min.width,
+                                  maxHeight: item.appSettings.size.autoHeight
+                                      ? undefined
+                                      : item.sizeConstraints.min.height,
+                              }
+                            : undefined
+                    }
+                >
+                    <div className={`${hasToolbar ? 'bg-primary flex items-center py-0.5 px-1' : ''}`}>
+                        {hasToolbar && <div className="flex-1" />}
+                        <div
+                            data-scheme="tertiary"
+                            onDoubleClick={handleDoubleClick}
+                            className={`inline-flex gap-1 items-center py-0.5 pl-1.5 pr-0.5 skin-classic:bg-primary opacity-40 hover:opacity-75 transition-opacity duration-100 ${
+                                hasToolbar ? 'flex-1 justify-end' : 'absolute z-20 right-1 top-1'
+                            }`}
+                        >
+                            <div className="flex justify-end">
+                                <Tooltip
+                                    trigger={<OSButton windowButton size="md" onClick={handleClose} icon={<IconX />} />}
+                                >
+                                    <div className="flex flex-col items-center gap-2">
+                                        <span>Close window</span>
+                                        <div>
+                                            <KeyboardShortcut text="Shift" size="xs" />
+                                            &nbsp;
+                                            <KeyboardShortcut text="W" size="xs" />
+                                        </div>
+                                    </div>
+                                </Tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        ref={contentRef}
+                        className={`size-full flex-grow ${
+                            chrome
+                                ? `overflow-hidden rounded-lg ${hasToolbar ? 'rounded-t-none' : ''} ${
                                       item.expanded
                                           ? 'rounded-tr-none rounded-tl-none'
                                           : item.snapped === 'left'
-                                          ? 'rounded-tl-none rounded-tr-none rounded-br-none border-r'
+                                          ? 'rounded-tl-none rounded-tr-none rounded-br-none'
                                           : item.snapped === 'right'
                                           ? 'rounded-tl-none rounded-tr-none rounded-bl-none'
                                           : ''
                                   }`
+                                : ''
                         }`}
-                        style={
-                            item.appSettings?.size?.fixed
-                                ? {
-                                      maxWidth: item.sizeConstraints.min.width,
-                                      maxHeight: item.appSettings.size.autoHeight
-                                          ? undefined
-                                          : item.sizeConstraints.min.height,
-                                  }
-                                : undefined
-                        }
                     >
-                        <div className={`${hasToolbar ? 'bg-primary flex items-center py-0.5 px-1' : ''}`}>
-                            {hasToolbar && <div className="flex-1" />}
-                            <div
-                                data-scheme="tertiary"
-                                onDoubleClick={handleDoubleClick}
-                                className={`inline-flex gap-1 items-center py-0.5 pl-1.5 pr-0.5 skin-classic:bg-primary opacity-40 hover:opacity-75 transition-opacity duration-100 ${
-                                    hasToolbar ? 'flex-1 justify-end' : 'absolute z-20 right-1 top-1'
-                                }`}
-                            >
-                                <div className="flex justify-end">
-                                    <Tooltip
-                                        trigger={
-                                            <OSButton windowButton size="md" onClick={handleClose} icon={<IconX />} />
-                                        }
-                                    >
-                                        <div className="flex flex-col items-center gap-2">
-                                            <span>Close window</span>
-                                            <div>
-                                                <KeyboardShortcut text="Shift" size="xs" />
-                                                &nbsp;
-                                                <KeyboardShortcut text="W" size="xs" />
-                                            </div>
-                                        </div>
-                                    </Tooltip>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            ref={contentRef}
-                            className={`size-full flex-grow ${
-                                chrome
-                                    ? `overflow-hidden rounded-lg ${hasToolbar ? 'rounded-t-none' : ''} ${
-                                          item.expanded
-                                              ? 'rounded-tr-none rounded-tl-none'
-                                              : item.snapped === 'left'
-                                              ? 'rounded-tl-none rounded-tr-none rounded-br-none'
-                                              : item.snapped === 'right'
-                                              ? 'rounded-tl-none rounded-tr-none rounded-bl-none'
-                                              : ''
-                                      }`
-                                    : ''
-                            }`}
-                        >
-                            <Router {...item.props}>{item.element}</Router>
-                        </div>
+                        <Router {...item.props}>{item.element}</Router>
                     </div>
-                </WindowContainer>
-            )}
+                </div>
+            </WindowContainer>
         </WindowProvider>
     )
 }

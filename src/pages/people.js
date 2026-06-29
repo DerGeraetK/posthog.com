@@ -4,15 +4,12 @@ import OSTabs from 'components/OSTabs'
 import SEO from 'components/seo'
 import People from 'components/People'
 import { useCompanyNavigation } from 'hooks/useCompanyNavigation'
-import { useApp } from '../context/App'
 
 const PeoplePage = () => {
-    const { websiteMode } = useApp()
-
     const { handleTabChange, tabs, tabContainerClassName, className } = useCompanyNavigation({
         value: '/people',
         content: (
-            <div className={` ${websiteMode && 'max-w-7xl mx-auto'}`}>
+            <div>
                 <People />
             </div>
         ),

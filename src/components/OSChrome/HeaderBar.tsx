@@ -110,7 +110,7 @@ export default function HeaderBar({
     onOrderHistoryClose,
     className = '',
 }: HeaderBarProps) {
-    const { compact, focusedWindow, posthogInstance, websiteMode } = useApp()
+    const { compact, focusedWindow, posthogInstance } = useApp()
     const { goBack, goForward, canGoBack, canGoForward, appWindow, menu } = useWindow()
     const [searchOpen, setSearchOpen] = useState(false)
     const [animateCartCount, setAnimateCartCount] = useState(false)
@@ -198,9 +198,7 @@ export default function HeaderBar({
         <>
             <div
                 data-scheme="secondary"
-                className={`${
-                    websiteMode ? '' : 'bg-primary'
-                } flex w-full gap-px p-2 flex-shrink-0 items-center ${className}`}
+                className={`bg-primary flex w-full gap-px p-2 flex-shrink-0 items-center ${className}`}
             >
                 {!compact && (
                     <div>
@@ -353,16 +351,12 @@ export default function HeaderBar({
                 {showSidebar && (
                     <motion.div
                         className={`flex-shrink-0 flex justify-end transition-all min-w-0 ${
-                            isTocVisible && !websiteMode ? '@4xl:min-w-[250px]' : 'w-auto'
+                            isTocVisible ? '@4xl:min-w-[250px]' : 'w-auto'
                         }`}
                         animate={isTocVisible ? 'open' : 'closed'}
                     >
                         {showToc && (
-                            <div
-                                className={`[&>span]:inline-block ${
-                                    websiteMode ? 'hidden @4xl/app-reader:block' : 'hidden @4xl:block '
-                                }`}
-                            >
+                            <div className="[&>span]:inline-block hidden @4xl:block">
                                 <Tooltip
                                     trigger={
                                         <OSButton
@@ -382,17 +376,15 @@ export default function HeaderBar({
                 <div className="flex items-center gap-1">
                     {showDrawerToggle && (
                         <>
-                            {!websiteMode && (
-                                <OSButton
-                                    variant="secondary"
-                                    size="md"
-                                    asLink
-                                    to="https://app.posthog.com/signup"
-                                    className="mr-1"
-                                >
-                                    Get started – free
-                                </OSButton>
-                            )}
+                            <OSButton
+                                variant="secondary"
+                                size="md"
+                                asLink
+                                to="https://app.posthog.com/signup"
+                                className="mr-1"
+                            >
+                                Get started – free
+                            </OSButton>
                             <Tooltip
                                 trigger={
                                     <OSButton

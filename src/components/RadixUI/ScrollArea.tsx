@@ -47,7 +47,7 @@ const ScrollArea = ({
                 <div className="block min-w-full">{children}</div>
             </div>
             {fadeHeight > 0 && (
-                <div className="os:block website:hidden pointer-events-none">
+                <div className="block pointer-events-none">
                     <div
                         className={`scrollarea-fade absolute bottom-0 left-0 right-0 h-${fadeHeight} bg-gradient-to-b from-[color-mix(in_srgb,rgb(var(--bg))_0%,transparent)] via-[color-mix(in_srgb,rgb(var(--bg))_75%,transparent)] to-[rgb(var(--bg))]`}
                     />

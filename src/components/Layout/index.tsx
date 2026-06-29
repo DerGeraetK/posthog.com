@@ -15,8 +15,6 @@ import Tooltip from 'components/Tooltip'
 import Banner from 'components/Banner'
 import HedgeHogModeEmbed from 'components/HedgehogMode'
 import ScrollArea from 'components/RadixUI/ScrollArea'
-import { useApp } from '../../context/App'
-
 const TheoToggle = () => {
     const { theoMode, setTheoMode } = useLayoutData()
     return (
@@ -76,7 +74,6 @@ const Layout = ({
     headerBlur = true,
 }: IProps & { className?: string; headerBlur?: boolean }): JSX.Element => {
     const posthog = usePostHog()
-    const { websiteMode } = useApp()
 
     useEffect(() => {
         posthog?.register_once({
@@ -90,7 +87,7 @@ const Layout = ({
 
     return (
         <ScrollArea>
-            <div data-scheme="secondary" className={`${!websiteMode && 'bg-primary'} text-primary rounded`}>
+            <div data-scheme="secondary" className="bg-primary text-primary rounded">
                 {children}
             </div>
         </ScrollArea>

@@ -7,11 +7,8 @@ import Link from 'components/Link'
 import { graphql, useStaticQuery } from 'gatsby'
 import OSButton from 'components/OSButton'
 import OSTable from 'components/OSTable'
-import { useApp } from '../context/App'
-
 const SmallTeamsPage = () => {
     const [searchTerm, setSearchTerm] = useState('')
-    const { websiteMode } = useApp()
 
     const { allTeams } = useStaticQuery(graphql`
         {
@@ -207,7 +204,7 @@ const SmallTeamsPage = () => {
     const { handleTabChange, tabs, tabContainerClassName, className } = useCompanyNavigation({
         value: '/small-teams',
         content: (
-            <div className={`mt-6 px-4 ${websiteMode ? '' : 'max-w-screen-lg mx-auto'}`}>
+            <div className="mt-6 px-4 max-w-screen-lg mx-auto">
                 <section data-scheme="primary" className="bg-primary">
                     <div className="mb-8">
                         <h1>Small teams</h1>

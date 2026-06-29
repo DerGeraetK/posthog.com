@@ -15,12 +15,6 @@ html[data-intro] [data-app='AppWindow'] {
     animation: none !important;
 }
 
-/* Website mode: force taskbar visibility over inline styles */
-html[data-website-mode] #taskbar {
-    opacity: 1 !important;
-    transform: none !important;
-}
-
 @keyframes taskbar-enter {
     from {
         opacity: 0;

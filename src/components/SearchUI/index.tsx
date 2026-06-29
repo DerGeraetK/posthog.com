@@ -18,14 +18,9 @@ const searchClient = algoliasearch(
 )
 
 const Filters = ({ isRefinedClassName = 'bg-primary' }: { isRefinedClassName?: string }) => {
-    const { websiteMode } = useApp()
     const { refine, items } = useRefinementList({ attribute: 'type', sortBy: ['name:asc'] })
     return (
-        <ul
-            className={`list-none m-0 p-0 flex space-x-2 snap-x snap-mandatory overflow-x-auto ${
-                websiteMode ? 'mb-2 px-2 border-t border-primary pt-2' : 'mt-2'
-            }`}
-        >
+        <ul className="list-none m-0 p-0 flex space-x-2 snap-x snap-mandatory overflow-x-auto mt-2">
             {items.map((item) => (
                 <li className="snap-center" key={item.value}>
                     <button
@@ -64,9 +59,8 @@ const Search = ({
     onEscape?: () => void
 }) => {
     const [query, setQuery] = useState('')
-    const [isFocused, setIsFocused] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
-    const { openNewChat, websiteMode, setSearchOpen } = useApp()
+    const { openNewChat, setSearchOpen } = useApp()
     const { dragControls, appWindow } = useWindow()
     const { refine } = useSearchBox()
     const { hits } = useHits()
@@ -74,7 +68,7 @@ const Search = ({
 
     const openChat = () => {
         if (query) {
-            openNewChat({ path: `ask-max${websiteMode ? '' : `-${appWindow?.path}`}`, initialQuestion: query })
+            openNewChat({ path: `ask-max-${appWindow?.path}`, initialQuestion: query })
         }
     }
 
@@ -105,7 +99,6 @@ const Search = ({
     }
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (websiteMode) return
         dragControls?.start(e)
     }
 
@@ -119,38 +112,16 @@ const Search = ({
         }
     }, [initialFilter])
 
-    useEffect(() => {
-        if (!websiteMode) return
-        const handleClickOutside = (e: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-                setIsFocused(false)
-            }
-        }
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [websiteMode])
-
     return (
-        <div
-            ref={containerRef}
-            onFocus={() => setIsFocused(true)}
-            className={`flex flex-col ${className}`}
-            onMouseDown={handleMouseDown}
-        >
+        <div ref={containerRef} className={`flex flex-col ${className}`} onMouseDown={handleMouseDown}>
             <Combobox value={null} onChange={handleChange} nullable>
                 <div className="relative">
-                    <div
-                        className={`bg-accent !border-primary overflow-hidden relative ${
-                            websiteMode ? '' : 'border rounded'
-                        }`}
-                    >
+                    <div className="bg-accent !border-primary overflow-hidden relative border rounded">
                         <Combobox.Input
                             as={Input}
                             label=""
                             showLabel={false}
-                            className={`w-full text-primary border-0 bg-transparent focus:ring-0 ${
-                                websiteMode ? 'rounded-none' : ''
-                            }`}
+                            className="w-full text-primary border-0 bg-transparent focus:ring-0"
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder={`Search ${initialFilter ? 'the ' + initialFilter : 'PostHog.com'}...`}
@@ -176,17 +147,13 @@ const Search = ({
                             </OSButton>
                         </div>
                     </div>
-                    {!hideFilters && hits.length > 0 && query && (!websiteMode || isFocused) && (
-                        <Filters isRefinedClassName={isRefinedClassName} />
-                    )}
+                    {!hideFilters && hits.length > 0 && query && <Filters isRefinedClassName={isRefinedClassName} />}
 
-                    {hits.length > 0 && query && (!websiteMode || isFocused) && (
+                    {hits.length > 0 && query && (
                         <Combobox.Options
                             static
                             hold
-                            className={`w-full border-primary list-none m-0 p-0 overflow-auto z-10 max-h-[calc(80vh_-_100px)] h-full bg-primary shadow-2xl ${
-                                websiteMode ? 'border-t' : 'mt-2 rounded-md border'
-                            }`}
+                            className="w-full border-primary list-none m-0 p-0 overflow-auto z-10 max-h-[calc(80vh_-_100px)] h-full bg-primary shadow-2xl mt-2 rounded-md border"
                             onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
                         >
                             {hits.length === 0 && query !== '' ? (

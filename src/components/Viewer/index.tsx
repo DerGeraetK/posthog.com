@@ -176,7 +176,7 @@ export function Viewer({
     const [isModifierKeyPressed, setIsModifierKeyPressed] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
     const searchContentRef = useRef<HTMLDivElement>(null)
-    const { addWindow, focusedWindow, websiteMode } = useApp()
+    const { addWindow, focusedWindow } = useApp()
     const { appWindow } = useWindow()
     const [maxWidth, setMaxWidth] = useState(initialMaxWidth ?? 768)
     const fullWidthContent = typeof maxWidth === 'string' && maxWidth === '100%'
@@ -267,13 +267,6 @@ export function Viewer({
     return (
         <SearchProvider onSearchChange={onSearchChange}>
             <div className="@container w-full h-full flex flex-col min-h-1">
-                {/* {hideToolbar
-                    ? null
-                    : !websiteMode && (
-                        <aside data-scheme="secondary" className="bg-primary p-2 border-b border-primary">
-                            <Toolbar elements={toolbarElements} />
-                        </aside>
-                    )} */}
                 <div className="flex flex-col flex-grow min-h-0">
                     <main
                         data-app="Viewer"
@@ -312,7 +305,7 @@ export function Viewer({
                                     <article
                                         data-scheme="primary"
                                         className={`${getProseClasses(proseSize)} h-full mx-auto transition-all ${
-                                            fullWidthContent || websiteMode ? 'max-w-full' : 'max-w-5xl'
+                                            fullWidthContent ? 'max-w-full' : 'max-w-5xl'
                                         }`}
                                     >
                                         {title && (
@@ -333,7 +326,7 @@ export function Viewer({
                                         className={`${getProseClasses(
                                             proseSize
                                         )} py-4 px-4 @xl:p-8 @2xl:px-12 @3xl:px-16 mx-auto transition-all ${
-                                            fullWidthContent || websiteMode ? 'max-w-full' : 'max-w-5xl'
+                                            fullWidthContent ? 'max-w-full' : 'max-w-5xl'
                                         }`}
                                     >
                                         {title && (

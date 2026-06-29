@@ -4,7 +4,6 @@ import AppWindow from 'components/AppWindow'
 import { AnimatePresence, motion } from 'framer-motion'
 import CookieBannerToast from 'components/CookieBanner/ToastVersion'
 import { DotLottiePlayer, PlayerEvents } from '@dotlottie/react-player'
-import WebsiteFooter from 'components/WebsiteFooter'
 import KoreanDesktop from '../KoreanDesktop'
 import KoreanTaskBarMenu from '../KoreanTaskBarMenu'
 
@@ -16,7 +15,6 @@ export default function KoreanWrapper() {
         closingAllWindowsAnimation,
         setClosingAllWindowsAnimation,
         closeAllWindows,
-        websiteMode,
         searchOpen,
     } = useApp()
     const [shakeReady, setShakeReady] = useState(false)
@@ -29,15 +27,7 @@ export default function KoreanWrapper() {
     }, [closingAllWindowsAnimation])
 
     return (
-        <div
-            data-scheme="primary"
-            className={`${
-                websiteMode
-                    ? 'max-w-7xl mx-auto border-x border-primary bg-primary shadow-xl min-h-screen'
-                    : 'fixed inset-0 size-full'
-            } flex flex-col`}
-            id="app-container"
-        >
+        <div data-scheme="primary" className="fixed inset-0 size-full flex flex-col" id="app-container">
             {!compact && <KoreanTaskBarMenu />}
             <div ref={constraintsRef} className={`flex-grow relative`}>
                 <KoreanDesktop />
@@ -73,7 +63,6 @@ export default function KoreanWrapper() {
                     })}
                 </AnimatePresence>
             </div>
-            <WebsiteFooter />
             {/*
             {!compact && <Dock />}
             */}

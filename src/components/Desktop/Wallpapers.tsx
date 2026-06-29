@@ -162,7 +162,7 @@ const KeyboardGarden = ({ reduceMotion }: SceneProps) => (
         />
 
         {/* Hedge scene — light/dark stacked in a single grid cell so layout sizing is preserved */}
-        <div className="absolute grid website:bottom-4 website:-right-4 website:@[2600px]:right-4 os:bottom-24 os:md:bottom-0 os:-right-4 os:xs:right-8 os:md:right-0">
+        <div className="absolute grid bottom-24 md:bottom-0 -right-4 xs:right-8 md:right-0">
             {/* Hedge scene (light) */}
             <CloudinaryImage
                 loading="lazy"

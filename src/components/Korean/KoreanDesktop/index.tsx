@@ -216,7 +216,6 @@ export default function Desktop(): JSX.Element {
         setConfetti,
         confetti,
         compact,
-        websiteMode,
         posthogInstance,
         updateSiteSettings,
     } = useApp()
@@ -424,11 +423,7 @@ export default function Desktop(): JSX.Element {
                     },
                 ]}
             >
-                <div
-                    data-scheme="primary"
-                    data-app="Desktop"
-                    className={`fixed size-full ${websiteMode ? '-z-10 inset-0' : ''}`}
-                >
+                <div data-scheme="primary" data-app="Desktop" className="fixed size-full">
                     <div className={`fixed inset-0 -z-10 ${getWallpaperClasses()}`} />
                     {/* Hogzilla */}
                     <div className="hidden select-none wallpaper-hogzilla:flex items-end justify-end absolute inset-0">
@@ -505,27 +500,13 @@ export default function Desktop(): JSX.Element {
                                 backgroundRepeat: 'repeat',
                             }}
                         />
-                        <div
-                            className={`absolute ${
-                                websiteMode
-                                    ? 'bottom-4 -right-4 @[2600px]:right-4'
-                                    : 'bottom-4 md:bottom-12 -right-4 xs:right-8 md:right-0'
-                            }`}
-                        >
+                        <div className="absolute bottom-4 md:bottom-12 -right-4 xs:right-8 md:right-0">
                             <CloudinaryImage
                                 loading="lazy"
                                 src="https://res.cloudinary.com/dmukukwp6/image/upload/keyboard_garden_light_opt_compressed_5094746caf.png"
                                 width={1401}
                                 height={1400}
-                                className={`${websiteMode ? '' : 'size-[300px] md:size-[700px]'} dark:hidden`}
-                                style={
-                                    websiteMode
-                                        ? {
-                                              width: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
-                                              height: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
-                                          }
-                                        : undefined
-                                }
+                                className="size-[300px] md:size-[700px] dark:hidden"
                                 draggable={false}
                             />
                             <CloudinaryImage
@@ -533,52 +514,40 @@ export default function Desktop(): JSX.Element {
                                 src="https://res.cloudinary.com/dmukukwp6/image/upload/keyboard_garden_dark_opt_15e213413c.png"
                                 width={1401}
                                 height={1400}
-                                className={`${websiteMode ? '' : 'size-[300px] md:size-[700px]'} hidden dark:block`}
-                                style={
-                                    websiteMode
-                                        ? {
-                                              width: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
-                                              height: 'clamp(8rem, calc(4rem + (100vw - 80rem) * 0.45), 42rem)',
-                                          }
-                                        : undefined
-                                }
+                                className="size-[300px] md:size-[700px] hidden dark:block"
                                 draggable={false}
                             />
                         </div>
                     </div>
 
-                    {!websiteMode && (
-                        <nav>
-                            <motion.ul
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: rendered ? 1 : 0 }}
-                                className="list-none m-0 -mt-2 md:mt-0 p-0 grid sm:grid-cols-4 grid-cols-3 gap-2"
-                            >
-                                {allApps.map((app) => {
-                                    const position = iconPositions[app.label] || { x: 0, y: 0 }
+                    <nav>
+                        <motion.ul
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: rendered ? 1 : 0 }}
+                            className="list-none m-0 -mt-2 md:mt-0 p-0 grid sm:grid-cols-4 grid-cols-3 gap-2"
+                        >
+                            {allApps.map((app) => {
+                                const position = iconPositions[app.label] || { x: 0, y: 0 }
 
-                                    return (
-                                        <DraggableDesktopIcon
-                                            key={app.label}
-                                            app={{ ...app, label: translateKo(app.label) }}
-                                            initialPosition={position}
-                                            onPositionChange={(newPosition) =>
-                                                handlePositionChange(app.label, newPosition)
-                                            }
-                                        />
-                                    )
-                                })}
-                            </motion.ul>
-                        </nav>
-                    )}
+                                return (
+                                    <DraggableDesktopIcon
+                                        key={app.label}
+                                        app={{ ...app, label: translateKo(app.label) }}
+                                        initialPosition={position}
+                                        onPositionChange={(newPosition) => handlePositionChange(app.label, newPosition)}
+                                    />
+                                )
+                            })}
+                        </motion.ul>
+                    </nav>
                 </div>
-                {!compact && !websiteMode && (
+                {!compact && (
                     <Screensaver
                         isActive={isInactive || screensaverPreviewActive}
                         onDismiss={handleScreensaverDismiss}
                     />
                 )}
-                {!websiteMode && <HedgeHogModeEmbed />}
+                <HedgeHogModeEmbed />
             </ContextMenu>
             <NotificationsPanel />
             {confetti && (

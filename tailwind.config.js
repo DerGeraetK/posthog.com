@@ -545,8 +545,6 @@ module.exports = {
             addVariant('wallpaper-hogzilla', 'body[data-wallpaper="hogzilla"] &')
             addVariant('wallpaper-office-party', 'body[data-wallpaper="office-party"] &')
             addVariant('wallpaper-startup-monopoly', 'body[data-wallpaper="startup-monopoly"] &')
-            addVariant('website', 'html[data-website-mode] &')
-            addVariant('os', 'html:not([data-website-mode]) &')
         },
     ],
 }

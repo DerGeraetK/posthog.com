@@ -40,10 +40,9 @@ function TaskBarMenu() {
         setIsActiveWindowsPanelOpen,
         addWindow,
         taskbarRef,
-        setSearchOpen,
         updateTaskbarHeight,
     } = useAppActions()
-    const { posthogInstance, websiteMode } = useAppSettings()
+    const { posthogInstance } = useAppSettings()
     const { searchOpen } = useAppUIState()
     const [isAnimating, setIsAnimating] = useState(false)
     const shouldAnimate = useRef(
@@ -110,12 +109,8 @@ function TaskBarMenu() {
         openSignIn()
     }
 
-    const handleSearchOpenChange = (open: boolean) => {
-        if (websiteMode) {
-            setSearchOpen(open)
-        } else {
-            openSearch()
-        }
+    const handleSearchOpenChange = () => {
+        openSearch()
     }
 
     const avatarURL = getAvatarURL(user?.profile)
@@ -311,7 +306,7 @@ function TaskBarMenu() {
                               }
                             : {}),
                     }}
-                    className={`bg-primary/50 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu skin-classic:bg-accent wallpaper-keyboard-garden:dark:bg-black/15 border-secondary rounded pl-0.5 pr-2 os:shadow-2xl website:!rounded-none ${
+                    className={`bg-primary/50 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu skin-classic:bg-accent wallpaper-keyboard-garden:dark:bg-black/15 border-secondary rounded pl-0.5 pr-2 shadow-2xl ${
                         windows.some((w) => w.expanded && !w.minimized)
                             ? 'rounded-br-none rounded-bl-none'
                             : `${windows.some((w) => w.snapped === 'left' && !w.minimized) ? 'rounded-bl-none' : ''} ${
@@ -338,7 +333,7 @@ function TaskBarMenu() {
                             transformOrigin: '50% 100%',
                         }}
                     />
-                    <div className="mx-auto transition-all duration-300 flex justify-between items-center w-full os:max-w-full website:max-w-7xl">
+                    <div className="mx-auto transition-all duration-300 flex justify-between items-center w-full max-w-full">
                         <MenuBar
                             menus={menuData}
                             className="[&_button]:px-2 [&_button:not(:first-child)]:hidden md:[&_button:not(:first-child)]:flex"
@@ -399,14 +394,7 @@ function TaskBarMenu() {
                                         <Tooltip
                                             trigger={
                                                 <span>
-                                                    <OSButton
-                                                        size="sm"
-                                                        className={`relative top-px ${
-                                                            websiteMode && searchOpen
-                                                                ? 'border border-primary !bg-accent'
-                                                                : ''
-                                                        }`}
-                                                    >
+                                                    <OSButton size="sm" className="relative top-px">
                                                         <IconSearch className="size-5" />
                                                     </OSButton>
                                                 </span>

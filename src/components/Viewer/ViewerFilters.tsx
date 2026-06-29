@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Select } from '../RadixUI/Select'
 import { useLocation } from '@reach/router'
-import { useApp } from '../../context/App'
-import { WEBSITE_MODE_CLASSES } from '../../constants'
-
 export interface FilterConfig {
     label: string
     value?: any
@@ -70,7 +67,6 @@ export default function ViewerFilters({
     )
     const [groupValue, setGroupValue] = useState('none')
     const { search } = useLocation()
-    const { websiteMode } = useApp()
 
     const handleFilterChange = (key: string, value: any, filter: (obj: any, value: any) => boolean) => {
         const newFilters = { ...filters, [key]: { value, filter } }
@@ -110,7 +106,7 @@ export default function ViewerFilters({
 
     return (
         <div className="text-sm text-primary gap-1">
-            <div className={`flex flex-wrap gap-2 ${websiteMode && WEBSITE_MODE_CLASSES}`}>
+            <div className="flex flex-wrap gap-2">
                 {availableFilters.map((filter) => {
                     const filterKey = filter.value ?? filter.label
                     const activeValue = filters[filterKey]?.value

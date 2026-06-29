@@ -11,7 +11,6 @@ import { Accordion } from 'components/RadixUI/Accordion'
 import ScrollArea from 'components/RadixUI/ScrollArea'
 import { SearchUI } from 'components/SearchUI'
 import SmallTeam from 'components/SmallTeam'
-import { useApp } from '../../context/App'
 import { useActiveFeatureFlags, filterMenuByFlags } from '../../hooks/useActiveFeatureFlags'
 
 // Process docsMenu to extract structure
@@ -130,19 +129,13 @@ export const DocsIndex = () => {
     const imagePositioning =
         'absolute @3xl:top-1/2 @3xl:left-1/2  opacity-100 @sm:opacity-80 @md:opacity-100 transition-all duration-300 @2xl:scale-75 @3xl:scale-90 @4xl:scale-100 @5xl:scale-110'
 
-    const { websiteMode } = useApp()
-
     return (
-        <div data-scheme="secondary" className={`${!websiteMode && 'bg-primary'} h-full text-primary`}>
+        <div data-scheme="secondary" className="bg-primary h-full text-primary">
             <SEO title="Documentation - PostHog" />
-            <ScrollArea className={`${websiteMode ? '@container' : ''}`}>
+            <ScrollArea>
                 <section
                     id="hero"
-                    className={`@container not-prose relative aspect-[3/1] overflow-hidden border-b border-primary bg-red-carpet bg-[length:150px_150px] ${
-                        websiteMode
-                            ? '@2xl:aspect-none h-36 @6xl:h-48 w-full'
-                            : '@2xl:aspect-[4/1] @6xl:aspect-[5/1] mb-4'
-                    }`}
+                    className="@container not-prose relative aspect-[3/1] overflow-hidden border-b border-primary bg-red-carpet bg-[length:150px_150px] @2xl:aspect-[4/1] @6xl:aspect-[5/1] mb-4"
                 >
                     {/* Background container for positioned graphics */}
                     {/* Example of positioned graphics - replace with your actual graphics */}
@@ -325,9 +318,7 @@ export const DocsIndex = () => {
                             initialFilter="docs"
                             hideFilters
                             isRefinedClassName="bg-white"
-                            className={`mb-4 ${
-                                websiteMode ? 'border border-primary rounded overflow-hidden [&_input]:bg-white' : ''
-                            }`}
+                            className="mb-4"
                             autoFocus={false}
                         />
                         <div className="@md:-ml-3">
