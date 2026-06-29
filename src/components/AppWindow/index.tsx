@@ -205,7 +205,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     const [closing, setClosing] = useState(false)
     const [closed, setClosed] = useState(false)
     const [minimizing, setMinimizing] = useState(false)
-    const skipsOpenAnimation = (item.expanded && !item.fromOrigin) || siteSettings.experience === 'boring'
+    const skipsOpenAnimation = item.expanded && !item.fromOrigin
     const [animating, setAnimating] = useState(!skipsOpenAnimation)
     const animationStartTimeRef = useRef<number | null>(null)
     const posthog = usePostHog()
@@ -595,11 +595,7 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
     )
 
     const handleClose = () => {
-        if (siteSettings.experience === 'boring') {
-            closeWindow(item)
-        } else {
-            setClosing(true)
-        }
+        setClosing(true)
     }
 
     const onAnimationStart = () => {
@@ -721,18 +717,14 @@ export default function AppWindow({ item, chrome = true }: { item: AppWindowType
                         siteSettings.heaterMode
                             ? 'bg-primary/75 backdrop-blur-3xl will-change-[transform,backdrop-filter] transform-gpu'
                             : `bg-primary ${meshVariant}`
-                    } flex flex-col ${
-                        siteSettings.experience === 'boring'
-                            ? ''
-                            : `${item.appSettings?.size?.fixed ? 'border' : 'border-t'} rounded-lg ${
-                                  item.expanded
-                                      ? 'rounded-tr-none rounded-tl-none'
-                                      : item.snapped === 'left'
-                                      ? 'rounded-tl-none rounded-tr-none rounded-br-none border-r'
-                                      : item.snapped === 'right'
-                                      ? 'rounded-tl-none rounded-tr-none rounded-bl-none'
-                                      : ''
-                              }`
+                    } flex flex-col ${item.appSettings?.size?.fixed ? 'border' : 'border-t'} rounded-lg ${
+                        item.expanded
+                            ? 'rounded-tr-none rounded-tl-none'
+                            : item.snapped === 'left'
+                            ? 'rounded-tl-none rounded-tr-none rounded-br-none border-r'
+                            : item.snapped === 'right'
+                            ? 'rounded-tl-none rounded-tr-none rounded-bl-none'
+                            : ''
                     }`}
                     style={
                         item.appSettings?.size?.fixed

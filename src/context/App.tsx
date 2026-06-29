@@ -351,7 +351,6 @@ export const Context = createContext<AppContextType>({
     openForgotPassword: () => {},
     siteSettings: {
         theme: 'light',
-        experience: 'posthog',
         colorMode: 'light',
         skinMode: 'modern',
         cursor: 'default',
@@ -434,7 +433,6 @@ export const ActionsContext = createContext<AppActionsContextType>({
 export const SettingsContext = createContext<AppSettingsContextType>({
     siteSettings: {
         theme: 'light',
-        experience: 'posthog',
         colorMode: 'light',
         skinMode: 'modern',
         cursor: 'default',
@@ -1511,7 +1509,6 @@ const appSettings: AppSettings = {
 } as const
 
 export interface SiteSettings {
-    experience: 'posthog' | 'boring'
     colorMode: 'light' | 'dark' | 'system'
     theme: 'light' | 'dark'
     skinMode: 'modern' | 'classic'
@@ -1527,10 +1524,8 @@ const isLabel = (item: any) => !item?.url && item?.name
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
-const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
-    const lastReset = typeof window !== 'undefined' ? localStorage.getItem('lastReset') : null
+const getInitialSiteSettings = () => {
     const siteSettings = {
-        experience: 'posthog',
         colorMode: (typeof window !== 'undefined' && (window as any).__theme) || 'light',
         theme: (typeof window !== 'undefined' && (window as any).__theme) || 'light',
         skinMode: 'modern',
@@ -1541,11 +1536,6 @@ const getInitialSiteSettings = (isMobile: boolean, compact: boolean) => {
         screensaverDisabled: true,
         heaterMode: false,
         ...(typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('siteSettings') || '{}') : {}),
-        ...(!lastReset ? { experience: 'posthog' } : {}),
-    }
-
-    if (isMobile || compact) {
-        siteSettings.experience = 'boring'
     }
 
     const retiredWallpapers = ['action-figure', '2001-bliss', 'parade', 'coding-at-night']
@@ -1563,7 +1553,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const taskbarRef = useRef<HTMLDivElement>(null)
     const [isMobile, setIsMobile] = useState(false)
     const [siteSettings, setSiteSettings] = useState<SiteSettings>({
-        experience: 'posthog',
         colorMode: 'light',
         theme: 'light',
         skinMode: 'modern',
@@ -1631,7 +1620,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
         const isMobileValue = window.innerWidth < 768
         setCompact(compactValue)
         setIsMobile(isMobileValue)
-        setSiteSettings(getInitialSiteSettings(isMobileValue, compactValue))
+        setSiteSettings(getInitialSiteSettings())
     }, [])
 
     const destinationNav = useDataPipelinesNav({ type: 'destination' })
@@ -2085,17 +2074,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             }
         }
 
-        if (siteSettings.experience === 'boring') {
-            if (!newWindow.appSettings?.size?.fixed && !newWindow.appSettings?.modal) {
-                return replaceFocusedWindow(newWindow)
-            } else {
-                return setWindows([
-                    ...windows?.filter((w) => !w.appSettings?.size?.fixed && w.key !== newWindow.key),
-                    newWindow,
-                ])
-            }
-        }
-
         if (existingWindow) {
             if (existingWindow.snapped && !isSideBySide) {
                 bringToFront(existingWindow, element.props.location)
@@ -2320,14 +2298,7 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
     const updateSiteSettings = (settings: SiteSettings) => {
         try {
             setSiteSettings(settings)
-            const savedSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}')
-            localStorage.setItem(
-                'siteSettings',
-                JSON.stringify({
-                    ...settings,
-                    experience: compact ? savedSettings.experience || 'posthog' : settings.experience || 'posthog',
-                })
-            )
+            localStorage.setItem('siteSettings', JSON.stringify(settings))
         } catch (error) {
             console.error('Failed to update site settings:', error)
         }
@@ -2573,26 +2544,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
                     }
                 }
             }
-            if (e.shiftKey && e.key.toLowerCase() === 'm') {
-                e.preventDefault()
-                // Toggle between OS mode and website mode
-                const newExperience = siteSettings.experience === 'posthog' ? 'boring' : 'posthog'
-                updateSiteSettings({
-                    ...siteSettings,
-                    experience: newExperience,
-                })
-
-                posthog?.capture('switched site mode', {
-                    value: newExperience === 'posthog' ? 'os' : 'website',
-                    source: 'keyboard',
-                })
-
-                // Add toast notification
-                addToast({
-                    description: `Switched to ${newExperience === 'posthog' ? 'OS mode' : 'website mode'}`,
-                    duration: 2000,
-                })
-            }
             if (e.shiftKey && e.key === 'C') {
                 e.preventDefault()
                 if (!desktopParams) return
@@ -2783,20 +2734,6 @@ export const Provider = ({ children, element, location }: AppProviderProps) => {
             })
         }
     }, [stateWindows])
-
-    useEffect(() => {
-        try {
-            const lastReset = localStorage.getItem('lastReset')
-            if (!lastReset) {
-                const currentSiteSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}')
-                currentSiteSettings.experience = 'posthog'
-                localStorage.setItem('lastReset', new Date().toISOString())
-                localStorage.setItem('siteSettings', JSON.stringify(currentSiteSettings))
-            }
-        } catch (error) {
-            console.error('Failed to reset site settings:', error)
-        }
-    }, [])
 
     useEffect(() => {
         const visibleWindows = windows.filter((window) => {

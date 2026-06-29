@@ -61,10 +61,7 @@ export default function PostHogOnPostHogSlide({ productData }: PostHogOnPostHogS
 
             // For thumbnail mode, check container width
             if (isThumbnail) {
-                const containerWidth =
-                    typeof window !== 'undefined' && siteSettings.experience === 'boring'
-                        ? window.innerWidth
-                        : appWindow?.size?.width
+                const containerWidth = appWindow?.size?.width
 
                 // Below @2xl (672px) should show portrait thumbnails
                 setIsPortraitMode(containerWidth ? containerWidth < 672 : false)

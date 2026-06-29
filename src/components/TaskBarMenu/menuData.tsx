@@ -30,8 +30,6 @@ import { useAppActions, useAppSettings, useAppWindows } from '../../context/App'
 import { IconChevronDown } from '@posthog/icons'
 import { useHedgehogMode } from 'components/HedgehogMode'
 import { navigate } from 'gatsby'
-import { useToast } from '../../context/Toast'
-import usePostHog from '../../hooks/usePostHog'
 
 interface DocsMenuItem {
     name: string
@@ -336,10 +334,8 @@ export function useMenuData(): MenuType[] {
     const smallTeamsMenuItems = useSmallTeamsMenuItems()
     const allProducts = useProduct() as any[]
     const { windows } = useAppWindows()
-    const { animateClosingAllWindows, setScreensaverPreviewActive, updateSiteSettings } = useAppActions()
-    const { isMobile, siteSettings } = useAppSettings()
-    const { addToast } = useToast()
-    const posthog = usePostHog()
+    const { animateClosingAllWindows, setScreensaverPreviewActive } = useAppActions()
+    const { isMobile } = useAppSettings()
     const [hedgehogModeEnabled, setHedgehogModeEnabled] = useHedgehogMode()
 
     // Define main navigation items (excluding logo menu)
@@ -811,34 +807,6 @@ export function useMenuData(): MenuType[] {
             },
             shortcut: [','],
         },
-        ...(isMobile
-            ? []
-            : [
-                  {
-                      type: 'item' as const,
-                      label: 'Switch to website mode',
-                      onClick: () => {
-                          const newExperience = 'boring'
-                          updateSiteSettings({ ...siteSettings, experience: newExperience })
-                          posthog?.capture('switched site mode', {
-                              value: 'website',
-                              source: 'menu',
-                          })
-                          addToast({
-                              title: 'Switched to website mode',
-                              description: 'Hover the logo to return to OS mode.',
-                              duration: 5000,
-                              onUndo: () => {
-                                  updateSiteSettings({
-                                      ...siteSettings,
-                                      experience: 'boring',
-                                  })
-                              },
-                          })
-                      },
-                      shortcut: ['Shift', 'M'],
-                  },
-              ]),
     ]
 
     // Process main nav items for mobile menu

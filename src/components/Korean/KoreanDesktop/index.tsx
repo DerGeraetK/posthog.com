@@ -14,14 +14,11 @@ import { motion } from 'framer-motion'
 import HedgeHogModeEmbed from 'components/HedgehogMode'
 import ReactConfetti from 'react-confetti'
 import { useToast } from '../../../context/Toast'
-import usePostHog from 'hooks/usePostHog'
 import { translateKo } from '../../../pages/ko/_translations'
 import KoreanCookieBannerToast from '../KoreanCookieBannerToast'
 
 export const useProductLinks = (): AppItem[] => {
-    const { posthogInstance, openNewChat, siteSettings, updateSiteSettings } = useApp()
-    const { addToast } = useToast()
-    const posthog = usePostHog()
+    const { posthogInstance, openNewChat } = useApp()
 
     return [
         {
@@ -92,26 +89,6 @@ export const useProductLinks = (): AppItem[] => {
                       source: 'desktop',
                   },
               ]),
-        {
-            label: 'Switch to website mode',
-            Icon: <AppIcon name="switch" />,
-            onClick: () => {
-                updateSiteSettings({ ...siteSettings, experience: 'boring' })
-                posthog?.capture('switched site mode', {
-                    value: 'website',
-                    source: 'desktop',
-                })
-                addToast({
-                    title: translateKo('Switched to website mode'),
-                    description: translateKo('Hover the logo to return to OS mode.'),
-                    duration: 5000,
-                    onUndo: () => {
-                        updateSiteSettings({ ...siteSettings, experience: 'posthog' })
-                    },
-                })
-            },
-            source: 'desktop',
-        },
     ]
 }
 

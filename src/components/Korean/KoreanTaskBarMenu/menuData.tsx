@@ -29,9 +29,6 @@ import {
 import { useApp } from '../../../context/App'
 import { IconChevronDown } from '@posthog/icons'
 import { navigate } from 'gatsby'
-import { useToast } from '../../../context/Toast'
-import usePostHog from 'hooks/usePostHog'
-import { translateKo } from '../../../pages/ko/_translations'
 
 interface DocsMenuItem {
     name: string
@@ -328,16 +325,7 @@ const buildProductOSMenuItems = (allProducts: any[]) => {
 export function useMenuData(): MenuType[] {
     const smallTeamsMenuItems = useSmallTeamsMenuItems()
     const allProducts = useProduct() as any[]
-    const {
-        animateClosingAllWindows,
-        windows,
-        setScreensaverPreviewActive,
-        isMobile,
-        siteSettings,
-        updateSiteSettings,
-    } = useApp()
-    const { addToast } = useToast()
-    const posthog = usePostHog()
+    const { animateClosingAllWindows, windows, setScreensaverPreviewActive, isMobile } = useApp()
 
     // Define main navigation items (excluding logo menu)
     const mainNavItems: MenuType[] = [
@@ -777,34 +765,6 @@ export function useMenuData(): MenuType[] {
             },
             shortcut: [','],
         },
-        ...(isMobile
-            ? []
-            : [
-                  {
-                      type: 'item' as const,
-                      label: 'Switch to website mode',
-                      onClick: () => {
-                          const newExperience = 'boring'
-                          updateSiteSettings({ ...siteSettings, experience: newExperience })
-                          posthog?.capture('switched site mode', {
-                              value: 'website',
-                              source: 'menu',
-                          })
-                          addToast({
-                              title: translateKo('Switched to website mode'),
-                              description: translateKo('Hover the logo to return to OS mode.'),
-                              duration: 5000,
-                              onUndo: () => {
-                                  updateSiteSettings({
-                                      ...siteSettings,
-                                      experience: 'boring',
-                                  })
-                              },
-                          })
-                      },
-                      shortcut: ['Shift', 'M'],
-                  },
-              ]),
     ]
 
     // Process main nav items for mobile menu
