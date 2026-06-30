@@ -847,6 +847,13 @@ export default function SlackAppPage(): JSX.Element {
                             }))}
                         />
                     </div>
+                    <p className="text-sm text-secondary">
+                        Steering an agent from Slack is one way work gets done.{' '}
+                        <Link to="/self-driving" state={{ newWindow: true }}>
+                            Self-driving
+                        </Link>{' '}
+                        is the bigger loop around it.
+                    </p>
                     <div
                         id="try"
                         className="not-prose bg-accent border border-primary rounded-md p-4 @md/reader-content:p-6 my-6"
