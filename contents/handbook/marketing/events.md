@@ -117,6 +117,6 @@ Sometimes students at varying universities ask us if we are interested in sponso
 
 ## Event submission form
 
-Want PostHog to partner, sponsor, or speak at your event? Fill out the form below and we'll be in touch.
+Want us to partner, sponsor, or speak at your event? Fill out the form below and we'll be in touch.
 
 <EmbeddedSurvey surveyId="019f181c-074f-0000-8240-f190ad8cfdfb" />
