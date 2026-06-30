@@ -17,14 +17,14 @@
         {
             "id": "cory",
             "name": "Cory Watilo",
-            "avatar": "https://pbs.twimg.com/profile_images/1737139642728660993/pKJ5HzcP_400x400.jpg",
+            "avatar": "https://res.cloudinary.com/dmukukwp6/image/upload/avatar_cory_1a344a0625.jpg",
             "isSelf": true
         },
         {
             "id": "posthog-bot",
             "name": "PostHog",
             "kind": "app",
-            "avatar": "https://avatars.slack-edge.com/2022-11-09/4332839178807_e4c788c631c52a9fe696_512.png"
+            "avatar": "https://res.cloudinary.com/dmukukwp6/image/upload/avatar_posthog_f85279a2ad.png"
         }
     ],
     "timeline": [
@@ -36,13 +36,12 @@
         },
         {
             "type": "delay",
-            "duration": 1000
+            "duration": 1400
         },
         {
             "type": "message",
             "from": "posthog-bot",
             "text": "Found it. Line 7 has `http://localhost:8002/handbook/content/posthog-style-guide`. Let me verify the target exists and fix it.",
-            "delay": 1400,
             "instant": true
         },
         {
@@ -50,19 +49,9 @@
             "duration": 2000
         },
         {
-            "type": "system",
+            "type": "message",
             "from": "posthog-bot",
-            "card": "pr-opened",
             "text": "Pull request opened – I changed it to the relative `/handbook/content/posthog-style-guide`.",
-            "actions": [
-                {
-                    "label": "View PR",
-                    "href": "https://github.com/PostHog/posthog.com/pull/17776"
-                },
-                {
-                    "label": "Open in PostHog Code"
-                }
-            ],
             "instant": true
         }
     ],
