@@ -15,7 +15,7 @@ For customer and sales calls, we've standardized on three tools. Use these by de
 - **[Gong](https://us-26000.app.gong.io/home?workspace-id=8823646477612786274) for meeting recordings** – records and stores every call in a shared, searchable library the whole team can review.
 - **[Granola](https://www.granola.ai/) for transcripts** – AI-generated notes and transcripts, created on your laptop while you're in the call.
 
-> We only use [BuildBetter](https://app.buildbetter.app) for historic meeting recordings made before we moved to Gong — you don't need it for new calls.
+> [BuildBetter](https://app.buildbetter.app) is where we store historical demos and meetings, and some teams still use it day-to-day. For new calls, Gong is the default.
 
 #### Connecting them together
 
@@ -51,7 +51,7 @@ You can self-serve access requests to the following tools using Zluri through Sl
 
 ### Tools that you may find useful and not required
 Unless otherwise indicated, you can self-serve access requests to the following tools using Zluri through Slack (type `/zluri` in any channel to start the request)
-- [BuildBetter](https://app.buildbetter.app) for historic meeting recordings made before we moved to Gong
+- [BuildBetter](https://app.buildbetter.app) for storing historical demos and meetings — some teams still use it
 - [Calendly.com](https://calendly.com/) for shared meeting booking links
 - [Clay](https://www.clay.com/) for account and contact enrichment
 - [In Your Face](https://www.inyourface.app/) (app) don't miss meeting notifications
