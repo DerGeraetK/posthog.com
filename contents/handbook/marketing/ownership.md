@@ -27,7 +27,7 @@ We generally only have product marketers on teams that _already_ have a product 
 <details>
 <summary>I need a product marketer, but my team hasn't been assigned one</summary>
 
-Just ask in #team-marketing in Slack and tag Joe. 
+Just ask in #team-marketing in Slack and tag <TeamMember name="Joe Martin" photo />. 
 </details>
 
 
