@@ -111,8 +111,8 @@ importers:
         specifier: ^3.13.12
         version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@typecaast/react':
-        specifier: ^0.5.2
-        version: 0.5.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^0.5.3
+        version: 0.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@typecaast/skin-kit':
         specifier: 0.4.1
         version: 0.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -5256,13 +5256,19 @@ packages:
   '@typecaast/core@0.4.0':
     resolution: {integrity: sha512-zy6eO7/okeox+3jr3GMzqmKgDHRWX6zCTGLJpwqU9isN+JrJIZyXJU8d0PM0SWVTzRVmv9NrWZKDX+Yhmy8R1Q==}
 
-  '@typecaast/react@0.5.2':
-    resolution: {integrity: sha512-GKWzZXykeLHcq06iFB1QAiEUn/gMMFV2lT0f2odezp6OE8oPmZeqozJodjvKpy1XZnmqWNXcLyNimaiDpf2ALg==}
+  '@typecaast/core@0.5.0':
+    resolution: {integrity: sha512-8r4SstxC22UcoX+Dg34TEpyGDmHepXZBl8Lh3xRP7+q8RZBgI0LraDnOkav0aQLpgSkyDF7rNOT7gnZrhLBNdQ==}
+
+  '@typecaast/react@0.5.3':
+    resolution: {integrity: sha512-Zs5VdJU/hatQXbBLulnYVy0ux76jNX8MbGI4+a3WhK/OoOan3j/7/hPIJO1J9MD/T5fZr/9ggeQ2OJbpL68K9A==}
     peerDependencies:
       react: '>=18'
 
   '@typecaast/schema@0.2.1':
     resolution: {integrity: sha512-0xUp4Aqt60kiBOBv49zZX3NDh5MAZvATd4iU0XsOPS1fw7Ak05aeM/H8uT528w/aR6WekGw34qLt2MJfNtvTzg==}
+
+  '@typecaast/schema@0.3.0':
+    resolution: {integrity: sha512-VzG33zBfd7jQDXpQfIjM1j5blZ8lYfFc6FvRFGhGhGaNAC4ay4O1Jo7ku1cCd6GSeE3xj6SXuv5yUs+D7QMDTQ==}
 
   '@typecaast/skin-kit@0.4.1':
     resolution: {integrity: sha512-U6/2EaugtUG1QpvXf9ruHd+q6wryMv9Onlt8i9NoAAwnYoQEeDP6x+ChTRLDdJHJfB32CTIeNhUyESQlQ5FHUw==}
@@ -5270,8 +5276,19 @@ packages:
       react: '>=18'
       react-dom: '>=18'
 
+  '@typecaast/skin-kit@0.5.0':
+    resolution: {integrity: sha512-eFmHnQDp/A+ybukfH/tUib8NylD8aCDaViPNbLY8hwF1YOqKVBttCJgNWS5GT5voS2uFklBEUdtHDlxtE3/GAQ==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+
   '@typecaast/skins@0.3.3':
     resolution: {integrity: sha512-yrigJwxb48Bxei2qRyf9xeaQ4de4vD4CH8gMI4133O2uZiw0TGiN9jtuxVwPRUoiM1OXbRvwfzdfMrY7eH2SUA==}
+    peerDependencies:
+      react: '>=18'
+
+  '@typecaast/skins@0.4.0':
+    resolution: {integrity: sha512-uJK6M9f5kcm1GjRNHy5TMS141+MLWz5xWCo89FKVIpwqKLCS3IKohBH4GpL76NuXNoCUwr7LkHq1j1ZnIahzSg==}
     peerDependencies:
       react: '>=18'
 
@@ -23829,17 +23846,25 @@ snapshots:
     dependencies:
       '@typecaast/schema': 0.2.1
 
-  '@typecaast/react@0.5.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@typecaast/core@0.5.0':
     dependencies:
-      '@typecaast/core': 0.4.0
-      '@typecaast/schema': 0.2.1
-      '@typecaast/skin-kit': 0.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@typecaast/skins': 0.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@typecaast/schema': 0.3.0
+
+  '@typecaast/react@0.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@typecaast/core': 0.5.0
+      '@typecaast/schema': 0.3.0
+      '@typecaast/skin-kit': 0.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@typecaast/skins': 0.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
     transitivePeerDependencies:
       - react-dom
 
   '@typecaast/schema@0.2.1':
+    dependencies:
+      zod: 4.4.3
+
+  '@typecaast/schema@0.3.0':
     dependencies:
       zod: 4.4.3
 
@@ -23851,11 +23876,29 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       zod: 4.4.3
 
+  '@typecaast/skin-kit@0.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@typecaast/core': 0.5.0
+      '@typecaast/schema': 0.3.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      zod: 4.4.3
+
   '@typecaast/skins@0.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@typecaast/core': 0.4.0
       '@typecaast/schema': 0.2.1
       '@typecaast/skin-kit': 0.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - react-dom
+
+  '@typecaast/skins@0.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@typecaast/core': 0.5.0
+      '@typecaast/schema': 0.3.0
+      '@typecaast/skin-kit': 0.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       zod: 4.4.3
     transitivePeerDependencies:
