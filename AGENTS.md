@@ -158,3 +158,12 @@ Reference these when working on specific areas:
 - Duplicate code when a shared solution exists
 - Skip verifying parent directories before creating files
 - Move or rename a page without adding a redirect in `vercel.json`
+
+## Cursor Cloud specific instructions
+
+Environment: Node 22 and pnpm 10 are preinstalled; the update script runs `pnpm install`. No secrets are required for normal development — `.env.development` is committed and public.
+
+- **Running the site:** `pnpm start` (runs `./bin/start`, which sets `NODE_OPTIONS=--max_old_space_size=16384` and serves Gatsby develop on `0.0.0.0:8001`). It's a long-running process — start it in a background/tmux session, not a blocking foreground call.
+- **First load is slow:** the dev server prints `success building schema` / `run page queries` well before it actually serves. Gatsby compiles pages on demand, so the very first HTTP request to `/` can take 1–2 minutes (and return nothing until then). Wait for an HTTP 200 from `http://localhost:8001/` before assuming a failure. GraphiQL is at `http://localhost:8001/___graphql`.
+- **Expected harmless warnings** during startup (do not treat as errors): `gatsby-source-ashby: Missing options.apiKey`, `No Algolia keys present`, `Cloudinary data not found ...` (hundreds of lines), `No Mapbox access token`, `YOUTUBE_API_KEY not set`. These features need optional API keys that aren't present; the site runs fine without them.
+- **Testing:** `pnpm test` is a placeholder (always fails). `pnpm test-redirects` currently matches no test files. The real automated test is `pnpm test:bundle`. There is no repo-wide lint script — run ESLint directly on files (e.g. `npx eslint <path>`); `any`/return-type findings are warnings, not errors. `pnpm format` runs Prettier and rewrites files.
