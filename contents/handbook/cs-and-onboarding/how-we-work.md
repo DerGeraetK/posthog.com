@@ -109,7 +109,7 @@ We use Calendly for scheduling meetings. In order to schedule a meeting between 
 We use Zoom for all customer and sales calls. If you have Calendly properly integrated, calls that are booked through the tool will default to Zoom. You can find backgrounds to use for the calls here: [This is fine \(and other awesome PostHog wallpapers\)](/blog/posthog-wallpapers).
 
 **Gong:**
-We use Gong to record calls. Once it's set up, Gong automatically joins your Zoom calls and saves the recording to a shared library the whole team can search and review. See [sales & CS tools](/handbook/growth/sales/sales-and-cs-tools#connecting-them-together) for how to connect Gong to Zoom and Calendly. We only keep [BuildBetter](https://app.buildbetter.app) around for historic recordings made before we moved to Gong.
+We use Gong to record calls. Once it's set up, Gong automatically joins your Zoom calls and saves the recording to a shared library the whole team can search and review. See [sales & CS tools](/handbook/growth/sales/sales-and-cs-tools#connecting-them-together) for how to connect Gong to your Zoom calls. We only keep [BuildBetter](https://app.buildbetter.app) around for historic recordings made before we moved to Gong.
 
 **Granola:**
 We use Granola for transcripts and AI notes. It runs on your laptop and transcribes whatever call you're in, so you get a transcript without adding another bot to the meeting.

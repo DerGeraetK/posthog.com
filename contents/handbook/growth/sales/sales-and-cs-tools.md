@@ -21,7 +21,7 @@ For customer and sales calls, we've standardized on three tools. Use these by de
 
 The three tools layer on top of each other: Zoom hosts the call, Gong records it to our shared library, and Granola gives you your own transcript and notes. Set them up in this order:
 
-1. **Zoom** – Book calls through [Calendly](https://calendly.com/) and they'll default to Zoom automatically. You'll also need a Zoom Pro account for Gong recording to work — request one via `/zluri` if you don't have it.
+1. **Zoom** – Run every customer and sales call on Zoom. You'll also need a Zoom Pro account for Gong recording to work — request one via `/zluri` if you don't have it. If you happen to use [Calendly](https://calendly.com/) for scheduling, you can set Zoom as its default location so booked calls land on Zoom automatically, but that's optional.
 2. **Gong** – Request access via `/zluri`, then connect it to your calls:
    - Download the [Gong Meeting Manager](https://workspace.google.com/marketplace/app/gong_meeting_manager/779001639133) extension, which triggers a user consent page when you join calls.
    - Connect your Calendly link (if you use one) with the Gong consent page [using this guide on Slack](https://posthog.slack.com/archives/C01MGUHFH6G/p1770157267662229?thread_ts=1770157176.458439&cid=C01MGUHFH6G).
