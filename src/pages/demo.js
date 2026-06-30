@@ -41,7 +41,11 @@ export default function BookADemo() {
                 </div>
                 <iframe
                     src="https://www.youtube-nocookie.com/embed/1FZji2L-LmM"
+                    title="PostHog product demo"
                     className="rounded shadow-xl order-2 md:order-3"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                 />
             </section>
 
