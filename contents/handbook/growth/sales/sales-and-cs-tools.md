@@ -9,7 +9,7 @@ Here are the common tools the Sales, CS, and Onboarding teams use daily.
 
 ### Our canonical call stack
 
-For customer and sales calls, we've standardized on three tools. Use these by default — keeping to one stack means every recording, transcript, and meeting link stays consistent and searchable for the whole team.
+For customer and sales calls, we've standardized on three tools. Use these by default – keeping to one stack means every recording, transcript, and meeting link stays consistent and searchable for the whole team.
 
 - **[Zoom](https://zoom.com/) for meetings** – every customer and sales call runs on Zoom.
 - **[Gong](https://us-26000.app.gong.io/home?workspace-id=8823646477612786274) for meeting recordings** – records and stores every call in a shared, searchable library the whole team can review.
@@ -21,7 +21,7 @@ For customer and sales calls, we've standardized on three tools. Use these by de
 
 The three tools layer on top of each other: Zoom hosts the call, Gong records it to our shared library, and Granola gives you your own transcript and notes. Set them up in this order:
 
-1. **Zoom** – Run every customer and sales call on Zoom. You'll also need a Zoom Pro account for Gong recording to work — request one via `/zluri` if you don't have it. If you happen to use [Calendly](https://calendly.com/) for scheduling, you can set Zoom as its default location so booked calls land on Zoom automatically, but that's optional.
+1. **Zoom** – Run every customer and sales call on Zoom. You'll also need a Zoom Pro account for Gong recording to work – request one via `/zluri` if you don't have it. If you happen to use [Calendly](https://calendly.com/) for scheduling, you can set Zoom as its default location so booked calls land on Zoom automatically, but that's optional.
 2. **Gong** – Request access via `/zluri`, then connect it to your calls:
    - Download the [Gong Meeting Manager](https://workspace.google.com/marketplace/app/gong_meeting_manager/779001639133) extension, which triggers a user consent page when you join calls.
    - Connect your Calendly link (if you use one) with the Gong consent page [using this guide on Slack](https://posthog.slack.com/archives/C01MGUHFH6G/p1770157267662229?thread_ts=1770157176.458439&cid=C01MGUHFH6G).
@@ -51,7 +51,7 @@ You can self-serve access requests to the following tools using Zluri through Sl
 
 ### Tools that you may find useful and not required
 Unless otherwise indicated, you can self-serve access requests to the following tools using Zluri through Slack (type `/zluri` in any channel to start the request)
-- [BuildBetter](https://app.buildbetter.app) for storing historical demos and meetings — some teams still use it
+- [BuildBetter](https://app.buildbetter.app) for storing historical demos and meetings – some teams still use it
 - [Calendly.com](https://calendly.com/) for shared meeting booking links
 - [Clay](https://www.clay.com/) for account and contact enrichment
 - [In Your Face](https://www.inyourface.app/) (app) don't miss meeting notifications
