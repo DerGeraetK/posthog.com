@@ -8,9 +8,11 @@ import { useApp } from '../../../context/App'
 import { ToggleGroup } from 'components/RadixUI/ToggleGroup'
 import TypecaastPlayer, { type TypecaastPlayerProps } from 'components/TypecaastPlayer'
 import { usePrefersReducedMotion } from 'components/Code/usePrefersReducedMotion'
-import { usePauseAutoAdvance } from './autoAdvanceGate'
+import { usePauseAutoAdvance, useSlideActive } from './autoAdvanceGate'
 import slackBrokenLink from '../../../data/typecaast/slack-broken-link.json'
 import cursorBrokenLink from '../../../data/typecaast/cursor-broken-link.json'
+import slackSignalsLoading from '../../../data/typecaast/slack-signals-loading.json'
+import slackAskPostHog from '../../../data/typecaast/slack-ask-posthog.json'
 
 // A Typecaast embed for use inside the hero carousel. While its animation plays it holds
 // the carousel's auto-advance (the animations run longer than the ~5s dwell), then releases
@@ -19,21 +21,30 @@ import cursorBrokenLink from '../../../data/typecaast/cursor-broken-link.json'
 // `onEnded` can never leave the carousel frozen.
 const MAX_CAROUSEL_HOLD_MS = 30000
 
+// Shared height for every Typecaast embed in the hero carousel — one value so all slides
+// match and the carousel doesn't jump in height between tabs.
+const CAROUSEL_EMBED_HEIGHT = 'h-[400px]'
+
 const CarouselTypecaast = ({ onEnded, ...props }: TypecaastPlayerProps): JSX.Element => {
     const [ended, setEnded] = useState(false)
     const reducedMotion = usePrefersReducedMotion()
+    // Slides stay mounted across tab switches (the carousel force-mounts every tab), so pause
+    // while this isn't the visible tab: Typecaast's controlled pause resumes in place instead
+    // of restarting, and only the active slide holds auto-advance / runs the safety timeout.
+    const isActive = useSlideActive()
 
-    usePauseAutoAdvance(!ended && !reducedMotion)
+    usePauseAutoAdvance(isActive && !ended && !reducedMotion)
 
     useEffect(() => {
-        if (ended || reducedMotion) return
+        if (ended || reducedMotion || !isActive) return
         const timer = setTimeout(() => setEnded(true), MAX_CAROUSEL_HOLD_MS)
         return () => clearTimeout(timer)
-    }, [ended, reducedMotion])
+    }, [ended, reducedMotion, isActive])
 
     return (
         <TypecaastPlayer
             {...props}
+            paused={!isActive}
             onEnded={() => {
                 setEnded(true)
                 onEnded?.()
@@ -67,7 +78,11 @@ export const PullRequestSlide = () => {
             </div>
             */}
             <div className="grid grid-cols-1 @2xl:grid-cols-[1.4fr_1fr] gap-6 @2xl:gap-8 items-center">
-                <CarouselTypecaast config={slackBrokenLink} height="h-96" className="border border-primary" />
+                <CarouselTypecaast
+                    config={slackBrokenLink}
+                    height={CAROUSEL_EMBED_HEIGHT}
+                    className="border border-primary"
+                />
                 <div className="flex flex-col gap-3">
                     <div className="space-y-2">
                         <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
@@ -111,14 +126,9 @@ export const FixBugsSlide = () => {
     const codeProduct = Array.isArray(allProducts)
         ? allProducts.find((p: any) => p.handle === 'posthog_code')
         : undefined
-    const slackProduct = Array.isArray(allProducts)
-        ? allProducts.find((p: any) => p.handle === 'posthog_slack')
-        : undefined
     const { siteSettings } = useApp()
     const isDark = siteSettings.theme === 'dark'
     const codeScreenshot = codeProduct?.screenshots?.home
-    const slackScreenshot = slackProduct?.screenshots?.inbox
-    const screenshot = view === 'slack' ? slackScreenshot : codeScreenshot
 
     return (
         <div className="@container rounded p-4 @md:p-6 h-full">
@@ -135,12 +145,20 @@ export const FixBugsSlide = () => {
                 />
             </div>
             <div className="grid grid-cols-1 @2xl:grid-cols-[1.4fr_1fr] gap-6 @2xl:gap-8 items-center">
-                {screenshot ? (
-                    <div className={`flex ${screenshot.classes || ''}`}>
+                {view === 'slack' ? (
+                    <CarouselTypecaast
+                        config={slackSignalsLoading}
+                        height={CAROUSEL_EMBED_HEIGHT}
+                        className="border border-primary"
+                    />
+                ) : codeScreenshot ? (
+                    <div className={`flex ${codeScreenshot.classes || ''}`}>
                         <CloudinaryImage
-                            src={(isDark && screenshot.srcDark ? screenshot.srcDark : screenshot.src) as any}
-                            alt={screenshot.alt}
-                            imgClassName={screenshot.imgClasses}
+                            src={
+                                (isDark && codeScreenshot.srcDark ? codeScreenshot.srcDark : codeScreenshot.src) as any
+                            }
+                            alt={codeScreenshot.alt}
+                            imgClassName={codeScreenshot.imgClasses}
                         />
                     </div>
                 ) : (
@@ -152,17 +170,15 @@ export const FixBugsSlide = () => {
                             <p className="flex items-center gap-1.5 text-secondary text-sm font-semibold m-0">
                                 PostHog in <IconSlack className="size-4" /> Slack
                             </p>
-                            <h2 className="text-2xl font-bold m-0">Fix bugs automatically</h2>
+                            <h2 className="text-2xl font-bold m-0">Automatic bug fixes &amp; optimizations</h2>
                         </div>
                         <p className="text-secondary m-0">
                             PostHog Signals runs analysis on errors, logs, and summarized session recordings to detect
                             and fix bugs without any human prompting.
                         </p>
-                        {/* TODO: re-enable once /signals (or equivalent) lands.
-                        <OSButton to="/signals" state={{ newWindow: true }} variant="primary" asLink>
-                            <IconAtSign className="size-4" /> Learn more about Signals
+                        <OSButton to="/self-driving" state={{ newWindow: true }} variant="secondary" size="md" asLink>
+                            Learn more
                         </OSButton>
-                        */}
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
@@ -200,14 +216,9 @@ export const AskAnythingSlide = () => {
     const [view, setView] = useState<'slack' | 'web'>('slack')
     const allProducts = useProduct() as any[]
     const aiProduct = Array.isArray(allProducts) ? allProducts.find((p: any) => p.handle === 'posthog_ai') : undefined
-    const slackProduct = Array.isArray(allProducts)
-        ? allProducts.find((p: any) => p.handle === 'posthog_slack')
-        : undefined
     const { siteSettings } = useApp()
     const isDark = siteSettings.theme === 'dark'
     const webScreenshot = aiProduct?.screenshots?.home
-    const slackScreenshot = slackProduct?.screenshots?.insight
-    const screenshot = view === 'slack' ? slackScreenshot : webScreenshot
 
     return (
         <div className="@container rounded p-4 @md:p-6 h-full">
@@ -224,12 +235,18 @@ export const AskAnythingSlide = () => {
                 />
             </div>
             <div className="grid grid-cols-1 @2xl:grid-cols-[1.4fr_1fr] gap-6 @2xl:gap-8 items-center">
-                {screenshot ? (
-                    <div className={`flex ${screenshot.classes || ''}`}>
+                {view === 'slack' ? (
+                    <CarouselTypecaast
+                        config={slackAskPostHog}
+                        height={CAROUSEL_EMBED_HEIGHT}
+                        className="border border-primary"
+                    />
+                ) : webScreenshot ? (
+                    <div className={`flex ${webScreenshot.classes || ''}`}>
                         <CloudinaryImage
-                            src={(isDark && screenshot.srcDark ? screenshot.srcDark : screenshot.src) as any}
-                            alt={screenshot.alt}
-                            imgClassName={screenshot.imgClasses}
+                            src={(isDark && webScreenshot.srcDark ? webScreenshot.srcDark : webScreenshot.src) as any}
+                            alt={webScreenshot.alt}
+                            imgClassName={webScreenshot.imgClasses}
                         />
                     </div>
                 ) : (

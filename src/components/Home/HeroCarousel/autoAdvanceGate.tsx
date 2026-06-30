@@ -26,3 +26,17 @@ export function usePauseAutoAdvance(active: boolean): void {
         return gate.acquire()
     }, [active, gate])
 }
+
+/**
+ * Whether the slide reading this is the carousel's currently-visible tab. The carousel
+ * force-mounts every tab (so animations keep their place instead of restarting on switch),
+ * so slides need this to know when to play/pause and when to hold auto-advance.
+ *
+ * Defaults to `true` outside a carousel (no provider), so a slide rendered standalone just
+ * behaves as "active" and plays normally.
+ */
+export const SlideActiveContext = React.createContext<boolean>(true)
+
+export function useSlideActive(): boolean {
+    return React.useContext(SlideActiveContext)
+}

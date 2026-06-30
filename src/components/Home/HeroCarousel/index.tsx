@@ -3,7 +3,7 @@ import { Tabs } from 'radix-ui'
 import { IconPauseFilled, IconPlayFilled } from '@posthog/icons'
 import Tooltip from 'components/RadixUI/Tooltip'
 import { Tab, productUsageTabs } from './tabs'
-import { AutoAdvanceGateContext } from './autoAdvanceGate'
+import { AutoAdvanceGateContext, SlideActiveContext } from './autoAdvanceGate'
 
 const SLIDE_DURATION = 5000
 
@@ -116,12 +116,19 @@ export default function HeroCarousel({ tabs = productUsageTabs, className }: { t
                                 </Tooltip>
                             </span>
                             {tabs.map((tab) => (
+                                // `forceMount` keeps every slide mounted so a Typecaast animation keeps its
+                                // place (and timing) when you switch tabs instead of restarting; inactive
+                                // panels are hidden via CSS. `SlideActiveContext` lets each slide pause itself
+                                // and release its auto-advance hold while it isn't the visible tab.
                                 <Tabs.Content
                                     key={tab.value}
                                     value={tab.value}
-                                    className="data-[state=active]:animate-[hero-carousel-fade-in_300ms_ease-out] flex-1"
+                                    forceMount
+                                    className="data-[state=active]:animate-[hero-carousel-fade-in_300ms_ease-out] data-[state=inactive]:hidden flex-1"
                                 >
-                                    {tab.content}
+                                    <SlideActiveContext.Provider value={activeTab === tab.value}>
+                                        {tab.content}
+                                    </SlideActiveContext.Provider>
                                 </Tabs.Content>
                             ))}
                         </div>
