@@ -11,10 +11,11 @@ tags:
 ---
 
 import { CalloutBox } from 'components/Docs/CalloutBox'
+import WizardCommand from 'components/WizardCommand'
 
-<CalloutBox type="fyi" title="New: instrument your MCP server in one line" icon="IconInfo">
+<CalloutBox type="fyi" title="New: instrument your MCP server in one command" icon="IconInfo">
 
-Since this tutorial was published, we've shipped [`@posthog/mcp`](/docs/mcp-analytics) – an official (alpha) SDK that captures every tool call, error, and the agent's intent with a single `instrument(server, posthog)` call. No wrapper code required. The manual approach below still works and is a great way to understand what's happening under the hood, but most servers should reach for the SDK first.
+Since this tutorial was published, we've shipped [`@posthog/mcp`](/docs/mcp-analytics) – an official (beta) SDK that captures every tool call, error, and the agent's intent automatically. You can set it up with a single `instrument(server, posthog)` call, or let our wizard do it for you with one command. No wrapper code required. The manual approach below still works and is a great way to understand what's happening under the hood, but most servers should reach for the SDK first.
 
 </CalloutBox>
 
@@ -33,7 +34,11 @@ The full source code for the manual approach is available in this [GitHub reposi
 
 [`@posthog/mcp`](/docs/mcp-analytics) wraps your MCP server and captures analytics automatically – no per-tool instrumentation. It supports any TypeScript MCP server built on `@modelcontextprotocol/sdk`.
 
-Install it alongside the [PostHog Node.js SDK](/docs/libraries/node):
+The fastest way to set it up is our wizard, which installs the package, adds your `posthog-node` client, and wires up the `instrument()` call for you (it also works with [LLM coding agents](/blog/envoy-wizard-llm-agent) like Cursor):
+
+<WizardCommand command="mcp-analytics" />
+
+Prefer to do it by hand, or want to see exactly what the wizard wires up? Install the SDK alongside the [PostHog Node.js SDK](/docs/libraries/node):
 
 ```bash
 npm install @posthog/mcp posthog-node
@@ -71,7 +76,7 @@ It also unlocks signals the manual approach can't easily capture, each a one-lin
 
 Remember to drain queued events on shutdown by calling `posthog.shutdown()` (or `posthog.flush()`) from your `SIGTERM` handler, since you own the client's lifecycle.
 
-> **Note:** `@posthog/mcp` is published as a `0.1.x` alpha. Pin a specific version and don't depend on it for production reporting yet. Running a custom dispatcher with no server object to wrap? See [Custom servers](/docs/mcp-analytics/custom-servers).
+> **Note:** `@posthog/mcp` is in beta (pre-1.0). The API may still change – including breaking changes in minor `0.x` releases – so pin a specific version while we iterate. Running a custom dispatcher with no server object to wrap? See [Custom servers](/docs/mcp-analytics/custom-servers).
 
 To go deeper, see the [getting started guide](/docs/mcp-analytics/start-here), the [installation docs](/docs/mcp-analytics/installation), and the [event reference](/docs/mcp-analytics/events).
 
