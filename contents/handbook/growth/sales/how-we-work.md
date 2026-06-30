@@ -135,6 +135,7 @@ These standards are likely to change as the TAE role evolves. Any changes will b
 
 **How we calculate**
 - Quota is calculated annually, and is paid out quarterly
+- Quota is rebased when accounts are added to or removed from your book, so taking on or handing off accounts moves your target up or down accordingly.
 - A deal counts toward quota in the quarter of its **effective date**. For annual deals, the effective date is the contract start date or the signature date, whichever is later. For monthly accounts, each payment counts toward the quarter it falls in.
 - Because the signature date sets the floor, a deal can never be credited to a quarter that has already closed, even if its contract start was backdated to align with the customer's current billing period.
 - The Commission rate is 10% flat and uncapped, regardless of whether it is monthly or annual
