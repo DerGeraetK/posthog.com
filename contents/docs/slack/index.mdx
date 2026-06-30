@@ -13,12 +13,13 @@ The PostHog Slack app is in beta. Commands, scopes, and behavior are still movin
 Mention `@PostHog` with a fix, an edit, or a feature idea and it plans the work in a sandboxed environment, edits files, runs your checks, and opens a draft PR. The same agent that powers [PostHog AI](/docs/posthog-ai) and [PostHog Code](/code), just summoned from where your team already chats.
 
 <ProductScreenshot
-imageLight="https://res.cloudinary.com/dmukukwp6/image/upload/Screenshot_2026_05_04_at_4_47_08_PM_b8ba794fdc.png"
-classes="rounded"
-alt="A PostHog Code task running in a Slack thread"
+  imageLight="https://res.cloudinary.com/dmukukwp6/image/upload/Screenshot_2026_05_04_at_4_47_08_PM_b8ba794fdc.png"
+  classes="rounded"
+  alt="A PostHog Code task running in a Slack thread"
 />
 
 Before you can mention the bot you'll need to [connect the integrations](/docs/slack/setup).You'll need to connect:
+
 - A Slack workspace connection for each project
 - A personal GitHub connection for each teammate who wants to ship PRs.
 
@@ -60,13 +61,27 @@ Heads up: the resulting PR is still authored under whoever started the task – 
 
 The bot reacts to your `@PostHog` message as it works through your request, so you can scan a busy channel and see what's still in flight without opening every thread:
 
-| Emoji | What it means |
-|---|---|
-| 🌱 `:seedling:` | Saw your mention and is spinning up a new task |
-| 🔍 `:mag:` | Picking which repo to run the task against |
-| 👀 `:eyes:` | Forwarding a follow-up to the running agent, or resuming a previous run |
-| 🦔 `:hedgehog:` | The agent finished and posted its reply in the thread |
-| ❌ `:x:` | Something went wrong |
+| Emoji           | What it means                                                           |
+| --------------- | ----------------------------------------------------------------------- |
+| 🌱 `:seedling:` | Saw your mention and is spinning up a new task                          |
+| 🔍 `:mag:`      | Picking which repo to run the task against                              |
+| 👀 `:eyes:`     | Forwarding a follow-up to the running agent, or resuming a previous run |
+| 🦔 `:hedgehog:` | The agent finished and posted its reply in the thread                   |
+| ❌ `:x:`        | Something went wrong                                                    |
+
+## App Home tab
+
+Click the PostHog app in your Slack sidebar to open the App Home tab. The **Tasks** card lists recent tasks you started by mentioning `@PostHog` in the workspace, scoped to teams you can access.
+
+Each task row shows a linked title (deep-linked to PostHog), the repo name, current status, and links to the Slack thread and associated PR.
+
+Use the controls at the top of the card to narrow the list:
+
+- **Repo dropdown** – filter by repository. Shows an "All repos" option to reset.
+- **Status dropdown** – filter by status (in progress, done, failed, cancelled, queued, or not started).
+- **Refresh** – reload the list without leaving the Home tab.
+
+Tasks that haven't had any Slack thread activity in the last 14 days automatically drop off the list.
 
 ## Link unfurling
 
