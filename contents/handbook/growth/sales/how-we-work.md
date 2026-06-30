@@ -163,9 +163,9 @@ Situations where PostHog credits a customer due to circumstances outside of the 
 
 **During ramp**
 
-For your first three months you carry a full quota, not a reduced ramp quota. You are guaranteed 100% of your OTE as a floor, so a slow start won't cost you. In each ramp period you are paid the higher of that floor or the commission you earn on net-new business you personally close. You do not get the floor and commission on top of it.
+For your first three months you carry a full quota, not a reduced ramp quota. You are guaranteed 100% of your OTE as a floor, so a slow start won't cost you. In each ramp period you are paid the higher of that floor or the commission you earn on net new business you personally close. You do not get the floor and commission on top of it.
 
-Net-new means a new logo, a new prepaid credit deal, or a cross-sell you drove. Inherited expansion, deals a previous owner signed (including ones with a future-dated start that lands in your ramp quarter), and passive usage growth on your book do not count toward ramp commission. The floor already covers you while you build, so ramp upside is reserved for cash you genuinely bring in. See the [new hire FAQ](/handbook/growth/sales/new-hire-onboarding#new-hire-frequently-asked-questions) for how the floor is prorated by start date.
+Deals a previous owner signed (including ones with a future-dated start that lands in your ramp quarter) do not count toward ramp commission. The floor already covers you while you build. See the [new hire FAQ](/handbook/growth/sales/new-hire-onboarding#new-hire-frequently-asked-questions) for how the floor is prorated by start date.
 
 ### TAM book of business rules
 
