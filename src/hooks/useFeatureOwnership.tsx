@@ -235,6 +235,12 @@ const FEATURE_DATA: Record<string, BaseFeature> = {
         feature: 'Internal messaging (email, notifications)',
         owner: ['platform-features'],
         label: 'feature/notifications',
+        notes: (
+            <>
+                Platform features owns the shared email delivery path (SMTP/sending) used by platform-level emails
+                such as digests. Individual digest content stays with its team (e.g. Growth owns the Weekly digest).
+            </>
+        ),
     },
     'live-events': {
         feature: 'Live events',
