@@ -24,13 +24,13 @@ Use it to space out a sequence so it doesn't all arrive at once, for example wai
 
 A wait until condition pauses the person until a condition becomes true, or until a maximum wait time elapses, whichever comes first. It has two branches:
 
-- **Match** — the condition became true within the wait time
-- **No match** — the wait time elapsed without the condition being met
+- **Match** – the condition became true within the wait time
+- **No match** – the wait time elapsed without the condition being met
 
 You configure two things on the block:
 
-- **Wait time** — the maximum time to wait for the condition (e.g. 1 day)
-- **Conditions to wait for** — the condition that, once true, moves the person down the **match** branch (e.g. the [person property](/docs/product-analytics/person-properties) `onboarding_completed` is set to `true`)
+- **Wait time** – the maximum time to wait for the condition (e.g. 1 day)
+- **Conditions to wait for** – the condition that, once true, moves the person down the **match** branch (e.g. the [person property](/docs/product-analytics/person-properties) `onboarding_completed` is set to `true`)
 
 This is the key step for behavior-based branching. Instead of messaging everyone the same way, you wait to see what each person does and react accordingly, sending a follow-up only to people who *didn't* take the action you were waiting for.
 
@@ -58,6 +58,6 @@ This is useful to combine with the other delay types: a fixed wait gets the timi
 
 ## Further reading
 
-- [Set up an email drip campaign](/docs/workflows/email-drip-campaign) — a step-by-step tutorial using wait until condition
-- [Workflow builder](/docs/workflows/workflow-builder) — all the components you can add to a workflow
-- [Broadcasts and batch triggers](/docs/workflows/broadcasts) — send to a whole audience at once
+- [Set up an email drip campaign](/docs/workflows/email-drip-campaign) – a step-by-step tutorial using wait until condition
+- [Workflow builder](/docs/workflows/workflow-builder) – all the components you can add to a workflow
+- [Broadcasts and batch triggers](/docs/workflows/broadcasts) – send to a whole audience at once
