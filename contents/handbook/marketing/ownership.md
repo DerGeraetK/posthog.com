@@ -14,7 +14,7 @@ We generally only have product marketers on teams that _already_ have a product 
 
 | Product | PM | PMM | Blitzscale |
 |---|---|---|---|
-| *Data warehouse* | Anna | Lizzie | Raquel |
+| *Context warehouse* | Anna | Lizzie | Raquel |
 | *PostHog AI* | Annika | Joe | James H |
 | *PostHog Code* | Annika | Cleo | James H |
 | *PostHog Slack* | Annika | Cleo | James H |
@@ -45,9 +45,9 @@ Speak to <SmallTeam slug="marketing" /> and read about [product launches](/handb
 <details>
 <summary>I need help with documentation</summary>
 
-Your main contact is the <SmallTeam slug="docs-wizard" />, but please read the [docs ownership handbook](/handbook/docs-and-wizard/docs-ownership) to understand how best to work with them. 
+Your main contact is the <SmallTeam slug="wizard-and-docs" />, but please read the [docs ownership handbook](/handbook/wizard-and-docs/docs-ownership) to understand how best to work with them. 
 
-If you just need someone to review something, tag `Team Docs & Wizard` in GitHub.
+If you just need someone to review something, tag `Team Wizard & Docs` in GitHub.
 </details>
 
 <details>
