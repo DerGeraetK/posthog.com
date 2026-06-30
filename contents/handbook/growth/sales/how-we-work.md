@@ -141,6 +141,7 @@ These standards are likely to change as the TAE role evolves. Any changes will b
 	- There is an additional 6.7% incentive on net-new annual contracts 
 	- There is also an additional 6.7% incentive on growth in annual renewals
 	- There is no additional incentive on monthly payments
+ - An account counts toward your quota only from the date it is added to your book (when the `AM Managed` segment is applied). Cash paid before that date does not count toward commission, even if it lands in the current quarter. We don't pay retroactively on an account that wasn't yet in your book.
 
 **Examples**
 Ator, the TAM has a book account that pays month to month. In the quarter, that account makes 3 payments of $2,200, $2,100, and $2,500 totaling $6,800. The quota realized and paid out to Ator on this account is 10% of the total for that quarter, $680.
