@@ -117,6 +117,8 @@ You might see some customers with a 30% discount on their monthly Stripe subscri
 
 For customers on our [startup plan](/startups), we offer two months free credit when signing a prepaid deal. This encourages startups to use their credits to understand usage, and then commit to a longer term plan with PostHog. This offer is available until the first billing date after the credits expire. If a customer has used up their credits before the expiration date, they still have until the original expiration date to decide and claim the offer. The amount of free credits is determined by how much they purchase on a prepaid plan. By default, we work with customers on prepaid plans that will cover their usage for the next 12 months.
 
+> Eligibility note: if a customer can still renew their startup program credits (eg a YC company eligible for a YC reup in the coming months), they are not eligible for the 2 free months.
+
 > Important clarification: operationally this is implemented as free credits applied before the contract start date, not as extra credits inside the contract term unless a specific dollar amount for the free credits is explicitly included under Special Terms.
 
 You should follow the same [inbound sales process](https://posthog.com/handbook/growth/sales/new-sales) and work with the customer on understanding and optimizing their usage. Then follow these additional steps take to present the prepaid plan + free credits option(s):
