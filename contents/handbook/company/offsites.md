@@ -133,9 +133,9 @@ If hotel prices are above £200 per night, it is worth quickly looking for alter
 
 ## Travel administration forms
 
-When travelling with PostHog, you may need to complete various travel administration forms ahead of your trip. These often ask for details that don't map neatly onto a remote-first company, so here's some guidance:
+When traveling with PostHog, you may need to complete various travel administration forms ahead of your trip. These often ask for details that don't map neatly onto a remote-first company, so here's some guidance:
 
-- **Business or company address:** you can use the Hogpatch address — 2360 3rd St, San Francisco, CA 94107, United States. For more on the space, see the [Hogpatch operations](/handbook/people/hogpatch-operations) page.
+- **Business or company address:** you can use the Hogpatch address – 2360 3rd St, San Francisco, CA 94107, United States. For more on the space, see the [Hogpatch operations](/handbook/people/hogpatch-operations) page.
 - **Where you'll be staying / contact details:** you can use the details of the hotel or accommodation you've booked, or leave the field blank if it's optional.
 
 ## Border Control
