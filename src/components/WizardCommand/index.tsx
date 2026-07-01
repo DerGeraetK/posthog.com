@@ -39,8 +39,8 @@ export default function WizardCommand({
     // never shows it. `latest` controls whether `@latest` is present at all; `simple` additionally
     // hides `@latest` from the display (the copy still pins it for freshness).
     const buildCode = (withYes: boolean, withLatest: boolean) =>
-        `npx ${withYes ? '-y ' : ''}@posthog/wizard${withLatest ? '@latest' : ''}${cloud ? ` --region ${cloud}` : ''}${
-            subcommand ? ` ${subcommand}` : ''
+        `npx ${withYes ? '-y ' : ''}@posthog/wizard${withLatest ? '@latest' : ''}${subcommand ? ` ${subcommand}` : ''}${
+            cloud ? ` --region ${cloud}` : ''
         }`
     const displayCode = buildCode(false, simple ? false : latest)
     const copyCode = buildCode(true, latest)

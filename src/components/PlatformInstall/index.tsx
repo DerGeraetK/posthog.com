@@ -4,6 +4,7 @@ import Link from 'components/Link'
 import Tooltip from 'components/RadixUI/Tooltip'
 import { cn } from '../../utils'
 import ZoomHover from 'components/ZoomHover'
+import useCloud from 'hooks/useCloud'
 import IconButton from './IconButton'
 import { CopyableCommand } from './CopyableCommand'
 import {
@@ -162,13 +163,16 @@ export default function PlatformInstall({
     }
 
     // `selfDriving` appends the `self-driving` subcommand; `command` is the escape hatch for any
-    // other subcommand. Either is added to both the displayed text and the clipboard copy.
+    // other subcommand. `appendRegion` tacks the user's cloud region on last (matching WizardCommand),
+    // e.g. `npx @posthog/wizard self-driving --region eu`. All added to both display and copy.
+    const cloud = useCloud()
     const subcommand = selfDriving ? 'self-driving' : command
     const commandSuffix = subcommand ? ` ${subcommand}` : ''
-    const displayCommand = `${schema.defaultCommand}${commandSuffix}`
+    const regionSuffix = schema.appendRegion && cloud ? ` --region ${cloud}` : ''
+    const displayCommand = `${schema.defaultCommand}${commandSuffix}${regionSuffix}`
     const copyCommand =
-        schema.defaultCopyCommand || subcommand
-            ? `${schema.defaultCopyCommand ?? schema.defaultCommand}${commandSuffix}`
+        schema.defaultCopyCommand || subcommand || regionSuffix
+            ? `${schema.defaultCopyCommand ?? schema.defaultCommand}${commandSuffix}${regionSuffix}`
             : undefined
 
     return (
