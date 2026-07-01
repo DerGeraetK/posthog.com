@@ -47,6 +47,7 @@ interface ContactSalesProps {
         }
         autoValidate?: boolean
         source?: string
+        formLocation?: string
     }
 }
 

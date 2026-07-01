@@ -111,6 +111,10 @@ const formConfig = {
 }
 
 export default function PresentationForm({ teamSlug, salesRep }: PresentationFormProps) {
+    // Tag the surface (e.g. `web_analytics_sidebar`) so demo-form engagement can be
+    // funneled per product presentation; fall back to a generic sidebar location.
+    const formLocation = teamSlug ? `${teamSlug.replace(/-/g, '_')}_sidebar` : 'presentation_sidebar'
+
     return (
         <ScrollArea viewportClasses="[&>div]:h-full">
             <div data-scheme="primary" className="bg-accent text-primary h-full p-4" data-default-form-id="509041">
@@ -161,7 +165,7 @@ export default function PresentationForm({ teamSlug, salesRep }: PresentationFor
 
                 <TeamMembers teamSlug={teamSlug} salesRep={salesRep} />
 
-                <ContactSales formConfig={formConfig as any} />
+                <ContactSales formConfig={{ ...formConfig, formLocation } as any} />
             </div>
         </ScrollArea>
     )

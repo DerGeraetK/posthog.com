@@ -6,6 +6,7 @@ import SEO from 'components/seo'
 
 const formConfig = {
     type: 'lead' as const,
+    formLocation: 'talk_to_a_human',
     formOptions: {
         className: 'pb-4 flex flex-col',
         ctaLocation: 'top' as const,

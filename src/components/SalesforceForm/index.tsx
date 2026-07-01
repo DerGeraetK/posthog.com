@@ -1,5 +1,5 @@
 import { Form, Formik, useFormikContext } from 'formik'
-import React, { createContext, InputHTMLAttributes, RefObject, useContext, useRef, useState } from 'react'
+import React, { createContext, InputHTMLAttributes, RefObject, useContext, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { button } from 'components/CallToAction'
 import usePostHog from 'hooks/usePostHog'
@@ -58,6 +58,11 @@ interface IProps {
     type: 'lead' | 'contact'
     source?: string
     initialValues?: Record<string, any>
+    /**
+     * Identifies which surface this form is rendered on (e.g. `talk_to_a_human`,
+     * `web_analytics_sidebar`) so engagement events can be funneled per surface.
+     */
+    formLocation?: string
 }
 
 export interface Field {
@@ -373,13 +378,44 @@ export default function SalesforceForm({
     type = 'lead',
     source,
     initialValues: initialValuesProp,
+    formLocation,
 }: IProps) {
     const { setConfetti } = useApp()
     const posthog = usePostHog()
     const [openOptions, setOpenOptions] = useState<string[]>([])
     const [submitted, setSubmitted] = useState(false)
 
+    // Engagement instrumentation: these forms post off-page to Salesforce, so
+    // without explicit events every open/close is invisible to analytics. We fire
+    // lightweight lifecycle events tagged with `form_location` so abandonment can
+    // be funneled per surface (see the SalesforceForm README for event details).
+    const hasStartedRef = useRef(false)
+    const submittedRef = useRef(false)
+    const eventProps = { form_name: form.name, form_location: formLocation }
+
+    useEffect(() => {
+        if (form.fields.length === 0) return
+        posthog?.capture?.('demo_form_viewed', eventProps)
+        return () => {
+            // Fire on close/unmount when the visitor left without submitting so we
+            // can measure abandonment, distinguishing glance-and-leave (form_started
+            // false) from partial fills (form_started true).
+            if (!submittedRef.current) {
+                posthog?.capture?.('demo_form_closed', { ...eventProps, form_started: hasStartedRef.current })
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const handleFirstInteraction = () => {
+        if (hasStartedRef.current) return
+        hasStartedRef.current = true
+        posthog?.capture?.('demo_form_started', eventProps)
+    }
+
     const handleSubmit = async (values: any) => {
+        submittedRef.current = true
+        posthog?.capture?.('demo_form_submitted', eventProps)
         const distinctId = posthog?.get_distinct_id?.()
         posthog?.setPersonProperties?.({
             email: values.email,
@@ -451,7 +487,7 @@ export default function SalesforceForm({
                 }}
                 onSubmit={handleSubmit}
             >
-                <Form className={formOptions?.className}>
+                <Form className={formOptions?.className} onFocus={handleFirstInteraction}>
                     {formOptions?.ctaLocation === 'top' && <CTAButton {...ctaButtonProps} />}
                     <div className="flex-1">
                         <ScrollArea className="min-h-0">
