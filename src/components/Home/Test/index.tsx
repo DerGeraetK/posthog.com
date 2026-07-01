@@ -116,9 +116,9 @@ const SecondaryActions = () => (
 
 // PostHog.com-side glue (see note above): the install UI + secondary links, used by the
 // homepage hero (inlined) and the /products page (via this export).
-export const GetStarted = () => (
+export const GetStarted = ({ selfDriving }: { selfDriving?: boolean }) => (
     <div className="mt-6 flex flex-col items-center @xl:items-start">
-        <PlatformInstall schema={wizardInstallSchema} />
+        <PlatformInstall schema={wizardInstallSchema} selfDriving={selfDriving} />
         <SecondaryActions />
     </div>
 )
@@ -397,7 +397,7 @@ function TestHero(): JSX.Element {
                     </div>
 
                     <div className="mt-6 flex flex-col items-center @xl:items-start">
-                        <PlatformInstall schema={wizardInstallSchema} />
+                        <PlatformInstall schema={wizardInstallSchema} selfDriving />
                         <SecondaryActions />
                     </div>
                 </div>

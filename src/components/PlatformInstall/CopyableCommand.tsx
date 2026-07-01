@@ -86,19 +86,26 @@ function fireCopyConfetti(originEl: HTMLElement | null, zIndex: number): void {
 
 export type CopyableCommandProps = {
     command: string
+    /** Clipboard override: when set, this is copied instead of `command` (display still shows `command`). */
+    copyCommand?: string
     className?: string
     /** Apply the wizard gradient text effect to the command */
     animate?: boolean
 }
 
-export function CopyableCommand({ command, className = '', animate = false }: CopyableCommandProps): JSX.Element {
+export function CopyableCommand({
+    command,
+    copyCommand,
+    className = '',
+    animate = false,
+}: CopyableCommandProps): JSX.Element {
     const { addToast } = useToast()
     const confettiZIndex = useCopyConfettiZIndex()
     const copyButtonRef = useRef<HTMLButtonElement>(null)
     const [copied, setCopied] = useState(false)
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(command)
+        navigator.clipboard.writeText(copyCommand ?? command)
         setCopied(true)
         fireCopyConfetti(copyButtonRef.current, confettiZIndex)
         window.setTimeout(() => setCopied(false), 1500)

@@ -13,14 +13,18 @@ const variantStyles: Record<string, string> = {
 export default function WizardCommand({
     className = '',
     command = '',
+    selfDriving = false,
     latest = true,
+    simple = false,
     slim = false,
     variant = 'default',
     onCopy,
 }: {
     className?: string
     command?: string
+    selfDriving?: boolean
     latest?: boolean
+    simple?: boolean
     slim?: boolean
     variant?: keyof typeof variantStyles
     onCopy?: () => void
@@ -28,12 +32,21 @@ export default function WizardCommand({
     const cloud = useCloud()
     const { addToast } = useToast()
     const [copyKey, setCopyKey] = useState(0)
-    const code = `npx @posthog/wizard${latest ? '@latest' : ''}${cloud ? ` --region ${cloud}` : ''}${
-        command ? ` ${command}` : ''
-    }`
+    // `selfDriving` is shorthand for the `self-driving` subcommand; `command` is the escape hatch
+    // for any other subcommand.
+    const subcommand = selfDriving ? 'self-driving' : command
+    // The copied command always includes `-y` (auto-confirms the npx prompt); the displayed command
+    // never shows it. `latest` controls whether `@latest` is present at all; `simple` additionally
+    // hides `@latest` from the display (the copy still pins it for freshness).
+    const buildCode = (withYes: boolean, withLatest: boolean) =>
+        `npx ${withYes ? '-y ' : ''}@posthog/wizard${withLatest ? '@latest' : ''}${cloud ? ` --region ${cloud}` : ''}${
+            subcommand ? ` ${subcommand}` : ''
+        }`
+    const displayCode = buildCode(false, simple ? false : latest)
+    const copyCode = buildCode(true, latest)
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(code)
+        navigator.clipboard.writeText(copyCode)
         setCopyKey((k) => k + 1)
         onCopy?.()
         addToast({
@@ -60,14 +73,16 @@ export default function WizardCommand({
                 >
                     <IconChevronRight className="size-4 opacity-50" />
                     <span className="relative mr-1">
-                        <code className="!bg-transparent !p-0 !border-0 text-gradient-wizard select-none">{code}</code>
+                        <code className="!bg-transparent !p-0 !border-0 text-gradient-wizard select-none">
+                            {displayCode}
+                        </code>
                         {copyKey > 0 && (
                             <code
                                 key={copyKey}
                                 className="!bg-transparent !p-0 !border-0 absolute inset-0 text-[#36C46F] pointer-events-none text-gradient-wizard-flash"
                                 aria-hidden="true"
                             >
-                                {code}
+                                {displayCode}
                             </code>
                         )}
                     </span>

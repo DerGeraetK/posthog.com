@@ -128,11 +128,17 @@ function PlatformOptionContent({ option }: { option: PlatformOption }): JSX.Elem
 export interface PlatformInstallProps {
     schema?: InstallSchema
     className?: string
+    /** Append the `self-driving` subcommand to the default command (display + copy). */
+    selfDriving?: boolean
+    /** Escape hatch to append any other subcommand to the default command (display + copy). */
+    command?: string
 }
 
 export default function PlatformInstall({
     schema = mcpInstallSchema,
     className = '',
+    selfDriving = false,
+    command,
 }: PlatformInstallProps): JSX.Element {
     const [selectedId, setSelectedId] = useState<string | null>(null)
     const [lastSelected, setLastSelected] = useState<Platform | null>(null)
@@ -154,6 +160,16 @@ export default function PlatformInstall({
     const handleToggle = (id: string) => {
         setSelectedId((current) => (current === id ? null : id))
     }
+
+    // `selfDriving` appends the `self-driving` subcommand; `command` is the escape hatch for any
+    // other subcommand. Either is added to both the displayed text and the clipboard copy.
+    const subcommand = selfDriving ? 'self-driving' : command
+    const commandSuffix = subcommand ? ` ${subcommand}` : ''
+    const displayCommand = `${schema.defaultCommand}${commandSuffix}`
+    const copyCommand =
+        schema.defaultCopyCommand || subcommand
+            ? `${schema.defaultCopyCommand ?? schema.defaultCommand}${commandSuffix}`
+            : undefined
 
     return (
         <div
@@ -194,7 +210,7 @@ export default function PlatformInstall({
                     ) : null}
                 </div>
 
-                <CopyableCommand command={schema.defaultCommand} animate />
+                <CopyableCommand command={displayCommand} copyCommand={copyCommand} animate />
 
                 {schema.supports ? <div className="text-sm text-secondary">{schema.supports}</div> : null}
             </div>

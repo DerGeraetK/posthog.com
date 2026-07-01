@@ -52,6 +52,8 @@ export type InstallSchema = {
     /** Header link on the right (replaces the old hardcoded "Learn more") */
     secondaryAction?: { label: string; to: string; state?: Record<string, unknown>; icon?: React.ReactNode }
     defaultCommand: string
+    /** Clipboard override for `defaultCommand` (display shows `defaultCommand`, copy writes this). */
+    defaultCopyCommand?: string
     /** Line shown below the command, e.g. "Supports Next.js, React, Python, and 21 more" */
     supports?: React.ReactNode
     platforms: Platform[]
@@ -501,7 +503,10 @@ export const wizardInstallSchema: InstallSchema = {
         state: { newWindow: true, initialTab: 'signup' },
         icon: <IconArrowUpRight className="size-4 text-secondary" />,
     },
-    defaultCommand: 'npx -y @posthog/wizard',
+    // Display shows a clean command; the copy adds `-y` (auto-confirm) and `@latest` (freshness).
+    // `self-driving` is intentionally NOT baked in here — it's opt-in via PlatformInstall's `command` prop.
+    defaultCommand: 'npx @posthog/wizard',
+    defaultCopyCommand: 'npx -y @posthog/wizard@latest',
     supports: supportsFrameworks,
     // Secondary install-methods row hidden for now on the homepage. Restore by
     // uncommenting installPlatforms (or swap in a custom array to diverge from MCP).
