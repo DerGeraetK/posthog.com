@@ -15,7 +15,7 @@ It's almost always rendered via [`ContactSales`](../ContactSales/index.tsx), whi
 ## Engagement instrumentation
 
 These forms submit off-page to Salesforce, so without explicit events every open/close is
-invisible to analytics — we couldn't measure how often visitors open the form and abandon it
+invisible to analytics – we couldn't measure how often visitors open the form and abandon it
 without interacting. The component fires lightweight lifecycle events via `posthog.capture`:
 
 | Event                 | When it fires                                                        |
