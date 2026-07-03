@@ -10,6 +10,7 @@ import OSButton from 'components/OSButton'
 import { DebugContainerQuery } from 'components/DebugContainerQuery'
 
 import SuggestedLinksBlock from 'components/SuggestedLinksBlock'
+import { useApp } from '../../context/App'
 
 const FinalSlide = () => (
     <div className="flex-1 px-4">
@@ -58,6 +59,7 @@ function Slide({ card, slideIndex }: { card: any; slideIndex: number }) {
 
 export default function Ick() {
     const [slideIndex, setSlideIndex] = useState(0)
+    const { siteSettings } = useApp()
 
     const cards = HomepageCards
     const totalSlides = cards.length + 1 // +1 for the final custom slide
@@ -102,7 +104,12 @@ export default function Ick() {
                     {!isFinalSlide && (
                         <header className="pb-4">
                             <h1 className="text-2xl flex items-center justify-center gap-2">
-                                You'll hate <Logo className="relative -top-px" /> if...
+                                You'll hate{' '}
+                                <Logo
+                                    className="relative -top-px"
+                                    fill={siteSettings.theme === 'dark' ? 'white' : undefined}
+                                />{' '}
+                                if...
                             </h1>
                         </header>
                     )}
